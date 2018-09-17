@@ -2,20 +2,20 @@ export function getDropdownOptions(name) {
     const json = require(`../../json/fields/${name}.js`);
     const options = json.filter(item => item.values_restricted === false)
                         .map(listObj => {
-                            let tmp = {};
-                            tmp[listObj.text] = listObj.values;
+                            let tmp = {
+                                name: listObj.name,
+                                text: listObj.text,
+                                values: listObj.values
+                            };
+                            
                             return tmp
                         });
-    let result = {}
-    Object.keys(options).forEach(elem => {
-        const entry = options[elem];
-        const key = Object.keys(entry)[0];
-        const values = entry[key];
 
-        result[key] = formatForDropDown(values);
-    })
-
-    return result;
+    return options.map(elem => ({
+            key: elem.name,
+            text: elem.text,
+            options: formatForDropDown(elem.values)
+        }))
 }
 
 function formatForDropDown(list) {
