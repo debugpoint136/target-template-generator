@@ -1,0 +1,28 @@
+{
+  "name": "tailwind",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "firebase": "^5.5.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-firebase-file-uploader": "^2.4.2",
+    "react-table": "^6.8.6",
+    "semantic-ui-css": "^2.3.0",
+    "semantic-ui-react": "^0.78.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^8.0.0",
+    "postcss-cli": "^5.0.0",
+    "react-scripts": "1.1.1",
+    "tailwindcss": "^0.4.1"
+  },
+  "scripts": {
+    "build:css": "postcss src/styles/index.css -o src/index.css",
+    "watch:css": "postcss src/styles/index.css -o src/index.css -w",
+    "start": "npm run watch:css & react-scripts start",
+    "build": "npm run build:css && react-scripts build",
+    "eject": "react-scripts eject",
+    "deploy": "firebase deploy"
+  }
+}
