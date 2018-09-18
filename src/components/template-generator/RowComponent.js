@@ -11,10 +11,13 @@ class RowComponent extends Component {
                 <div className="w-2/3">
                     {this.props.children}
                 </div>
-                <div className="w-1/3 mt-8">
-                <Label color='blue' basic>Enter number</Label>
-                <Input name={this.props.name} size='large' icon='question' placeholder='How many records' onChange={this.props.handleUpdate} />
-                </div>
+                {this.props.showRowAddInput ? 
+                    <div className="w-1/3 mt-8">
+                    <Label color='blue' basic>Enter number</Label>
+                    <Input key={this.props.name} name={this.props.name} size='large' icon='question' placeholder='How many records' onChange={this.props.handleUpdate} />
+                    </div>
+                : null
+                }
             </div>
         );
     }

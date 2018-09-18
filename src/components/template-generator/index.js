@@ -76,6 +76,17 @@ class TemplateGenerator extends Component {
         this.setState({ rows: deletedRowArray });
     }
 
+    checkRowCanBeAdded = () => {
+        if (this.state.selection.length === 0) {
+            return false;
+        }
+        if (this.state.selection.filter(elem => elem.item === this.state.filterView).length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     render() {
         return (
             <div className="sdfd">
@@ -100,7 +111,7 @@ class TemplateGenerator extends Component {
                     .map((item, index) => {
                     const values = metadataOptions[item];
                     
-                    return <RowComponent key={index} name={item} handleUpdate={this.handleRowAdd}>
+                    return <RowComponent key={index} name={item} handleUpdate={this.handleRowAdd} showRowAddInput={this.checkRowCanBeAdded()}>
                         { values.map((value, i) => {
                             const { key, text, options } = value;
                             return <DropdownComponent
