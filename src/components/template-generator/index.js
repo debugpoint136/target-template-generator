@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import RowComponent from './RowComponent';
 import ListAddedRows from './ListAddedRows';
-import {Button} from 'semantic-ui-react'
+import AddedRow from './AddedRow';
+import {Button} from 'semantic-ui-react';
+import produce from 'immer';
 
 import uuid from 'uuid';
 // import LookupComponent from './LookupComponent';
@@ -67,6 +69,13 @@ class TemplateGenerator extends Component {
         }
     }
 
+    handleRemoveRow = (e, {name}) => {
+        const deletedRowArray = produce(this.state.rows, draft => {
+            draft.splice(draft.findIndex(row => row.id === name), 1)
+        });
+        this.setState({ rows: deletedRowArray });
+    }
+
     render() {
         return (
             <div className="sdfd">
@@ -112,7 +121,7 @@ class TemplateGenerator extends Component {
                             <ListAddedRows>
                                 { this.state.rows
                                     .filter(d => d.item === this.state.filterView)
-                                    .map((row, index) => <p key={index}>{row.id}</p>)}
+                                    .map((row, index) => <AddedRow id={row.id} key={index} removeRow={this.handleRemoveRow}>{row.id}</AddedRow>)}
                             </ListAddedRows>
                             : null 
                         }
