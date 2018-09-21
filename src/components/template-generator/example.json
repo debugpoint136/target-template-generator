@@ -1,0 +1,83 @@
+{
+    "Library": {
+      "columns": [
+        { "header": "Starting material", "key": "starting_material" },
+        { "header": "Population", "key": "population" }
+      ],
+      "rows": [
+        {
+          "combination": {
+            "starting_material": "Frozen",
+            "population": "Chromatin"
+          },
+          "count": 2
+        },
+        {
+          "combination": {
+            "starting_material": "Fresh",
+            "population": "Chromatin"
+          },
+          "count": 3
+        }
+      ]
+    },
+    "Treatment": {
+      "columns": [{ "header": "Exposure type", "key": "exposure_type" }],
+      "rows": [
+        {
+          "combination": {
+            "exposure_type": "BPA (Bisphenol A)"
+          },
+          "count": 3
+        },
+        {
+          "combination": {
+            "exposure_type": "Genestein"
+          },
+          "count": 4
+        }
+      ]
+    },
+    "Mice": {
+      "columns": [
+        { "header": "Age", "key": "age" },
+        { "header": "Strain", "key": "strain" },
+        { "header": "Life stage at sac", "key": "life_stage_at_sac" }
+      ],
+      "rows": [
+        {
+          "combination": {
+            "age": "5 weeks",
+            "strain": "C57BL/6",
+            "life_stage_at_sac": "preconception"
+          },
+          "count": 3
+        },
+        {
+          "combination": {
+            "age": "5 weeks",
+            "strain": "C57BL/6",
+            "life_stage_at_sac": "adult (5 months)"
+          },
+          "count": 4
+        },
+        {
+          "combination": {
+            "age": "2 weeks",
+            "strain": "C57BL/6",
+            "life_stage_at_sac": "preconception"
+          },
+          "count": 2
+        },
+        {
+          "combination": {
+            "age": "2 weeks",
+            "strain": "C57BL/6",
+            "life_stage_at_sac": "adult (5 months)"
+          },
+          "count": 3
+        }
+      ]
+    }
+  }
+  

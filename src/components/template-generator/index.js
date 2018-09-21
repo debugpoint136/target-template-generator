@@ -9,6 +9,8 @@ import uuid from 'uuid';
 // import LookupComponent from './LookupComponent';
 import {getDropdownOptions} from './utils';
 import DropdownComponent from '../common/DropdownComponent';
+import RowsHeader from './RowsHeader';
+import ExceljsComponent from './ExceljsComponent';
 const metadataOptions = { 
     'Mice': getDropdownOptions('mouse'), 
     'Biosample': getDropdownOptions('biosample'), 
@@ -22,7 +24,7 @@ class TemplateGenerator extends Component {
         lab: "Dolinoy Lab",
         selection: [],
         rows: [],
-        filterView: undefined
+        filterView: 'Mice'
     }
 
     handleFilter = (e, {name}) => this.setState({ filterView: name })
@@ -127,15 +129,28 @@ class TemplateGenerator extends Component {
                     </RowComponent>
                 })}
                 </div>
+                    
                     <div className="border-blue-lighter border-2 rounded mx-8 p-8 w-1/2">
+                        
+                        <ExceljsComponent data={this.state.rows}/>
+
                         { (this.state.rows.length > 0 && this.state.filterView !== undefined) ? 
                             <ListAddedRows>
+                                <RowsHeader key={this.props.filterView} 
+                                    data={this.state.selection.filter(d => d.item === this.state.filterView)} 
+                                    item={this.props.filterView}/>
                                 { this.state.rows
                                     .filter(d => d.item === this.state.filterView)
-                                    .map((row, index) => <AddedRow id={row.id} key={index} removeRow={this.handleRemoveRow}>{row.id}</AddedRow>)}
+                                    .map((row, index) => <AddedRow 
+                                                id={row.id} 
+                                                key={index}
+                                                header={this.state.selection.filter(d => d.item === this.state.filterView)}  
+                                                data={this.state.rows.filter(d => d.id === row.id)} 
+                                                removeRow={this.handleRemoveRow}/>)}
                             </ListAddedRows>
                             : null 
                         }
+                        
                     </div>
                 </div>
             </div>
