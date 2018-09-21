@@ -21,7 +21,6 @@ class ExceljsComponent extends Component {
             alert('Nothing to download. Please select options.');
             return
         }
-        console.log(JSON.stringify(this.props.data));
         const workbook = new Excel.Workbook();
         const createWorkbook = makeAllWorkSheets(workbook);
         const workBookWithRows = fillRows(createWorkbook, this.props.data)

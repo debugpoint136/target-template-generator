@@ -1,4 +1,4 @@
-// import { generateAccession } from '../../helpers';
+import { generateAccession } from '../../helpers';
 // const PREFIX = {
 //     assay: 'AS',
 //     biosample: 'BS',
@@ -9,6 +9,16 @@
 //     treatment: 'TR',
 //     reagent: 'RG'
 // }
+const PREFIX = {
+    'Assay Details': 'AS',
+    'Biosample': 'BS',
+    'Diet': 'DT',
+    'Litter': 'LT',
+    'Mice': 'MS',
+    'File': 'FI',
+    'Treatment': 'TR',
+    'Reagent': 'RG'
+}
 const ALL_SCHEMA = {};
 
 const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'file' ];
@@ -109,7 +119,7 @@ function formatDataForExcel(name) {
                         });
     const system_accession = [{
         key: 'system_accession',
-        header: 'System generated accession',
+        header: 'System accession',
         placeholder: '',
         required: false
     }];
@@ -141,7 +151,8 @@ export function fillRows(WORKBOOK, ROWS) {
         });
 
         const { columns } = ROW;
-        let rowEntry = {};
+        const SYSTEM_ACCSN = generateAccession(PREFIX[ROW.item]);
+        let rowEntry = { system_accession: SYSTEM_ACCSN };
         columns.forEach((entry, i) => {
             let { name, value } = entry;
             rowEntry[name] = value;            
@@ -149,6 +160,12 @@ export function fillRows(WORKBOOK, ROWS) {
 
         const createdRow = worksheet.addRow(rowEntry);
         createdRow.eachCell(function(cell, colNumber) {
+                cell.fill = {
+                    type: 'pattern',
+                    pattern:'solid',
+                    fgColor:{argb:'cccccc'}
+                }
+
                 if (VALUES_ARRAY[colNumber]) {
                     let values = VALUES_ARRAY[colNumber].join(',').toString();
                     let formattedValues = [JSON.stringify(values)];
