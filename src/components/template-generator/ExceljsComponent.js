@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {saveAs} from 'file-saver';
 import {Button} from 'semantic-ui-react';
-import { makeAllWorkSheets, fillRows } from './utils';
+import {makeAllWorkSheets, fillRows} from './utils';
 // import _ from 'lodash';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 
 /**
- * 1. Create Headers from Fields json and create all the tabs for now
- * 2. when this.download is invoked, it fetches this.props.data and plugs those rows together excel sheet
+ * 1. Create Headers from Fields json and create all the tabs for now - DONE
+ * 2. when this.download is invoked, it fetches this.props.data and plugs those rows together excel sheet - DONE
+ * 3. READ user filled excel sheet : https://github.com/guyonroche/exceljs/issues/592
  */
 
 class ExceljsComponent extends Component {
@@ -32,13 +33,16 @@ class ExceljsComponent extends Component {
             .catch(err => console.log('Error writing excel export', err))
     }
 
-
     render() {
         return (
-            <Button color='blue'
+            <div className="flex justify-center">
+                <Button
+                    color='blue'
                     icon='download'
                     label='Download Excel template'
                     onClick={this.download}/>
+            </div>
+
         );
     }
 }

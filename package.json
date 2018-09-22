@@ -14,7 +14,8 @@
     "react-router-dom": "^4.3.1",
     "react-table": "^6.8.6",
     "semantic-ui-css": "^2.3.0",
-    "semantic-ui-react": "^0.78.3"
+    "semantic-ui-react": "^0.78.3",
+    "xlsx": "^0.14.0"
   },
   "devDependencies": {
     "autoprefixer": "^8.0.0",

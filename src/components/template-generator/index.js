@@ -4,6 +4,8 @@ import ListAddedRows from './ListAddedRows';
 import AddedRow from './AddedRow';
 import {Button} from 'semantic-ui-react';
 import produce from 'immer';
+import ExcelUpload from './ExcelUpload';
+
 
 import uuid from 'uuid';
 // import LookupComponent from './LookupComponent';
@@ -152,6 +154,10 @@ class TemplateGenerator extends Component {
                         }
                         
                     </div>
+                </div>
+                <div className="m-8 p-8 border-teal border-4 text-grey-dark font-hairline font-mono">
+                    <div className="m-8 p-8 h-8 font-semibold font-sans text-2xl">Upload filled out template excel sheet</div>
+                    <ExcelUpload />
                 </div>
             </div>
         );
