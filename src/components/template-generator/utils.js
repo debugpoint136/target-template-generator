@@ -20,10 +20,17 @@ const PREFIX = {
     'Reagent': 'RG'
 }
 const ALL_SCHEMA = {};
+const ALL_CONNECTIONS = {};
 
 const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'file' ];
 SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
 const ALL_VALUES = SHEETNAMES.map(name => getValues(name));
+
+SHEETNAMES.forEach(name => ALL_CONNECTIONS[name] = require(`../../json/metadata_objects/${name}.js`));
+const CONNECTION_OPTIONS = {};
+SHEETNAMES.forEach(name => {
+    CONNECTION_OPTIONS[name] = getConnectionOptions(name);
+});
 
 
 const SHEETID = {
@@ -77,6 +84,18 @@ const style = {
         family: 1,
         size: 10,
         italic: true
+    },
+    relationshipRequired: {
+        name: 'Arial Black',
+        color: { argb: 'FF0000FF' },
+        family: 2,
+        size: 11,
+    },
+    relationshipNotRequired: {
+        name: 'Arial Black',
+        color: { argb: 'FF008080' },
+        family: 2,
+        size: 11,
     }
 }
 export function makeAllWorkSheets(WORKBOOK) { // in index.js :  var workbook = new Excel.Workbook();
@@ -126,19 +145,33 @@ function fillLookups(WORKBOOK) {
 function makeOneWorkSheet(WORKBOOK, NAME) {
 
     const headerSchema = formatDataForExcel(NAME);
+    const connectionsList = CONNECTION_OPTIONS[NAME];
+
+    console.log(headerSchema);
+    console.log(connectionsList);
+
     const createdWorksheet = WORKBOOK.addWorksheet(NAME);
-    createdWorksheet.columns = headerSchema.map(elem => ({ key: elem.key, header: elem.header, width: elem.header.length + 5 }));
+    const headers = headerSchema.map(elem => ({ key: elem.key, header: elem.header, width: elem.header.length + 5 }));
+    const relationsHeaders = connectionsList.map(elem => ({ key: elem.name, header: elem.name, width: elem.name.length + 5}));
+    createdWorksheet.columns = headers.concat(relationsHeaders);
     let HEADER = createdWorksheet.getRow(1);
 
     // Iterate over all non-null cells in a row
     HEADER.eachCell(function(cell, colNumber) {
-        if (headerSchema[colNumber - 1].required) {
-            cell.font = style.required;
-        } else {
-            cell.font = style.notRequired;
+        if (colNumber <= headers.length) {
+            if (headerSchema[colNumber - 1].required) {
+                cell.font = style.required;
+            } else {
+                cell.font = style.notRequired;
+            }
+        } else if (colNumber <= headers.length + connectionsList.length) {
+            if (connectionsList[colNumber - headers.length - 1].required) {
+                cell.font = style.relationshipRequired;
+            } else {
+                cell.font = style.relationshipNotRequired;
+            }
         }
     });
-
 }
 
 function formatDataForExcel(name) {
@@ -164,6 +197,7 @@ function formatDataForExcel(name) {
     }];
 
     const headerSchema = system_accession.concat(headers);
+
     return headerSchema;
 }
 
@@ -175,7 +209,6 @@ export function fillRows(WORKBOOK, ROWS) {
 
     ROWS.forEach(ROW => {
         const sheetid = SHEETID[ROW.item];
-        // const VALUES_FOR_THIS_SHEET = ALL_VALUES[sheetid - 1];
 
         const worksheet = WORKBOOK.getWorksheet(sheetid);
         const header = worksheet.getRow(1);
@@ -186,7 +219,6 @@ export function fillRows(WORKBOOK, ROWS) {
                 if (VALUES_RANGE[sheetid - 1]) {
                     let tmp = VALUES_RANGE[sheetid - 1].filter(d => Object.keys(d)[0] === item)[0];
                     if (tmp) {
-                        console.log(Object.values(tmp));
                         return Object.values(tmp)[0];
                     } else {
                         return null;
@@ -238,4 +270,19 @@ function getValues(sheetname) {
         }
     })
     return tmp;
+}
+
+function getConnectionOptions(sheetname) {
+    const connectionOptions = ALL_CONNECTIONS[sheetname].connections.map(entry => {
+        const { name, placeholder, to } = entry;
+        const requiredCondition = (entry.hasOwnProperty('required') ? true: false);
+        return {
+            name: name,
+            placeholder: placeholder,
+            to: to,
+            required: requiredCondition
+        }
+    });
+
+    return connectionOptions;
 }
