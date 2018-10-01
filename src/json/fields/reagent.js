@@ -3,72 +3,74 @@ var fields = [{
     text: 'User accession',
     placeholder: 'USRREA####',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'reagent',
     text: 'Reagent',
     placeholder: 'Antibody or enzyme',
     type: 'text',
-    required: true
+    values: ['antibody'],
+    values_restricted: true,
+    required: false
 }, {
     name: 'source',
     text: 'Source',
-    placeholder: '(e.g., laboratory, vendor)',
+    placeholder: 'Company name (e.g., laboratory, vendor)',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'product_id',
     text: 'Product ID',
     placeholder: 'For commercially available reagents',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'lot',
     text: 'Lot ID',
     placeholder: 'For commercially available reagents',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'antigen_sequence',
     text: 'Antigen sequence',
     placeholder: '(for antibodies)',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'clonality',
     text: 'Clonality',
     placeholder: '(for antibodies)',
-    values: [ '', 'monoclonal', 'polyclonal' ],
+    values: [ 'monoclonal', 'polyclonal' ],
     type: 'text',
-    required: true,
-    values_restricted: false
+    required: false,
+    values_restricted: true
 }, {
     name: 'host',
     text: 'Host organism',
     placeholder: '(for antibodies)',
-    values: [ '', 'horse', 'rabbit' ],
+    values: [ 'horse', 'rabbit' ],
     type: 'text',
-    required: true,
-    values_restricted: false
+    required: false,
+    values_restricted: true
 }, {
     name: 'isotype',
     text: 'Isotype',
     placeholder: '(for antibodies)',
-    values: [ '', 'IgA', 'IgG' ],
+    values: [ 'IgA', 'IgG' ],
     type: 'text',
-    required: true,
-    values_restricted: false
+    required: false,
+    values_restricted: true
 }, {
     name: 'purification_method',
     text: 'Purification method',
-    placeholder: '(e.g., antiserum, affinity; if applicable)',
+    placeholder: '(e.g., antiserum, affinity)',
     type: 'text',
-    required: true
+    required: false
 }, {
     name: 'comments',
     text: 'Comments',
     placeholder: '',
-    type: 'textarea',
+    type: 'text',
     required: false
 }];
 

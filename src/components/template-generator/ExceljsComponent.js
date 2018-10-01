@@ -23,6 +23,7 @@ class ExceljsComponent extends Component {
             return
         }
         const workbook = new Excel.Workbook();
+        
         const createWorkbook = makeAllWorkSheets(workbook);
         const workBookWithRows = fillRows(createWorkbook, this.props.data)
 

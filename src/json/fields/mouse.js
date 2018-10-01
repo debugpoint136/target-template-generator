@@ -9,21 +9,25 @@ var fields = [{
     text: 'Organism',
     placeholder: 'Scientific name (genus, species, and subspecies, if applicable)',
     type: 'text',
-    required: true
+    required: true,
+    values: ['Mus musculus'],
+    values_restricted: true
 }, {
     name: 'source',
     text: 'Source',
     placeholder: 'Source of mouse strain (e.g., laboratory)',
     type: 'text',
-    required: true
+    required: true,
+    values: ['The Jackson Laboratory', 'Laboratory colony'],
+    values_restricted: true
 }, {
     name: 'strain',
     text: 'Strain',
-    placeholder: 'Strain information, including parental background if the product of cross',
+    placeholder: 'Strain information, including parental background if the product of cross. Not just “C57BL/6”.',
     required: true,
     type: 'text',
-    values: ['C57BL/6', 'Collaborative Cross/CC', 'Diversity Outbred', '129S1/SvlmJ', 'C57BL/6J', 'C57BL/6-Avy'],
-    values_restricted: false
+    values: ['Avy'],
+    values_restricted: true
 }, {
     name: 'sex',
     text: 'Sex',
@@ -41,31 +45,25 @@ var fields = [{
     required: true
 }, {
     name: 'mouse_age_collection',
-    text: 'Mouse age at sac (include units)',
+    text: 'Mouse age at sac (weeks)',
     placeholder: '',
-    type: 'text',
+    type: 'integer',
     required: true,
     pilot: true
 }, {
     name: 'life_stage_collection',
     text: 'Life stage at sac',
     placeholder: '',
-    values: ['preconception', 'in utero', 'neonate', 'weaned', 'juvenile (5-10 wk)', 'adult (5 months)', 'aged (12 months)', 'Gestation (2 weeks prior to conception-PND21)','Gestation (GD0-PND21)','Adolescent (PND21-35)','Juvenile/Adult'],
+    values: ['preconception (-5 weeks to conception/-3 weeks)', 'gestation (conception/-3 weeks to birth/0 weeks', 'neonate (birth/0 weeks to 1 week)', 'preconception to weaning (-5 weeks to 3 weeks)', 'weanling (3 weeks)', 'adolescent (3 to 5 weeks)', 'juvenile (5 to 10 weeks)', 'adult (15 to 30 weeks)', 'aged (45 to 52 weeks)'],
     type: 'text',
     required: true,
-    values_restricted: false
-}, {
-    name: 'time_last_exposure',
-    text: 'Time since last exposure (include units)',
-    placeholder: '',
-    type: 'text',
-    required: true
+    values_restricted: true
 }, {
     name: 'animal_weight_sac',
     text: 'Weight at sac (g)',
     placeholder: '',
     type: 'float',
-    required: true
+    required: false
 }, {
     name: 'perfusion',
     text: 'Perfusion',
@@ -86,39 +84,33 @@ var fields = [{
     name: 'fasted_hours',
     text: 'Number of hours fasted',
     placeholder: '',
-    type: 'number',
-    required: true
+    type: 'integer',
+    required: false
 }, {
     name: 'liver_tumors',
-    text: 'Liver tumors present',
-    placeholder: 'Were diffuse liver tumors present?',
+    text: 'Macroscopic tumors present',
+    placeholder: 'Were diffuse tumors present?',
     type: 'text',
     values: ['NA', 'TRUE', 'FALSE'],
     required: true,
     values_restricted: true
 }, {
-    name: 'technicians',
-    text: 'Technicians',
-    placeholder: 'Individuals handling mice',
+    name: 'tumor_organs',
+    text: 'Organs with tumors',
+    placeholder: 'Specify organ(s) where macroscopic tumors are present',
     type: 'text',
     required: true
 }, {
-    name: 'liver_hist_image_HE',
-    text: 'Liver histology, H&E stain',
-    placeholder: 'Link to URL of uploaded image',
+    name: 'technicians',
+    text: 'Technicians',
+    placeholder: 'Individual performing the sac (initials).',
     type: 'text',
-    required: false
-}, {
-    name: 'liver_hist_image_ORO',
-    text: 'Liver histology, Oil red O stain',
-    placeholder: 'Link to URL of uploaded image',
-    type: 'text',
-    required: false
+    required: true
 }, {
     name: 'comments',
     text: 'Comments',
     placeholder: '',
-    type: 'textarea',
+    type: 'text',
     required: false
 }];
 

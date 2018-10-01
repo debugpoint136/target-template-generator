@@ -36,9 +36,11 @@ const SHEETID = {
     'File': 7
 }
 
+const VALUES_RANGE = [];
+
 export function getDropdownOptions(name) {
     const json = require(`../../json/fields/${name}.js`);
-    const options = json.filter(item => item.values_restricted === false)
+    const options = json.filter(item => item.values_restricted === true)
                         .map(listObj => {
                             let tmp = {
                                 name: listObj.name,
@@ -77,13 +79,50 @@ const style = {
         italic: true
     }
 }
-export function makeAllWorkSheets(WORKBOOK) { // var workbook = new Excel.Workbook();
+export function makeAllWorkSheets(WORKBOOK) { // in index.js :  var workbook = new Excel.Workbook();
     
     SHEETNAMES.forEach(item => makeOneWorkSheet(WORKBOOK, item));
+    const WORKBOOK_WITH_LOOKUPS = fillLookups(WORKBOOK);
+
+    return WORKBOOK_WITH_LOOKUPS;
+}
+
+
+function fillLookups(WORKBOOK) {
+    const LOOKUPS = WORKBOOK.addWorksheet('lookups');
+    let counter = 1;
+
+    SHEETNAMES.forEach((sheetName, index) => {
+        const sheetValues = ALL_VALUES[index];
+
+        let acc = [];
+        Object.keys(sheetValues).forEach((fieldName, index) => {
+                const fieldListOfValues = sheetValues[fieldName];
+                let tmp = {};
+                // create column
+                LOOKUPS.getColumn(counter).values = fieldListOfValues;
+                let columnLetter = '';
+                if (counter > 26 && counter < 53) {
+                    columnLetter = "A" + (counter - 26 + 9).toString(36).toUpperCase();
+                } else if (counter > 52 && counter < 79) {
+                    columnLetter = "B" + (counter - 26 + 9).toString(36).toUpperCase();
+                } else {
+                    columnLetter = (counter + 9).toString(36).toUpperCase();
+                }
+
+                const rangeStr = `lookups!${columnLetter}1:${columnLetter}${fieldListOfValues.length}`;
+                tmp[fieldName] = rangeStr;
+                acc.push(tmp);
+                counter = counter + 1;
+                
+        });
+        VALUES_RANGE.push(acc);
+    });
+
+    LOOKUPS.state = 'hidden';
 
     return WORKBOOK;
 }
-
 function makeOneWorkSheet(WORKBOOK, NAME) {
 
     const headerSchema = formatDataForExcel(NAME);
@@ -136,7 +175,7 @@ export function fillRows(WORKBOOK, ROWS) {
 
     ROWS.forEach(ROW => {
         const sheetid = SHEETID[ROW.item];
-        const VALUES_FOR_THIS_SHEET = ALL_VALUES[sheetid - 1];
+        // const VALUES_FOR_THIS_SHEET = ALL_VALUES[sheetid - 1];
 
         const worksheet = WORKBOOK.getWorksheet(sheetid);
         const header = worksheet.getRow(1);
@@ -144,7 +183,17 @@ export function fillRows(WORKBOOK, ROWS) {
 
         const VALUES_ARRAY = headerCellNames.map(item => {
             if (item) {
-                return VALUES_FOR_THIS_SHEET[item];
+                if (VALUES_RANGE[sheetid - 1]) {
+                    let tmp = VALUES_RANGE[sheetid - 1].filter(d => Object.keys(d)[0] === item)[0];
+                    if (tmp) {
+                        console.log(Object.values(tmp));
+                        return Object.values(tmp)[0];
+                    } else {
+                        return null;
+                    }                    
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
@@ -165,19 +214,17 @@ export function fillRows(WORKBOOK, ROWS) {
                     pattern:'solid',
                     fgColor:{argb:'cccccc'}
                 }
-
+                
                 if (VALUES_ARRAY[colNumber]) {
-                    let values = VALUES_ARRAY[colNumber].join(',').toString();
-                    let formattedValues = [JSON.stringify(values)];
+                    
                     cell.dataValidation = {
                         type: 'list',
                         allowBlank: false,
-                        formulae: formattedValues // ['"One,Two,Three,Four"']
+                        formulae: [ VALUES_ARRAY[colNumber] ] // `lookups!A1:A3`;
                     };
                 }
             });
-
-    })
+    });
 
     return WORKBOOK;
 }

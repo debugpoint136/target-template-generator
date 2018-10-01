@@ -17,7 +17,10 @@ const metadataOptions = {
     'Mice': getDropdownOptions('mouse'), 
     'Biosample': getDropdownOptions('biosample'), 
     'Assay Details': getDropdownOptions('assay'), 
-    'Treatment': getDropdownOptions('treatment') 
+    'Treatment': getDropdownOptions('treatment'), 
+    'Diet': getDropdownOptions('diet'), 
+    'Reagent': getDropdownOptions('reagent'), 
+    'Litter': getDropdownOptions('litter')
 };
 
 
