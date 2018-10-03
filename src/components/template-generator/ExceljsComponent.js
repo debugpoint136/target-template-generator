@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {saveAs} from 'file-saver';
 import {Button} from 'semantic-ui-react';
-import {makeAllWorkSheets, fillRows} from './utils';
+import { makeAllWorkSheets, fillRows, reshapeSheetFillouts } from './utils';
 // import _ from 'lodash';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 
@@ -24,8 +24,9 @@ class ExceljsComponent extends Component {
         }
         const workbook = new Excel.Workbook();
         
-        const createWorkbook = makeAllWorkSheets(workbook);
-        const workBookWithRows = fillRows(createWorkbook, this.props.data)
+        const newWorkbook = makeAllWorkSheets(workbook);
+        const standardizedData = reshapeSheetFillouts(this.props.data);
+        const workBookWithRows = fillRows(newWorkbook, standardizedData);
 
         workBookWithRows
             .xlsx

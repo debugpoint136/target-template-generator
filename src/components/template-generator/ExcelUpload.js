@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import XLSX from 'xlsx';
+import fire from '../../fire';
 
 export default class SheetJSApp extends Component {
     constructor(props) {
@@ -22,6 +23,7 @@ export default class SheetJSApp extends Component {
             const wb = XLSX.read(bstr, {
                 type: rABS ? 'binary' : 'array'
             });
+            const readDataAllSheets = parseWorkBook(wb);
             /* Get first worksheet */
             const wsname = wb.SheetNames[3];
             const ws = wb.Sheets[wsname];
@@ -30,10 +32,15 @@ export default class SheetJSApp extends Component {
             // const dataObj = XLSX.utils.sheet_to_json(ws); // creates a straight-up object - save this in Firebase
             // console.log(data);
             // console.log(dataObj);
+
+            /* Update Firebase */
+            const newPostRef = fire.database().ref('uploads').push(readDataAllSheets);
+            const postId = newPostRef.key;
         
             /* Update state */
             this.setState({
                 data: data,
+                postId: postId,
                 cols: make_cols(ws['!ref'])
             });
         };
@@ -174,3 +181,18 @@ const make_cols = refstr => {
         }
     return o;
 };
+
+function parseWorkBook(wb) {
+
+    let tmp = {};
+    wb.SheetNames.forEach(wsname => {
+        const ws = wb.Sheets[wsname];
+        if (ws !== undefined && wsname !== 'lookups') {
+            console.log(ws);
+            const dataObj = XLSX.utils.sheet_to_json(ws);
+            tmp[wsname] = dataObj;
+        }
+    });
+    console.log(tmp);
+    return tmp;
+}

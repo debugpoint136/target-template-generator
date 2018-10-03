@@ -1,28 +1,28 @@
 import { generateAccession } from '../../helpers';
-// const PREFIX = {
-//     assay: 'AS',
-//     biosample: 'BS',
-//     diet: 'DT',
-//     litter: 'LT',
-//     mouse: 'MS',
-//     file: 'FI',
-//     treatment: 'TR',
-//     reagent: 'RG'
-// }
 const PREFIX = {
-    'Assay Details': 'AS',
-    'Biosample': 'BS',
-    'Diet': 'DT',
-    'Litter': 'LT',
-    'Mice': 'MS',
-    'File': 'FI',
-    'Treatment': 'TR',
-    'Reagent': 'RG'
+    assay: 'AS',
+    biosample: 'BS',
+    diet: 'DT',
+    litter: 'LT',
+    mouse: 'MS',
+    file: 'FI',
+    treatment: 'TR',
+    reagent: 'RG'
 }
+// const PREFIX = {
+//     'Assay Details': 'AS',
+//     'Biosample': 'BS',
+//     'Diet': 'DT',
+//     'Litter': 'LT',
+//     'Mice': 'MS',
+//     'File': 'FI',
+//     'Treatment': 'TR',
+//     'Reagent': 'RG'
+// }
 const ALL_SCHEMA = {};
 const ALL_CONNECTIONS = {};
 
-const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'file' ];
+const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
 const ALL_VALUES = SHEETNAMES.map(name => getValues(name));
 
@@ -32,15 +32,37 @@ SHEETNAMES.forEach(name => {
     CONNECTION_OPTIONS[name] = getConnectionOptions(name);
 });
 
+// const SHEETID = {
+//     'Treatment': 1,
+//     'Diet': 2,
+//     'Litter': 3,
+//     'Mice': 4,
+//     'Biosample': 5,
+//     'Assay Details': 6,
+//     'Reagent': 7,
+//     'File': 8
+// }
 
-const SHEETID = {
-    'Treatment': 1,
-    'Diet': 2,
-    'Litter': 3,
-    'Mice': 4,
-    'Biosample': 5,
-    'Assay Details': 6,
-    'File': 7
+const SHEETNAMEID = {
+    'treatment': 1,
+    'diet': 2,
+    'litter': 3,
+    'mouse': 4,
+    'biosample': 5,
+    'assay': 6,
+    'reagent': 7,
+    'file': 8
+}
+
+const SHEETNAMELOOKUP = {
+    'Treatment': 'treatment',
+    'Diet': 'diet',
+    'Litter': 'litter',
+    'Mice': 'mouse',
+    'Biosample': 'biosample',
+    'Assay Details': 'assay',
+    'Reagent': 'reagent',
+    'File': 'file'
 }
 
 const VALUES_RANGE = [];
@@ -147,12 +169,9 @@ function makeOneWorkSheet(WORKBOOK, NAME) {
     const headerSchema = formatDataForExcel(NAME);
     const connectionsList = CONNECTION_OPTIONS[NAME];
 
-    console.log(headerSchema);
-    console.log(connectionsList);
-
     const createdWorksheet = WORKBOOK.addWorksheet(NAME);
     const headers = headerSchema.map(elem => ({ key: elem.key, header: elem.header, width: elem.header.length + 5 }));
-    const relationsHeaders = connectionsList.map(elem => ({ key: elem.name, header: elem.name, width: elem.name.length + 5}));
+    const relationsHeaders = connectionsList.map(elem => ({ key: elem.name, header: elem.display_name, width: elem.name.length + 5}));
     createdWorksheet.columns = headers.concat(relationsHeaders);
     let HEADER = createdWorksheet.getRow(1);
 
@@ -205,57 +224,40 @@ function formatDataForExcel(name) {
  * FILL UP ROWS
  */
 
-export function fillRows(WORKBOOK, ROWS) {
+export function fillRows(WORKBOOK, DATATOFILL) {
 
-    ROWS.forEach(ROW => {
-        const sheetid = SHEETID[ROW.item];
-
-        const worksheet = WORKBOOK.getWorksheet(sheetid);
+    Object.keys(DATATOFILL).forEach((ROWNAME) => {
+        const ROW_DATA = DATATOFILL[ROWNAME];
+        const worksheet = WORKBOOK.getWorksheet(ROWNAME);
         const header = worksheet.getRow(1);
         const headerCellNames = header.values;
 
-        const VALUES_ARRAY = headerCellNames.map(item => {
-            if (item) {
-                if (VALUES_RANGE[sheetid - 1]) {
-                    let tmp = VALUES_RANGE[sheetid - 1].filter(d => Object.keys(d)[0] === item)[0];
-                    if (tmp) {
-                        return Object.values(tmp)[0];
-                    } else {
-                        return null;
-                    }                    
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        });
+        const VALUES_ARRAY = getValueRanges(headerCellNames, ROWNAME);
 
-        const { columns } = ROW;
-        const SYSTEM_ACCSN = generateAccession(PREFIX[ROW.item]);
-        let rowEntry = { system_accession: SYSTEM_ACCSN };
-        columns.forEach((entry, i) => {
-            let { name, value } = entry;
-            rowEntry[name] = value;            
-        });
+        ROW_DATA.forEach(ROW => {
+            
+            const SYSTEM_ACCSN = generateAccession(PREFIX[ROWNAME]);
+        
+            let rowEntry = Object.assign({ system_accession: SYSTEM_ACCSN }, ROW);
 
-        const createdRow = worksheet.addRow(rowEntry);
-        createdRow.eachCell(function(cell, colNumber) {
-                cell.fill = {
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{argb:'cccccc'}
-                }
-                
-                if (VALUES_ARRAY[colNumber]) {
+            const createdRow = worksheet.addRow(rowEntry);
+
+            createdRow.eachCell(function(cell, colNumber) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern:'solid',
+                        fgColor:{argb:'cccccc'}
+                    }
                     
-                    cell.dataValidation = {
-                        type: 'list',
-                        allowBlank: false,
-                        formulae: [ VALUES_ARRAY[colNumber] ] // `lookups!A1:A3`;
-                    };
-                }
-            });
+                    if (VALUES_ARRAY[colNumber]) {
+                        cell.dataValidation = {
+                            type: 'list',
+                            allowBlank: false,
+                            formulae: [ VALUES_ARRAY[colNumber] ] // `lookups!A1:A3`;
+                        };
+                    }
+                });
+        });
     });
 
     return WORKBOOK;
@@ -274,10 +276,11 @@ function getValues(sheetname) {
 
 function getConnectionOptions(sheetname) {
     const connectionOptions = ALL_CONNECTIONS[sheetname].connections.map(entry => {
-        const { name, placeholder, to } = entry;
+        const { name, placeholder, to, display_name } = entry;
         const requiredCondition = (entry.hasOwnProperty('required') ? true: false);
         return {
             name: name,
+            display_name: display_name,
             placeholder: placeholder,
             to: to,
             required: requiredCondition
@@ -285,4 +288,45 @@ function getConnectionOptions(sheetname) {
     });
 
     return connectionOptions;
+}
+
+const sheetFillouts = {};
+export function reshapeSheetFillouts (ROWS) {
+
+    SHEETNAMES.forEach(s => sheetFillouts[s] = []); // setup
+
+    ROWS.forEach(row => {
+        const { item, columns } = row;
+        const sheetName = SHEETNAMELOOKUP[item];
+        let rowEntry = {};
+        columns.forEach((entry, i) => {
+            let { name, value } = entry;
+            rowEntry[name] = value;
+        });
+        sheetFillouts[sheetName].push(rowEntry);
+    })
+
+    return sheetFillouts;
+}
+
+
+function getValueRanges (headers, sheetname) {
+
+    const sheetid = SHEETNAMEID[sheetname];
+    return headers.map(item => {
+        if (item) {
+            if (VALUES_RANGE[sheetid - 1]) {
+                let tmp = VALUES_RANGE[sheetid - 1].filter(d => Object.keys(d)[0] === item)[0];
+                if (tmp) {
+                    return Object.values(tmp)[0];
+                } else {
+                    return null;
+                }                    
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    });
 }

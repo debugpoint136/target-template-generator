@@ -13,6 +13,8 @@ import {getDropdownOptions} from './utils';
 import DropdownComponent from '../common/DropdownComponent';
 import RowsHeader from './RowsHeader';
 import ExceljsComponent from './ExceljsComponent';
+import UploadsList from './UploadsList';
+// import FirebaseTest from './FireBaseTest';
 const metadataOptions = { 
     'Mice': getDropdownOptions('mouse'), 
     'Biosample': getDropdownOptions('biosample'), 
@@ -20,7 +22,8 @@ const metadataOptions = {
     'Treatment': getDropdownOptions('treatment'), 
     'Diet': getDropdownOptions('diet'), 
     'Reagent': getDropdownOptions('reagent'), 
-    'Litter': getDropdownOptions('litter')
+    'Litter': getDropdownOptions('litter'),
+    'File': getDropdownOptions('file'),
 };
 
 
@@ -161,6 +164,8 @@ class TemplateGenerator extends Component {
                 <div className="m-8 p-8 border-teal border-4 text-grey-dark font-hairline font-mono">
                     <div className="m-8 p-8 h-8 font-semibold font-sans text-2xl">Upload filled out template excel sheet</div>
                     <ExcelUpload />
+                    {/* <FirebaseTest/> */}
+                    <UploadsList/>
                 </div>
             </div>
         );

@@ -1,0 +1,35 @@
+{
+  "assay": {
+    "0": {
+      "Biosample": "TGTBS83EREDF",
+      "Category": "Gene expression",
+      "Population": "rRNA-depleted total RNA",
+      "Starting number of cells (k)": 223,
+      "Subcellular fraction": 4,
+      "System accession": "TGTASX3IR1CD",
+      "Target": "Input",
+      "Technique": "RNA-seq (OBI:0001271)",
+      "Tissue weight (mg)": 67
+    },
+    "1": {
+      "Category": "Open chromatin",
+      "Population": "rRNA-depleted total RNA",
+      "Reagent": "test",
+      "Subcellular fraction": 3,
+      "System accession": "TGTAS48PA3LR",
+      "Target": "H3K4me1 (SO:0001705)",
+      "Technique": "ATAC-seq (transposase-accessible chromatin, OBI:0002039)",
+      "Tissue weight (mg)": 78
+    },
+    "2": {
+      "Category": "Open chromatin",
+      "Population": "rRNA-depleted total RNA",
+      "Starting number of cells (k)": 321,
+      "Subcellular fraction": 6,
+      "System accession": "TGTAS3PU36HE",
+      "Target": "H3K4me1 (SO:0001705)",
+      "Technique": "ATAC-seq (transposase-accessible chromatin, OBI:0002039)",
+      "Tissue weight (mg)": 54
+    }
+  }
+}
