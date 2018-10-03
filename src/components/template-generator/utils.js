@@ -224,7 +224,7 @@ function formatDataForExcel(name) {
  * FILL UP ROWS
  */
 
-export function fillRows(WORKBOOK, DATATOFILL) {
+export function fillRows(WORKBOOK, DATATOFILL, TYPE) { // TYPE = 'template' or 'data'
 
     Object.keys(DATATOFILL).forEach((ROWNAME) => {
         const ROW_DATA = DATATOFILL[ROWNAME];
@@ -236,11 +236,19 @@ export function fillRows(WORKBOOK, DATATOFILL) {
 
         ROW_DATA.forEach(ROW => {
             
-            const SYSTEM_ACCSN = generateAccession(PREFIX[ROWNAME]);
-        
-            let rowEntry = Object.assign({ system_accession: SYSTEM_ACCSN }, ROW);
+            let createdRow = {};
 
-            const createdRow = worksheet.addRow(rowEntry);
+            if (TYPE === 'template') {
+                const SYSTEM_ACCSN = generateAccession(PREFIX[ROWNAME]);
+                let rowEntry = Object.assign({ system_accession: SYSTEM_ACCSN }, ROW);
+    
+                createdRow = worksheet.addRow(rowEntry);
+            }
+
+            if (TYPE === 'data') {
+                createdRow = worksheet.addRow(ROW);
+            }
+            
 
             createdRow.eachCell(function(cell, colNumber) {
                     cell.fill = {
@@ -329,4 +337,36 @@ function getValueRanges (headers, sheetname) {
             return null;
         }
     });
+}
+
+export function restructureSheetFillouts(WORKBOOK, downloadedJSON) { // for firebase downloads
+
+    const downloadedObj = JSON.parse(downloadedJSON);
+    const result = {};
+
+    Object.keys(downloadedObj).forEach(sheetName => {
+        const worksheet = WORKBOOK.getWorksheet(sheetName);
+        const header = worksheet.getRow(1);
+        const headerCellNames = header.values;
+        
+        const sheetObj = downloadedObj[sheetName];
+
+        const list = Object.values(sheetObj);
+
+        const fillDataWithIndices = list.map(row =>  {
+            let rowFill = [];
+            Object.keys(row).forEach(fieldName => {       
+                const fillValue = row[fieldName];
+                const index = headerCellNames.findIndex(i => i === fieldName);
+                rowFill[index] = fillValue;
+            })
+
+            return rowFill;
+        })
+
+        result[sheetName] = fillDataWithIndices;
+        
+    });
+
+    return result;
 }

@@ -26,7 +26,7 @@ class ExceljsComponent extends Component {
         
         const newWorkbook = makeAllWorkSheets(workbook);
         const standardizedData = reshapeSheetFillouts(this.props.data);
-        const workBookWithRows = fillRows(newWorkbook, standardizedData);
+        const workBookWithRows = fillRows(newWorkbook, standardizedData, 'template');
 
         workBookWithRows
             .xlsx
