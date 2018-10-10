@@ -35,7 +35,7 @@ class Neo4jDownload extends Component {
     }
 
     _generateNewSheet = (id) => {
-        console.log(setupQuery('biosample'));
+        console.log(setupQuery('file'));
         const params = {
             submission_id: id
         };
@@ -101,8 +101,12 @@ function setupQuery(type) {
             return queryCore + queryParams;
 
         case 'file':
-            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT f as file`;
-            return queryCore + queryParams;
+            return `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]->(l:lab),
+            (n:file)<-[pr:paired_file]-(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
+                    WHERE f.submission_id = $submission_id 
+                    RETURN DISTINCT f as file, 
+                    n.accession as paired_file, 
+                    a.accession as sequenced`
 
         case 'assay':
             queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay`;
