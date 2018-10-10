@@ -68,9 +68,9 @@ export default class SheetJSApp extends Component {
                         </div>
                     </div>
 
-                    <div className="bg-orange-light m-4 p-4">
+                    {/* <div className="bg-orange-light m-4 p-4">
                         <button disabled={!this.state.data.length} className="btn btn-success" onClick={this.exportFile}>Export</button>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="row">

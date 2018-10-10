@@ -30,7 +30,7 @@ class ExcelDownload extends Component {
 
     render() {
         return (
-            <div className="m-4 p-2 bg-grey-lighter flex justify-between w-1/3">
+            <div className="m-4 p-2 bg-grey-lighter flex justify-between">
                 {this.props.id}
                 <Button name={this.props.id} onClick={this.handleClick}>Download</Button>
             </div>
