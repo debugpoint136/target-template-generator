@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import XLSX from 'xlsx';
 import fire from '../../fire';
+import { swapDisplayNamesToKeys } from './utils';
+
 
 export default class SheetJSApp extends Component {
     constructor(props) {
@@ -188,11 +190,10 @@ function parseWorkBook(wb) {
     wb.SheetNames.forEach(wsname => {
         const ws = wb.Sheets[wsname];
         if (ws !== undefined && wsname !== 'lookups') {
-            console.log(ws);
             const dataObj = XLSX.utils.sheet_to_json(ws);
-            tmp[wsname] = dataObj;
+            tmp[wsname] = swapDisplayNamesToKeys(wsname, dataObj);
         }
     });
-    console.log(tmp);
+
     return tmp;
 }

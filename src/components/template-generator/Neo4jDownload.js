@@ -51,10 +51,9 @@ class Neo4jDownload extends Component {
                                     }, { headers: { Authorization: AUTHORIZATION }} ))
         axios.all(fetchPromises)
             .then((res) => {
-                console.log(res);
                 const results = formatResultsForState(res);
+                console.log(results);
                 excelSimpleDownload(this.props.id, results);
-                // this.setState(results);
             })
             .catch(err => {
                 console.log(err);

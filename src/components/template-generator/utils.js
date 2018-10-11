@@ -32,6 +32,11 @@ SHEETNAMES.forEach(name => {
     CONNECTION_OPTIONS[name] = getConnectionOptions(name);
 });
 
+const HEADERDISPLAYTOKEY = {};
+SHEETNAMES.forEach(name => {
+    HEADERDISPLAYTOKEY[name] = getDisplayNameToKeys(name);
+});
+
 // const SHEETID = {
 //     'Treatment': 1,
 //     'Diet': 2,
@@ -345,28 +350,43 @@ export function restructureSheetFillouts(WORKBOOK, downloadedJSON) { // for fire
     const result = {};
 
     Object.keys(downloadedObj).forEach(sheetName => {
-        const worksheet = WORKBOOK.getWorksheet(sheetName);
-        const header = worksheet.getRow(1);
-        const headerCellNames = header.values;
-        
-        const sheetObj = downloadedObj[sheetName];
 
+        const sheetObj = downloadedObj[sheetName];
         const list = Object.values(sheetObj);
 
-        const fillDataWithIndices = list.map(row =>  {
-            let rowFill = [];
-            Object.keys(row).forEach(fieldName => {       
-                const fillValue = row[fieldName];
-                const index = headerCellNames.findIndex(i => i === fieldName);
-                rowFill[index] = fillValue;
-            })
+        result[sheetName] = list;
 
-            return rowFill;
-        })
-
-        result[sheetName] = fillDataWithIndices;
-        
     });
 
     return result;
+}
+
+function getDisplayNameToKeys(sheetname) {
+    let tmp = {};
+    ALL_CONNECTIONS[sheetname].connections.forEach(entry => {
+        const { name, display_name } = entry;
+        tmp[display_name] = name;
+    });
+
+    ALL_SCHEMA[sheetname].forEach(entry => {
+        const { name, text } = entry;
+        tmp[text] = name;
+    });
+
+    return tmp;
+}
+
+export function swapDisplayNamesToKeys(sheetName, dataObj) {
+    const headerDisplayToKeys = HEADERDISPLAYTOKEY[sheetName];
+    
+    let updatedObj = dataObj.map(elem => {
+        let tmp = {};
+        Object.keys(elem).forEach(displayName => {
+            const keyName = headerDisplayToKeys[displayName];
+            tmp[keyName] = elem[displayName]
+        });
+        return tmp;
+    })
+    
+    return updatedObj;
 }
