@@ -4,8 +4,10 @@ import axios from 'axios';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
-const neo4jUrl = "http://10.20.127.31:8474/db/data/transaction/commit";
-const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+const neo4jUrl = "https://graph.dev-targetepigenomics.org:7473/db/data/transaction/commit";
+const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
+// const neo4jUrl = "http://10.20.127.31:8474/db/data/transaction/commit";
+// const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
 
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
@@ -35,7 +37,7 @@ class Neo4jDownload extends Component {
     }
 
     _generateNewSheet = (id) => {
-        console.log(setupQuery('file'));
+        console.log(setupQuery('litter'));
         const params = {
             submission_id: id
         };
@@ -90,9 +92,9 @@ function setupQuery(type) {
             return queryCore + queryParams;
 
         case 'mouse':
-            queryParams = `OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) 
+            queryParams = `WHERE f.submission_id = $submission_id 
+            OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) 
             OPTIONAL MATCH (m:mouse)-[bt:born_to]-(lt:litter) 
-            WHERE f.submission_id = $submission_id 
             RETURN DISTINCT m as mouse, 
             t.accession as undergoes, 
             p.accession as part_of, 
@@ -109,20 +111,21 @@ function setupQuery(type) {
                     a.accession as sequenced`
 
         case 'assay':
-            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay`;
+            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay, b.accession as assay_input`;
             return queryCore + queryParams;
 
         case 'litter':
             let overridenQuery = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[bt:born_to]-(li:litter)-[pf:part_of]->(p:bioproject)-[w:works_on]
             ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
-            WHERE f.submission_id = $submission_id RETURN DISTINCT li as litter`;
+            WHERE f.submission_id = $submission_id OPTIONAL MATCH (msr:mouse)-[sr:sire]-(li:litter), (mdm:mouse)-[dm:dam]-(li:litter) 
+            RETURN DISTINCT li as litter, p.accession as part_of, msr.accession as sire, mdm.accession as dam`;
             return overridenQuery;
 
         case 'diet':
             return `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[bt:born_to]-(li:litter)-[pf:part_of]->(p:bioproject)-[w:works_on]
             ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
-            OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet)
-            WHERE f.submission_id = $submission_id RETURN DISTINCT d as diet`;
+                WHERE f.submission_id = $submission_id 
+                OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) RETURN DISTINCT d as diet`;
     
         default:
             break;
