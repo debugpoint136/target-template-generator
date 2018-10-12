@@ -37,7 +37,7 @@ class Neo4jDownload extends Component {
     }
 
     _generateNewSheet = (id) => {
-        console.log(setupQuery('litter'));
+        console.log(setupQuery('biosample'));
         const params = {
             submission_id: id
         };

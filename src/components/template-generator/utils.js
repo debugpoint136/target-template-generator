@@ -214,7 +214,7 @@ function formatDataForExcel(name) {
                             return tmp
                         });
     const system_accession = [{
-        key: 'system_accession',
+        key: 'accession',
         header: 'System accession',
         placeholder: '',
         required: false
@@ -383,6 +383,7 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
         let tmp = {};
         Object.keys(elem).forEach(displayName => {
             const keyName = headerDisplayToKeys[displayName];
+            tmp['accession'] = elem['System accession'];
             tmp[keyName] = elem[displayName]
         });
         return tmp;

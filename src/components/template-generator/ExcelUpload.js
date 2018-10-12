@@ -75,11 +75,11 @@ export default class SheetJSApp extends Component {
                     </div> */}
                 </div>
 
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-xs-12">
                         <OutTable data={this.state.data} cols={this.state.cols}/>
                     </div>
-                </div>
+                </div> */}
             </div>
 
         );
@@ -124,6 +124,7 @@ class DataInput extends Component {
     data:Array<Array<any> >;
     cols:Array<{name:string, key:number|string}>;
 */
+/*
 class OutTable extends React.Component {
 
     render() {
@@ -143,7 +144,7 @@ class OutTable extends React.Component {
         );
     };
 };
-
+*/
 /* list of supported file types */
 const SheetJSFT = [
     "xlsx",

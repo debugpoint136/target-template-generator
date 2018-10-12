@@ -6,15 +6,13 @@ import {Button} from 'semantic-ui-react';
 import produce from 'immer';
 import ExcelUpload from './ExcelUpload';
 import MetadataForSubmissions from './MetadataForSubmissions';
-
+import FlatTemplate from './FlatTemplate';
 import uuid from 'uuid';
-// import LookupComponent from './LookupComponent';
 import {getDropdownOptions} from './utils';
 import DropdownComponent from '../common/DropdownComponent';
 import RowsHeader from './RowsHeader';
 import ExceljsComponent from './ExceljsComponent';
 import UploadsList from './UploadsList';
-// import FirebaseTest from './FireBaseTest';
 const metadataOptions = {
     'Mice': getDropdownOptions('mouse'),
     'Biosample': getDropdownOptions('biosample'),
@@ -106,6 +104,12 @@ class TemplateGenerator extends Component {
             <div className="sdfd">
 
             <h3 className="text-center">New Template Generator</h3>
+
+            <FlatTemplate/>
+
+            
+
+            
                 <div className="m-4 text-center p-4">
                     <Button.Group>
                         {Object
@@ -147,6 +151,7 @@ class TemplateGenerator extends Component {
                                 </RowComponent>
                             })}
                     </div>
+                    
 
                     <div className="border-blue-lighter border-2 rounded mx-8 p-8 w-1/2">
 
@@ -176,10 +181,12 @@ class TemplateGenerator extends Component {
                                             removeRow={this.handleRemoveRow}/>)}
                                 </ListAddedRows>
                             : null
-}
+                        }
 
                     </div>
+                    
                 </div>
+                
                 <div
                     className="m-8 p-8 border-teal border-4 text-grey-dark font-hairline font-mono">
 
