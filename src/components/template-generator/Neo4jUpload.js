@@ -5,28 +5,58 @@ import { createNeo4jUploadQuery } from './utils';
 const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
 const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
 // const QUESTIONS = require('./questions.json');
-const MICE = require('./simple_upload.json');
-// const UPLOAD_DATA = require('./testupload.json');
+// const MICE = require('./simple_upload.json');
+const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
-    state = {}
+    state = { error: null }
 
     handleUpload = () => {
-        const query = createNeo4jUploadQuery();
-        axios.post(neo4jUrl, {
-            statements: [
-                {
-                    statement: query,
-                    parameters: { json: MICE }
-                }
-            ]
-        }, { headers: { Authorization: AUTHORIZATION }} )
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err));
+        const queryList = createNeo4jUploadQuery(UPLOAD_DATA);
+        if (!queryList) {
+            this.setState({ error: "No data to upload" });
+            return
+        }
+        const allAxiosPosts = queryList.map(entry => {
+            const { query, sheetname } = entry;
+            const data = {};
+            data[sheetname] = UPLOAD_DATA[sheetname];
+            console.log(data);
+            return axios.post(neo4jUrl, {
+                statements: [
+                    {
+                        statement: query,
+                        parameters: { json: data }
+                    }
+                ]
+            }, { headers: { Authorization: AUTHORIZATION }} )
+        });
+
+        axios.all(allAxiosPosts)
+            .then(res => {
+                // if (res.data.errors.length > 0) {
+                //     this.setState({ error: res.data.errors.map(err => err.message).join('<br/>')});
+                // }
+                console.log(res);
+            })
+            .catch(err => this.setState({ error: err}));
+        
+    }
+
+    handleErrorBoxClose = () => {
+        this.setState({ error: null });
     }
 
     render() {
         return (
-            <Button onClick={this.handleUpload}>Upload-test</Button>
+            <div className="m-4 p-4">
+            {(this.state.error)? 
+                <div className="m-4 p-4 border-2 border-red-light text-red flex justify-between">
+                <h4> <span role="img" aria-label="error">❗️</span> Error encountered: </h4>
+                {this.state.error}
+                <Button icon='close' onClick={this.handleErrorBoxClose}/>
+                </div>: null }
+                <Button onClick={this.handleUpload}>Upload-test</Button>
+            </div>
         );
     }
 }

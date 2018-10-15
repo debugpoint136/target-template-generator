@@ -392,13 +392,21 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
     return updatedObj;
 }
 
-export function createNeo4jUploadQuery() {
-    const connections = CONNECTION_OPTIONS['mouse'];
-    const fields = ALL_SCHEMA['mouse'];
+export function createNeo4jUploadQuery(DATA) {
+    const keysToIterate = Object.keys(DATA);
+    if (! keysToIterate.length > 0) {
+        return null;
+    }
 
-    const templateQuery = makeQueryTemplate(connections, fields, 'mouse');
-    console.log(templateQuery);
-    return templateQuery;
+    let allQuery = keysToIterate.map(key => {
+        const connections = CONNECTION_OPTIONS[key];
+        const fields = ALL_SCHEMA[key];
+    
+        const templateQuery = makeQueryTemplate(connections, fields, key);
+        return { sheetname: key, query: templateQuery };
+    })
+    
+    return allQuery;
 }
 
 function makeQueryTemplate(CONNECTIONS, FIELDS, ITEM) {
