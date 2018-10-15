@@ -1,27 +1,27 @@
 import React, {Component} from 'react';
 import {Button} from 'semantic-ui-react';
-// import axios from 'axios';
+import axios from 'axios';
 import { createNeo4jUploadQuery } from './utils';
-// const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
-// const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
+const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
 // const QUESTIONS = require('./questions.json');
-// const MICE = require('./simple_upload.json');
-const UPLOAD_DATA = require('./testupload.json');
+const MICE = require('./simple_upload.json');
+// const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
     state = {}
 
     handleUpload = () => {
-        // axios.post(neo4jUrl, {
-        //     statements: [
-        //         {
-        //             statement: mousequery,
-        //             parameters: { json: MICE }
-        //         }
-        //     ]
-        // }, { headers: { Authorization: AUTHORIZATION }} )
-        // .then(res => console.log(res.data))
-        // .catch(err => console.log(err));
-        createNeo4jUploadQuery(UPLOAD_DATA);
+        const query = createNeo4jUploadQuery();
+        axios.post(neo4jUrl, {
+            statements: [
+                {
+                    statement: query,
+                    parameters: { json: MICE }
+                }
+            ]
+        }, { headers: { Authorization: AUTHORIZATION }} )
+        .then(res => console.log(res.data))
+        .catch(err => console.log(err));
     }
 
     render() {
@@ -33,6 +33,39 @@ class Neo4jUpload extends Component {
 
 export default Neo4jUpload;
 
+/*
+const query = `WITH {json} as data  
+UNWIND data.mouse as m
+MERGE (mouse:mouse {accession: m.accession})
+SET 
+    mouse.user_accession = m.user_accession,
+    mouse.organism = m.organism,
+    mouse.source = m.source,
+    mouse.strain = m.strain,
+    mouse.sex = m.sex,
+    mouse.internal_id = m.internal_id,
+    mouse.mouse_age_collection = m.mouse_age_collection,
+    mouse.life_stage_collection = m.life_stage_collection,
+    mouse.animal_weight_sac = m.animal_weight_sac,
+    mouse.perfusion = m.perfusion,
+    mouse.fasted = m.fasted,
+    mouse.fasted_hours = m.fasted_hours,
+    mouse.liver_tumors = m.liver_tumors,
+    mouse.tumor_organs = m.tumor_organs,
+    mouse.technicians = m.technicians,
+    mouse.comments = m.comments
+    WITH m, CASE  WHEN (m.born_to) <> "" THEN ['ok'] ELSE [] END as array1
+    FOREACH (el1 in array1 | MERGE (litter:litter {accession:m.born_to}))
+    
+    WITH m, CASE  WHEN (m.fed) <> "" THEN ['ok'] ELSE [] END as array2
+    FOREACH (el2 in array2 | MERGE (diet:diet {accession:m.fed}))
+    
+    WITH m, CASE  WHEN (m.undergoes) <> "" THEN ['ok'] ELSE [] END as array3
+    FOREACH (el3 in array3 | MERGE (treatment:treatment {accession:m.undergoes}))
+    
+    WITH m, CASE  WHEN (m.part_of) <> "" THEN ['ok'] ELSE [] END as array4
+    FOREACH (el4 in array4 | MERGE (bioproject:bioproject {accession:m.part_of}))`
+    */
 /*
 const query = `WITH {json} as data 
 UNWIND data.items as q 

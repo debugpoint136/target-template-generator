@@ -392,29 +392,45 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
     return updatedObj;
 }
 
-export function createNeo4jUploadQuery(DATA) {
+export function createNeo4jUploadQuery() {
     const connections = CONNECTION_OPTIONS['mouse'];
     const fields = ALL_SCHEMA['mouse'];
-    const data = DATA['mouse'];
 
-    const templateQuery = makeQueryTemplate(connections, fields, data, 'mouse');
+    const templateQuery = makeQueryTemplate(connections, fields, 'mouse');
     console.log(templateQuery);
+    return templateQuery;
 }
 
-function makeQueryTemplate(CONNECTIONS, FIELDS, DATA, ITEM) {
-    const query = `UNWIND data.${ITEM} as m
-    MERGE (${ITEM}:${ITEM} {accession: m})
+function makeQueryTemplate(CONNECTIONS, FIELDS, ITEM) {
+    const query = `WITH {json} as data
+    UNWIND data.${ITEM} as m
+    MERGE (${ITEM}:${ITEM} {accession: m.accession})
     SET 
-    `;
+        `;
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = m.${field.name}`);
-    const queryFields = queryFieldsArray.join(',');
+    const queryFields = queryFieldsArray.join(',\n\t\t');
 
     const final = query + queryFields;
 
-    // const queryConnectionsArray = CONNECTIONS.map(connection => )
+    const queryConnectionsArray = CONNECTIONS.map(connection => {
+        const connectionName = connection.name;
+        const connectionTo = connection.to;
+        const toReturn = `
+        WITH ${ITEM}, m, CASE  WHEN (m.${connectionName} <> "") THEN ['ok'] ELSE [] END as array1
+        FOREACH (el1 in array1 | MERGE (${connectionTo}:${connectionTo} {accession:m.${connectionName}})
+            MERGE (${ITEM})-[:${connectionName}]->(${connectionTo}))
+        `;
+        return toReturn;
+    })
 
-    return final;
+    return final + queryConnectionsArray.join('');
 }
+
+// MERGE (treatment:Treatment {accession:m.undergoes}) 
+// MERGE (mouse)-[:undergoes]->(treatment) 
+// MERGE (litter:Litter {accession:m.born_to}) 
+// MERGE (mouse)-[:born_to]->(litter)
+
 //https://markhneedham.com/blog/2014/08/22/neo4j-load-csv-handling-empty-columns/
 /**
  * WITH u, b2,b1, g, r1, CASE  WHEN (b1.fork='y' and b2.fork='success') or (b1.fork='n') or   (b1.fork='success') THEN ['ok'] ELSE [] END as array1

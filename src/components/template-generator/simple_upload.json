@@ -1,5 +1,5 @@
 {
-  "mice": [
+  "mouse": [
     {
       "accession": "TGTMSABC123",
       "animal_weight_sac": 19.39,
@@ -19,7 +19,7 @@
       "source": "JAX",
       "strain": "C57BL/6",
       "technicians": "CK/JLT/AJ/FX",
-      "undergoes": "TGTTRBPAPM1",
+      "undergoes": null,
       "user_accession": "USRMSE0095"
     },
     {
@@ -41,7 +41,7 @@
       "source": "JAX",
       "strain": "C57BL/6",
       "technicians": "CK/JLT/AJ/FX",
-      "undergoes": null,
+      "undergoes": "TGTTRBPAPM2",
       "user_accession": "USRMSE0098"
     }
   ]
