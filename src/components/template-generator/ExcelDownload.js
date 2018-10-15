@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 import {Button} from 'semantic-ui-react';
+import Neo4jUpload from './Neo4jUpload';
 import fire from '../../fire';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, restructureSheetFillouts, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 
 class ExcelDownload extends Component {
-    state = {}
+    state = {
+        data: {}
+    }
 
     handleClick = (e, {name}) => {
         fire.database().ref(`uploads/${name}`).once('value', downloadedObj => {
@@ -17,6 +20,7 @@ class ExcelDownload extends Component {
                 const workbook = new Excel.Workbook();
                 const newWorkbook = makeAllWorkSheets(workbook);
                 const standardizedData = restructureSheetFillouts(newWorkbook, JSON.stringify(downloadedObj));
+                this.setState({ data: standardizedData })
                 const workBookWithRows = fillRows(newWorkbook, standardizedData, 'data');
 
                 workBookWithRows
@@ -33,6 +37,7 @@ class ExcelDownload extends Component {
             <div className="m-4 p-2 bg-grey-lighter flex justify-between">
                 {this.props.id}
                 <Button name={this.props.id} onClick={this.handleClick}>Download</Button>
+                <Neo4jUpload data={this.state.data} />
             </div>
         );
     }

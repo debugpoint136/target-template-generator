@@ -245,7 +245,7 @@ export function fillRows(WORKBOOK, DATATOFILL, TYPE) { // TYPE = 'template' or '
 
             if (TYPE === 'template') {
                 const SYSTEM_ACCSN = generateAccession(PREFIX[ROWNAME]);
-                let rowEntry = Object.assign({ system_accession: SYSTEM_ACCSN }, ROW);
+                let rowEntry = Object.assign({ accession: SYSTEM_ACCSN }, ROW);
     
                 createdRow = worksheet.addRow(rowEntry);
             }
@@ -391,3 +391,49 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
     
     return updatedObj;
 }
+
+export function createNeo4jUploadQuery(DATA) {
+    const connections = CONNECTION_OPTIONS['mouse'];
+    const fields = ALL_SCHEMA['mouse'];
+    const data = DATA['mouse'];
+
+    const templateQuery = makeQueryTemplate(connections, fields, data, 'mouse');
+    console.log(templateQuery);
+}
+
+function makeQueryTemplate(CONNECTIONS, FIELDS, DATA, ITEM) {
+    const query = `UNWIND data.${ITEM} as m
+    MERGE (${ITEM}:${ITEM} {accession: m})
+    SET 
+    `;
+    const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = m.${field.name}`);
+    const queryFields = queryFieldsArray.join(',');
+
+    const final = query + queryFields;
+
+    // const queryConnectionsArray = CONNECTIONS.map(connection => )
+
+    return final;
+}
+//https://markhneedham.com/blog/2014/08/22/neo4j-load-csv-handling-empty-columns/
+/**
+ * WITH u, b2,b1, g, r1, CASE  WHEN (b1.fork='y' and b2.fork='success') or (b1.fork='n') or   (b1.fork='success') THEN ['ok'] ELSE [] END as array1
+FOREACH (el1 in array1 | MERGE (u)-[r2:STAGE {startdate:20141225, enddate:99999999, status:'InProgress'}]->(b2))
+
+used CASE WHEN to create a dummy array that in a way has dummy elements matching the count of matches and then use FOREACH to iterate through the result.
+ */
+
+/**
+ * UNWIND data.mice as m 
+MERGE (mouse:Mouse {accession:m.accession}) 
+    SET 
+        mouse.animal_weight_sac = m.animal_weight_sac,
+        mouse.fasted = m.fasted,
+        mouse.life_stage_collection = m.life_stage_collection,
+        mouse.liver_tumors = m.liver_tumors,
+        mouse.strain = m.strain        
+MERGE (treatment:Treatment {accession:m.undergoes}) 
+MERGE (mouse)-[:undergoes]->(treatment) 
+MERGE (litter:Litter {accession:m.born_to}) 
+MERGE (mouse)-[:born_to]->(litter) 
+ */

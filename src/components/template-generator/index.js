@@ -13,6 +13,8 @@ import DropdownComponent from '../common/DropdownComponent';
 import RowsHeader from './RowsHeader';
 import ExceljsComponent from './ExceljsComponent';
 import UploadsList from './UploadsList';
+import Neo4jUpload from './Neo4jUpload';
+
 const metadataOptions = {
     'Mice': getDropdownOptions('mouse'),
     'Biosample': getDropdownOptions('biosample'),
@@ -106,7 +108,7 @@ class TemplateGenerator extends Component {
             <h3 className="text-center">New Template Generator</h3>
 
             <FlatTemplate/>
-
+            <Neo4jUpload/>
             
 
             
