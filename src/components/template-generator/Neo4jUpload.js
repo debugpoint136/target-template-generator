@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
 import {Button} from 'semantic-ui-react';
 import axios from 'axios';
+import _ from 'lodash';
+import Notifications, {notify} from 'react-notify-toast';
 import { createNeo4jUploadQuery } from './utils';
 const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
 const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
 // const QUESTIONS = require('./questions.json');
-// const MICE = require('./simple_upload.json');
+// const simple_DATA = require('./simple_upload.json');
 const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
     state = { error: null }
 
     handleUpload = () => {
         const queryList = createNeo4jUploadQuery(UPLOAD_DATA);
+        console.log(queryList);
         if (!queryList) {
             this.setState({ error: "No data to upload" });
             return
@@ -20,7 +23,7 @@ class Neo4jUpload extends Component {
             const { query, sheetname } = entry;
             const data = {};
             data[sheetname] = UPLOAD_DATA[sheetname];
-            console.log(data);
+
             return axios.post(neo4jUrl, {
                 statements: [
                     {
@@ -33,10 +36,17 @@ class Neo4jUpload extends Component {
 
         axios.all(allAxiosPosts)
             .then(res => {
-                // if (res.data.errors.length > 0) {
-                //     this.setState({ error: res.data.errors.map(err => err.message).join('<br/>')});
-                // }
-                console.log(res);
+                const errorsArray = res.map(r => (r.data.errors.length > 0) ? r.data.errors: null);
+                let errorsList = [];
+                if (errorsArray.length > 0) {
+                    errorsList = _.flattenDeep(errorsArray.filter(d => d));
+                }
+                if (errorsList.length > 0) {
+                    this.setState({ error: errorsList.map(err => err.message).join('<br/>') })
+                } else {
+                    notify.show('Submitted successfully!');
+                }
+                
             })
             .catch(err => this.setState({ error: err}));
         
@@ -49,6 +59,7 @@ class Neo4jUpload extends Component {
     render() {
         return (
             <div className="m-4 p-4">
+            <Notifications />
             {(this.state.error)? 
                 <div className="m-4 p-4 border-2 border-red-light text-red flex justify-between">
                 <h4> <span role="img" aria-label="error">❗️</span> Error encountered: </h4>
@@ -96,7 +107,7 @@ SET
     WITH m, CASE  WHEN (m.part_of) <> "" THEN ['ok'] ELSE [] END as array4
     FOREACH (el4 in array4 | MERGE (bioproject:bioproject {accession:m.part_of}))`
     */
-/*
+/* -- don't delete yet
 const query = `WITH {json} as data 
 UNWIND data.items as q 
 MERGE (question:Question {id:q.question_id}) 

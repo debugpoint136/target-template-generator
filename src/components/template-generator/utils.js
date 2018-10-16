@@ -394,58 +394,89 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
 
 export function createNeo4jUploadQuery(DATA) {
     const keysToIterate = Object.keys(DATA);
+
+    keysToIterate.forEach(key => console.log(`${key} == ${DATA[key].length}`));
+
     if (! keysToIterate.length > 0) {
         return null;
     }
 
-    let allQuery = keysToIterate.map(key => {
-        const connections = CONNECTION_OPTIONS[key];
+    const allFields = keysToIterate.map(key => {
         const fields = ALL_SCHEMA[key];
     
-        const templateQuery = makeQueryTemplate(connections, fields, key);
-        return { sheetname: key, query: templateQuery };
+        const templateQueryFields = makeQueryTemplateFields(fields, key);
+
+        return { sheetname: key, query: templateQueryFields };
+    })
+
+    const allConnections = keysToIterate.map(key => {
+        const connections = CONNECTION_OPTIONS[key];
+        if (connections.length > 0) {
+            const templateQueryConnections = makeQueryTemplateConnections(connections, key);
+            return { sheetname: key, query: templateQueryConnections };
+        } else {
+            return null;
+        }
+        
     })
     
+    const allQuery = allFields.concat(allConnections.filter(d => d));
+    // const allQuery = allConnections;
     return allQuery;
 }
 
-function makeQueryTemplate(CONNECTIONS, FIELDS, ITEM) {
+function makeQueryTemplateFields(FIELDS, ITEM) {
     const query = `WITH {json} as data
-    UNWIND data.${ITEM} as m
-    MERGE (${ITEM}:${ITEM} {accession: m.accession})
+    UNWIND data.${ITEM} as row
+    MERGE (${ITEM}:${ITEM} {accession: row.accession})
     SET 
         `;
-    const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = m.${field.name}`);
+    const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
     const queryFields = queryFieldsArray.join(',\n\t\t');
 
     const final = query + queryFields;
 
-    const queryConnectionsArray = CONNECTIONS.map(connection => {
+    console.log(final);
+
+    return final;
+}
+
+function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
+
+    let toReturn = `
+        WITH {json} as data
+        UNWIND data.${ITEM} as row
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        WITH ${ITEM}, row`;
+    const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
-        const toReturn = `
-        WITH ${ITEM}, m, CASE  WHEN (m.${connectionName} <> "") THEN ['ok'] ELSE [] END as array1
-        FOREACH (el1 in array1 | MERGE (${connectionTo}:${connectionTo} {accession:m.${connectionName}})
-            MERGE (${ITEM})-[:${connectionName}]->(${connectionTo}))
+        // let body =`
+        // WITH row, CASE  WHEN (row.${connectionName} <> "") THEN ['ok'] ELSE [] END as array1
+        // FOREACH (el1 in array1 | MATCH(${ITEM}:${ITEM} {accession: row.accession})
+        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        //         MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}))
+        // `;
+        let body = `
+        MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
         `;
-        return toReturn;
+        if (index < CONNECTIONS.length -1) {
+            body = body + `
+            WITH row, ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}
+            `;
+        }
+        return body;
     })
-
-    return final + queryConnectionsArray.join('');
+    //WITH ${ITEM}, row, 
+    console.log(toReturn + queryConnectionsArray.join(''));
+    return toReturn + queryConnectionsArray.join('');
 }
 
 // MERGE (treatment:Treatment {accession:m.undergoes}) 
 // MERGE (mouse)-[:undergoes]->(treatment) 
 // MERGE (litter:Litter {accession:m.born_to}) 
 // MERGE (mouse)-[:born_to]->(litter)
-
-//https://markhneedham.com/blog/2014/08/22/neo4j-load-csv-handling-empty-columns/
-/**
- * WITH u, b2,b1, g, r1, CASE  WHEN (b1.fork='y' and b2.fork='success') or (b1.fork='n') or   (b1.fork='success') THEN ['ok'] ELSE [] END as array1
-FOREACH (el1 in array1 | MERGE (u)-[r2:STAGE {startdate:20141225, enddate:99999999, status:'InProgress'}]->(b2))
-
-used CASE WHEN to create a dummy array that in a way has dummy elements matching the count of matches and then use FOREACH to iterate through the result.
- */
 
 /**
  * UNWIND data.mice as m 
