@@ -133,6 +133,13 @@ export function makeAllWorkSheets(WORKBOOK) { // in index.js :  var workbook = n
     return WORKBOOK_WITH_LOOKUPS;
 }
 
+export function makeJustOneWorksheet(WORKBOOK) {
+    makeOneWorkSheet(WORKBOOK, 'file');
+    const WORKBOOK_WITH_LOOKUPS = fillLookups(WORKBOOK);
+
+    return WORKBOOK_WITH_LOOKUPS;
+}
+
 
 function fillLookups(WORKBOOK) {
     const LOOKUPS = WORKBOOK.addWorksheet('lookups');

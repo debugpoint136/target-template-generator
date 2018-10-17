@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {saveAs} from 'file-saver';
-import {Button} from 'semantic-ui-react';
-import { makeAllWorkSheets, fillOnlyFileRows, getDropdownOptions } from './utils';
+import {Button, Popup} from 'semantic-ui-react';
+import { makeJustOneWorksheet, fillOnlyFileRows, getDropdownOptions } from './utils';
 import Notifications, {notify} from 'react-notify-toast';
 
 const Excel = require('exceljs/dist/es5/exceljs.browser');
@@ -41,7 +41,7 @@ class FileSheetDownload extends Component {
             notify.show('⚠️ No files found. Please contact admin', 'error')
         }
         const workbook = new Excel.Workbook();
-        const newWorkbook = makeAllWorkSheets(workbook);
+        const newWorkbook = makeJustOneWorksheet(workbook);
         const formattedFiles = formatMetadataOptionsForFiles(this.state.files);
         const workBookWithRows = fillOnlyFileRows(newWorkbook, formattedFiles); 
     
@@ -57,7 +57,9 @@ class FileSheetDownload extends Component {
             return (
                 <div className="sdf">
                     <Notifications/>
+                    <Popup trigger={
                     <Button basic size='tiny' name={this.props.id} className="mx-4" icon='file' onClick={this.handleFileSheetDownload}/>
+                } content='Download only files registered in this submission' />
                 </div>
             );
         } else {

@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Label, Button} from 'semantic-ui-react';
+import {Label, Button, Popup} from 'semantic-ui-react';
 import Neo4jDownload from './Neo4jDownload';
 import FileSheetDownload from './FileSheetDownload';
 import moment from 'moment';
-const SUBMISSION = 'https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submission';
 const SUBMISSIONS = 'https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submissions';
 
 class MetadataForSubmissions extends Component {
@@ -34,7 +33,7 @@ class MetadataForSubmissions extends Component {
                                 <Label size='tiny' className="px-4">{submission._id}</Label>
                                 <div className="flex text-xs">
                                     <div className="mx-2 font-hairline text-grey-dark">{moment(submission.registered).format('MMM DD YYYY')}</div>
-                                    {/* <a href={`${SUBMISSION}/${submission._id}`} target="_blank">Details</a> */}
+                                    {/* <a href={`https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submission/${submission._id}`} target="_blank">Details</a> */}
                                 </div>
                             </div>
                             
@@ -42,7 +41,9 @@ class MetadataForSubmissions extends Component {
                             <Label color={(submission.read_type === 'Paired-end')? 'brown': 'teal'} className="px-4">{submission.read_type}</Label>
                             <Label color={(submission.data_phase === 'production')? 'green': 'orange'} className="px-4">{submission.data_phase}</Label>
                             <Label color={(submission.assay === 'ATAC-seq')? 'purple': (submission.assay === 'RNA-seq') ? 'pink': 'grey'} className="px-4">{submission.assay}</Label>
-                            <Button basic size='tiny' name={submission._id} className="mx-4" icon='download' onClick={this.handleMetadataDownload}/>
+                            <Popup trigger={
+                                <Button basic size='tiny' name={submission._id} className="mx-4" icon='download' onClick={this.handleMetadataDownload}/>
+                            } content='Download previously registered metadata for this submission' />
                             <FileSheetDownload id={submission._id} />                       
                         </div>
                     ) 
