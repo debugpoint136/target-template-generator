@@ -1,30 +1,31 @@
 import React, {Component} from 'react';
-import RowComponent from './RowComponent';
-import ListAddedRows from './ListAddedRows';
-import AddedRow from './AddedRow';
-import {Button} from 'semantic-ui-react';
+// import RowComponent from './RowComponent';
+// import ListAddedRows from './ListAddedRows';
+// import AddedRow from './AddedRow';
+// import {Button} from 'semantic-ui-react';
 import produce from 'immer';
 import ExcelUpload from './ExcelUpload';
 import MetadataForSubmissions from './MetadataForSubmissions';
+// import MetadataForLabs from './MetadataForLabs';
 import FlatTemplate from './FlatTemplate';
 import uuid from 'uuid';
-import {getDropdownOptions} from './utils';
-import DropdownComponent from '../common/DropdownComponent';
-import RowsHeader from './RowsHeader';
-import ExceljsComponent from './ExceljsComponent';
+// import {getDropdownOptions} from './utils';
+// import DropdownComponent from '../common/DropdownComponent';
+// import RowsHeader from './RowsHeader';
+// import ExceljsComponent from './ExceljsComponent';
 import UploadsList from './UploadsList';
-import Neo4jUpload from './Neo4jUpload';
+// import Neo4jUpload from './Neo4jUpload';
 
-const metadataOptions = {
-    'Mice': getDropdownOptions('mouse'),
-    'Biosample': getDropdownOptions('biosample'),
-    'Assay Details': getDropdownOptions('assay'),
-    'Treatment': getDropdownOptions('treatment'),
-    'Diet': getDropdownOptions('diet'),
-    'Reagent': getDropdownOptions('reagent'),
-    'Litter': getDropdownOptions('litter'),
-    'File': getDropdownOptions('file')
-};
+// const metadataOptions = {
+//     'Mice': getDropdownOptions('mouse'),
+//     'Biosample': getDropdownOptions('biosample'),
+//     'Assay Details': getDropdownOptions('assay'),
+//     'Treatment': getDropdownOptions('treatment'),
+//     'Diet': getDropdownOptions('diet'),
+//     'Reagent': getDropdownOptions('reagent'),
+//     'Litter': getDropdownOptions('litter'),
+//     'File': getDropdownOptions('file')
+// };
 
 class TemplateGenerator extends Component {
     state = {
@@ -108,10 +109,10 @@ class TemplateGenerator extends Component {
             <h3 className="text-center">New Template Generator</h3>
 
             <FlatTemplate/>
-            <Neo4jUpload/>
+            {/* <Neo4jUpload/> */}
             
 
-            
+            {/*
                 <div className="m-4 text-center p-4">
                     <Button.Group>
                         {Object
@@ -188,7 +189,7 @@ class TemplateGenerator extends Component {
                     </div>
                     
                 </div>
-                
+                */}
                 <div
                     className="m-8 p-8 border-teal border-4 text-grey-dark font-hairline font-mono">
 
@@ -199,15 +200,14 @@ class TemplateGenerator extends Component {
                             
                             <ExcelUpload/> 
 
-                            <h3 className='text-center'>Uploaded Files</h3>
+                            <h3 className='text-center'>Saved Excel files</h3>
                             <hr/>
                             <UploadsList/>
                         </div>
                         
                         <div className="m-8 p-8">
-                            <h3>Download metadata by submission</h3>
-                            <hr/>
                             <MetadataForSubmissions/>
+                            {/* <MetadataForLabs/> */}
                         </div>
                     </div>
                 </div>

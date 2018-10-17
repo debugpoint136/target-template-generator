@@ -25,7 +25,12 @@ export default class SheetJSApp extends Component {
             const wb = XLSX.read(bstr, {
                 type: rABS ? 'binary' : 'array'
             });
-            const readDataAllSheets = parseWorkBook(wb);
+
+            const sheetData = parseWorkBook(wb);
+            const readDataAllSheets = { name: file.name,
+                data: JSON.stringify(sheetData),
+                uploaded: Date.now()
+            }
             /* Get first worksheet */
             const wsname = wb.SheetNames[3];
             const ws = wb.Sheets[wsname];

@@ -433,11 +433,8 @@ function makeQueryTemplateFields(FIELDS, ITEM) {
         `;
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
     const queryFields = queryFieldsArray.join(',\n\t\t');
-
     const final = query + queryFields;
-
-    console.log(final);
-
+    
     return final;
 }
 
@@ -463,32 +460,13 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
         `;
         if (index < CONNECTIONS.length -1) {
             body = body + `
-            WITH row, ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}
+            WITH ${ITEM}, row
             `;
         }
         return body;
     })
-    //WITH ${ITEM}, row, 
+
     console.log(toReturn + queryConnectionsArray.join(''));
+
     return toReturn + queryConnectionsArray.join('');
 }
-
-// MERGE (treatment:Treatment {accession:m.undergoes}) 
-// MERGE (mouse)-[:undergoes]->(treatment) 
-// MERGE (litter:Litter {accession:m.born_to}) 
-// MERGE (mouse)-[:born_to]->(litter)
-
-/**
- * UNWIND data.mice as m 
-MERGE (mouse:Mouse {accession:m.accession}) 
-    SET 
-        mouse.animal_weight_sac = m.animal_weight_sac,
-        mouse.fasted = m.fasted,
-        mouse.life_stage_collection = m.life_stage_collection,
-        mouse.liver_tumors = m.liver_tumors,
-        mouse.strain = m.strain        
-MERGE (treatment:Treatment {accession:m.undergoes}) 
-MERGE (mouse)-[:undergoes]->(treatment) 
-MERGE (litter:Litter {accession:m.born_to}) 
-MERGE (mouse)-[:born_to]->(litter) 
- */

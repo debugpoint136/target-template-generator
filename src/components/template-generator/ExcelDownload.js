@@ -13,13 +13,16 @@ class ExcelDownload extends Component {
 
     handleClick = (e, {name}) => {
         fire.database().ref(`uploads/${name}`).once('value', downloadedObj => {
+            const FIREBASE_DATA_STR = JSON.stringify(downloadedObj);
+            const FIREBASE_DATA = JSON.parse(FIREBASE_DATA_STR).data;
+
             if (Object.keys(downloadedObj).length === 0) {
                 alert('Nothing to download. Please select other options');
                 return
             } else {
                 const workbook = new Excel.Workbook();
                 const newWorkbook = makeAllWorkSheets(workbook);
-                const standardizedData = restructureSheetFillouts(newWorkbook, JSON.stringify(downloadedObj));
+                const standardizedData = restructureSheetFillouts(newWorkbook, FIREBASE_DATA);
                 this.setState({ data: standardizedData })
                 const workBookWithRows = fillRows(newWorkbook, standardizedData, 'data');
 
@@ -35,8 +38,13 @@ class ExcelDownload extends Component {
     render() {
         return (
             <div className="m-4 p-2 bg-grey-lighter flex justify-between">
-                {this.props.id}
-                <Button name={this.props.id} onClick={this.handleClick}>Download</Button>
+                <div className="">
+                    <div className='text-grey-darkest text-grey-dark text-sm font-mono'>{this.props.name}</div>
+                    <div className='text-grey font-hairline text-grey-dark text-xs'>{this.props.date}</div>
+                    <hr/>
+                    <Button basic name={this.props.id} onClick={this.handleClick}>Fetch file</Button>
+                </div>
+                
                 <Neo4jUpload data={this.state.data} />
             </div>
         );

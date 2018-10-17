@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import fire from '../../fire';
 import ExcelDownload from './ExcelDownload';
+import moment from 'moment';
 
 class UploadsList extends Component {
     state = { uploads: [] }
@@ -12,10 +13,15 @@ class UploadsList extends Component {
             .ref('uploads')
             .orderByKey()
             .limitToLast(100);
-        uploadsRef.on('child_added', snapshot => {
+
+            uploadsRef.on('child_added', snapshot => {
             /* Update React state when upload is added at Firebase Database */
+            const content = snapshot.val();
+            const m = moment(content.uploaded);
             let upload = {
-                text: JSON.stringify(snapshot.val()),
+                text: content.data,
+                date: m.fromNow(),
+                name: content.name,
                 id: snapshot.key
             };
             this.setState({
@@ -30,7 +36,7 @@ class UploadsList extends Component {
                 <ul>
                     {/* Render the list of messages */
                     this.state.uploads
-                        .map(upload => <ExcelDownload key={upload.id} id={upload.id}/>)
+                        .map(upload => <ExcelDownload key={upload.id} id={upload.id} name={upload.name} date={upload.date}/>)
                     }
                 </ul>
             </div>

@@ -4,31 +4,46 @@ import axios from 'axios';
 import _ from 'lodash';
 import Notifications, {notify} from 'react-notify-toast';
 import { createNeo4jUploadQuery } from './utils';
-const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
-const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+// const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
+// const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+const neo4jUrl = "https://graph.dev-targetepigenomics.org:7473/db/data/transaction/commit";
+const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
 // const QUESTIONS = require('./questions.json');
 // const simple_DATA = require('./simple_upload.json');
-const UPLOAD_DATA = require('./testupload.json');
+// const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
     state = { error: null }
 
     handleUpload = () => {
-        const queryList = createNeo4jUploadQuery(UPLOAD_DATA);
-        console.log(queryList);
+/*
+        axios.post(neo4jUrl, {
+            statements: [
+                {
+                    statement: query,
+                    parameters: { json: UPLOAD_DATA }
+                }
+            ]
+        }, { headers: { Authorization: AUTHORIZATION }} )
+        .then(res => console.log(res.data))
+        .catch(err => console.log(err))
+*/
+        const { data } = this.props;
+        const queryList = createNeo4jUploadQuery(data);
+        console.log(data);
         if (!queryList) {
             this.setState({ error: "No data to upload" });
             return
         }
         const allAxiosPosts = queryList.map(entry => {
             const { query, sheetname } = entry;
-            const data = {};
-            data[sheetname] = UPLOAD_DATA[sheetname];
+            const _data = {};
+            _data[sheetname] = data[sheetname];
 
             return axios.post(neo4jUrl, {
                 statements: [
                     {
                         statement: query,
-                        parameters: { json: data }
+                        parameters: { json: _data }
                     }
                 ]
             }, { headers: { Authorization: AUTHORIZATION }} )
@@ -44,7 +59,7 @@ class Neo4jUpload extends Component {
                 if (errorsList.length > 0) {
                     this.setState({ error: errorsList.map(err => err.message).join('<br/>') })
                 } else {
-                    notify.show('Submitted successfully!');
+                    notify.show('Submitted successfully! ✅', 'success');
                 }
                 
             })
@@ -66,13 +81,33 @@ class Neo4jUpload extends Component {
                 {this.state.error}
                 <Button icon='close' onClick={this.handleErrorBoxClose}/>
                 </div>: null }
-                <Button onClick={this.handleUpload}>Upload-test</Button>
+                <Button onClick={this.handleUpload}>Upload sheet</Button>
             </div>
         );
     }
 }
 
 export default Neo4jUpload;
+
+/*
+const query = `WITH {json} as data
+UNWIND data.assay as row
+MATCH (assay:assay {accession: row.accession})
+WITH assay, row
+MATCH (assay_recruits_reagent:reagent {accession:row.recruits})
+MERGE (assay)-[:recruits]->(assay_recruits_reagent)
+
+    WITH assay, row
+    
+MATCH (assay_assay_input_biosample:biosample {accession:row.assay_input})
+MERGE (assay)-[:assay_input]->(assay_assay_input_biosample)
+
+    WITH assay, row
+    
+MATCH (assay_pooled_from_assay:assay {accession:row.pooled_from})
+MERGE (assay)-[:pooled_from]->(assay_pooled_from_assay)`;
+*/
+
 
 /*
 const query = `WITH {json} as data  

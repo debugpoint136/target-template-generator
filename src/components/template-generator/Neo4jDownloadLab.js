@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import Notifications, {notify} from 'react-notify-toast';
-// import ExcelDownloadSimple from './ExcelDownloadSimple';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
@@ -9,10 +7,10 @@ const neo4jUrl = "https://graph.dev-targetepigenomics.org:7473/db/data/transacti
 const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
 // const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
 // const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
-// const neo4jUrl = "http://10.20.127.31:8474/db/data/transaction/commit";
-// const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+
 
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
+
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
 
 class Neo4jDownload extends Component {
@@ -40,10 +38,10 @@ class Neo4jDownload extends Component {
     }
 
     _generateNewSheet = (id) => {
-        // console.log(setupQuery('biosample'));
         const params = {
-            submission_id: id
+            lab: id
         };
+        // console.log(setupQuery('biosample'))
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
                                         statements: [
                                             {
@@ -55,13 +53,8 @@ class Neo4jDownload extends Component {
         axios.all(fetchPromises)
             .then((res) => {
                 const results = formatResultsForState(res);
-                if (Object.keys(results).length === 0) {
-                    notify.show('⚠️ No metadata found', 'error')
-                } else {
-                    notify.show('Downloading ...⬇️', 'warning');
-                    excelSimpleDownload(this.props.id, results);
-                }
-                
+                // console.log(results);
+                excelSimpleDownload(this.props.id, results);
             })
             .catch(err => {
                 console.log(err);
@@ -70,10 +63,11 @@ class Neo4jDownload extends Component {
 
 
     render() {
-
+        // if (!this.props.id) {
+        //     return <h5>Looking up..</h5>
+        // }
         return (
             <div className="dsfs">
-                <Notifications/>
                 {/* Connected.. */}
                 {/* <ExcelDownloadSimple data={this.state} id={this.props.id}/> */}
             </div>
@@ -90,15 +84,15 @@ function setupQuery(type) {
     
     switch (type) {
         case 'treatment':
-            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT t as treatment`;
+            queryParams = `WHERE l.principal_investigator = $lab RETURN DISTINCT t as treatment`;
             return queryCore + queryParams;
 
         case 'biosample':
-            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT b as biosample, m.accession as derived_from`;
+            queryParams = `WHERE l.principal_investigator = $lab RETURN DISTINCT b as biosample, m.accession as derived_from`;
             return queryCore + queryParams;
 
         case 'mouse':
-            queryParams = `WHERE f.submission_id = $submission_id 
+            queryParams = `WHERE l.principal_investigator = $lab 
             OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) 
             OPTIONAL MATCH (m:mouse)-[bt:born_to]-(lt:litter) 
             RETURN DISTINCT m as mouse, 
@@ -111,26 +105,26 @@ function setupQuery(type) {
         case 'file':
             return `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]->(l:lab),
             (n:file)<-[pr:paired_file]-(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
-                    WHERE f.submission_id = $submission_id 
+                    WHERE l.principal_investigator = $lab 
                     RETURN DISTINCT f as file, 
                     n.accession as paired_file, 
                     a.accession as sequenced`
 
         case 'assay':
-            queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay, b.accession as assay_input`;
+            queryParams = `WHERE l.principal_investigator = $lab RETURN DISTINCT a as assay, b.accession as assay_input`;
             return queryCore + queryParams;
 
         case 'litter':
             let overridenQuery = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[bt:born_to]-(li:litter)-[pf:part_of]->(p:bioproject)-[w:works_on]
             ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
-            WHERE f.submission_id = $submission_id OPTIONAL MATCH (msr:mouse)-[sr:sire]-(li:litter), (mdm:mouse)-[dm:dam]-(li:litter) 
+            WHERE l.principal_investigator = $lab OPTIONAL MATCH (msr:mouse)-[sr:sire]-(li:litter), (mdm:mouse)-[dm:dam]-(li:litter) 
             RETURN DISTINCT li as litter, p.accession as part_of, msr.accession as sire, mdm.accession as dam`;
             return overridenQuery;
 
         case 'diet':
             return `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[bt:born_to]-(li:litter)-[pf:part_of]->(p:bioproject)-[w:works_on]
             ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) 
-                WHERE f.submission_id = $submission_id 
+                WHERE l.principal_investigator = $lab 
                 OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) RETURN DISTINCT d as diet`;
     
         default:
@@ -140,7 +134,7 @@ function setupQuery(type) {
 // const query = 'MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)' +
 //         '-[w:works_on]->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)' +
 //         '-[fr:derived_from]->(m) ' +
-//         'WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay'
+//         'WHERE l.principal_investigator = $lab RETURN DISTINCT a as assay'
 
 function formatResultsForState(resArray) {
     const formattedResult = resArray.map(res => {
@@ -194,5 +188,3 @@ function excelSimpleDownload (id, data) {
         .then(buffer => saveAs(new Blob([buffer]), `${id}_${Date.now()}.xlsx`))
         .catch(err => console.log('Error writing excel export', err));    
 }
-
-

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {Label, Button} from 'semantic-ui-react';
 import Neo4jDownload from './Neo4jDownload';
-
+import moment from 'moment';
+const SUBMISSION = 'https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submission';
 const SUBMISSIONS = 'https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submissions';
 
 class MetadataForSubmissions extends Component {
@@ -10,7 +11,7 @@ class MetadataForSubmissions extends Component {
 
     componentDidMount() {
         axios.get(SUBMISSIONS)
-        .then(res => this.setState({ submissions: res.data.body }))
+        .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' && sub.assay !== 'RRBS-seq').sort(compare) }))
         .catch(err => console.log(err));    
     }
 
@@ -20,12 +21,21 @@ class MetadataForSubmissions extends Component {
     
     render() {
         return (
-            <div>
+            <div className='border-2 border-dashed border-blue p-4 m-4'>
+            <h4>Download metadata by Submission</h4>
+                <hr/>
             <div className="m-4 p-4">
                 { (this.state.submissions.length > 0) ? 
                     this.state.submissions.map(submission => 
-                        <div className="m-4 p-4 bg-blue-lightest flfex justify-between" key={submission._id}>
-                            <Label size='tiny' className="px-4">{submission._id}</Label>
+                        <div className="m-4 p-4 bg-blue-lightest flex justify-between" key={submission._id}>
+                            <div className="fdf">
+                                <Label size='tiny' className="px-4">{submission._id}</Label>
+                                <div className="flex text-xs">
+                                    <div className="mx-2 font-hairline text-grey-dark">{moment(submission.registered).format('MMM DD YYYY')}</div>
+                                    <a href={`${SUBMISSION}/${submission._id}`} target="_blank">Details</a>
+                                </div>
+                            </div>
+                            
                             <Label color='blue' className="px-4">{submission.lab}</Label>
                             <Label color={(submission.read_type === 'Paired-end')? 'brown': 'teal'} className="px-4">{submission.read_type}</Label>
                             <Label color={(submission.data_phase === 'production')? 'green': 'orange'} className="px-4">{submission.data_phase}</Label>
@@ -43,3 +53,17 @@ class MetadataForSubmissions extends Component {
 }
 
 export default MetadataForSubmissions;
+
+function compare(a, b) {
+    // Use toUpperCase() to ignore character casing
+    const labA = a.lab.toUpperCase();
+    const labB = b.lab.toUpperCase();
+
+    let comparison = 0;
+    if (labA > labB) {
+        comparison = 1;
+    } else if (labA < labB) {
+        comparison = -1;
+    }
+    return comparison;
+}
