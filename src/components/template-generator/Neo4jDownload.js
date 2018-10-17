@@ -16,7 +16,7 @@ const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
 
 class Neo4jDownload extends Component {
-    state = {}
+    state = { noMetadata: false }
     
     static getDerivedStateFromProps(nextProps, prevState) {
         // Store prevId in state so we can compare when props change.
@@ -74,8 +74,6 @@ class Neo4jDownload extends Component {
         return (
             <div className="dsfs">
                 <Notifications/>
-                {/* Connected.. */}
-                {/* <ExcelDownloadSimple data={this.state} id={this.props.id}/> */}
             </div>
         );
     }

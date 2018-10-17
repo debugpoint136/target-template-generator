@@ -44,8 +44,9 @@ class ExcelDownload extends Component {
                     <hr/>
                     <Button basic name={this.props.id} onClick={this.handleClick}>Fetch file</Button>
                 </div>
+                { (Object.keys(this.state.data).length > 0) ?  
+                    <Neo4jUpload data={this.state.data} /> : null }
                 
-                <Neo4jUpload data={this.state.data} />
             </div>
         );
     }

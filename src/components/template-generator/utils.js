@@ -276,6 +276,41 @@ export function fillRows(WORKBOOK, DATATOFILL, TYPE) { // TYPE = 'template' or '
     return WORKBOOK;
 }
 
+export function fillOnlyFileRows(WORKBOOK, DATATOFILL) {
+    const worksheet = WORKBOOK.getWorksheet('file');
+    const header = worksheet.getRow(1);
+    const headerCellNames = header.values;
+
+    const VALUES_ARRAY = getValueRanges(headerCellNames, 'file');
+
+    DATATOFILL.forEach(ROW => {
+            
+        let createdRow = {};
+
+        const SYSTEM_ACCSN = generateAccession(PREFIX['file']);
+        let rowEntry = Object.assign({ accession: SYSTEM_ACCSN }, ROW);
+
+        createdRow = worksheet.addRow(rowEntry);
+        
+        createdRow.eachCell(function(cell, colNumber) {
+                cell.fill = {
+                    type: 'pattern',
+                    pattern:'solid',
+                    fgColor:{argb:'cccccc'}
+                }
+                
+                if (VALUES_ARRAY[colNumber]) {
+                    cell.dataValidation = {
+                        type: 'list',
+                        allowBlank: false,
+                        formulae: [ VALUES_ARRAY[colNumber] ] // `lookups!A1:A3`;
+                    };
+                }
+            });
+    });
+
+    return WORKBOOK;
+}
 
 function getValues(sheetname) {
     let tmp = {};
