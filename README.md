@@ -118,3 +118,12 @@ export default Base;
 
 ```
 
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}

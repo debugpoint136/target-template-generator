@@ -33,10 +33,10 @@ const LogInView = ({onSubmit, handleSignupClick, handleForgotPasswordClick}) => 
         </div>
         <div className="flex justify-center">
         <button
-          className="mt-8 mx-4 focus:shadow-outline focus:outline-none text-blue font-thin px-4"
+          className="mt-8 mx-4 focus:shadow-outline focus:outline-none text-indigo font-thin px-4"
           onClick={handleSignupClick}
           type="button">
-          New user?
+          Create account
         </button>
 
         <button

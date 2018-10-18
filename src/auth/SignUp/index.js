@@ -4,6 +4,12 @@ import {withRouter} from "react-router";
 import app from "../../fire";
 
 class SignUpContainer extends Component {
+
+  handleGoHome = (event) => {
+    event.preventDefault();
+    this.props.history.push("/");
+  }
+
   handleSignUp = async event => {
     event.preventDefault();
     const {email, password, firstname, lastname, lab} = event.target.elements;
@@ -27,7 +33,7 @@ class SignUpContainer extends Component {
   };
 
   render() {
-    return <SignUpView onSubmit={this.handleSignUp}/>;
+    return <SignUpView onSubmit={this.handleSignUp} onGoHome={this.handleGoHome}/>;
   }
 }
 

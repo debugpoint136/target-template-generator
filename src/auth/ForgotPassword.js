@@ -18,11 +18,15 @@ class ForgotPassword extends Component {
                 .catch(function (error) {
                     console.log(error)
                 });
-            // this.props.history.push("/");
+            
         } else {
             alert('Enter email to send the reset link');
             return;
         }
+    }
+
+    handleGoHome = () => {
+        this.props.history.push("/");
     }
 
     render() {
@@ -56,6 +60,12 @@ class ForgotPassword extends Component {
                                 className="mt-8 mx-4 shadow bg-blue hover:bg-blue-light focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
                                 type="submit">
                                 Reset password
+                            </button>
+                            <button
+                                className="mt-8 mx-4 focus:shadow-outline focus:outline-none text-blue font-hairline py-2 px-4 rounded"
+                                onClick={this.handleGoHome}
+                                type="button">
+                                Sign in
                             </button>
                         </div>
                 </form>

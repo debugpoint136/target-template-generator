@@ -10,7 +10,7 @@ const LABS = [
   'Winnie Tang',
   'Ting Wang'
 ];
-const SignUpView = ({onSubmit}) => {
+const SignUpView = ({onSubmit, onGoHome}) => {
   return (
     <div className="flex justify-center" style={{ marginTop: '100px' }}>
       <form className="w-full max-w-md" onSubmit={onSubmit}>
@@ -64,7 +64,7 @@ const SignUpView = ({onSubmit}) => {
               name="password"
               type="password"
               placeholder="******************"/>
-            <p className="text-grey-dark text-xs italic">Make it as long and as crazy as you'd like</p>
+            {/* <p className="text-grey-dark text-xs italic">Make it as long and as crazy as you'd like</p> */}
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-2">
@@ -98,6 +98,12 @@ const SignUpView = ({onSubmit}) => {
           className="mt-8 shadow bg-purple hover:bg-purple-light focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
           type="submit">
           Sign Up
+        </button>
+        <button
+            className="mt-8 mx-4 focus:shadow-outline focus:outline-none text-blue font-hairline py-2 px-4 rounded"
+            onClick={onGoHome}
+            type="button">
+            Sign in
         </button>
         </div>
       </form>
