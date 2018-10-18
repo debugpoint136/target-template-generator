@@ -5,7 +5,7 @@ class App extends Component {
     state = {}
     render() {
         return (
-            <div className="fdsafd">
+            <div>
                 <TemplateGenerator/>
             </div>
         );
