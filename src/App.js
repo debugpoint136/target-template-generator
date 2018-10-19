@@ -27,14 +27,14 @@ class App extends Component {
                         name='download'
                         active={activeItem === 'download'}
                         onClick={this.handleItemClick}>
-                        Download previously Metadata
+                        Download previously uploaded Metadata
                     </Menu.Item>
 
                     <Menu.Item
                         name='upload'
                         active={activeItem === 'sign-in'}
                         onClick={this.handleItemClick}>
-                        Upload / Update new metadata
+                        Upload new or Update previous metadata
                     </Menu.Item>
                 </Menu>
                 </div>

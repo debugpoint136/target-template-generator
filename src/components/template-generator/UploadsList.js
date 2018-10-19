@@ -33,7 +33,7 @@ class UploadsList extends Component {
 
     render() {
         if (this.state.uploads.length === 0) {
-            <div className="text-italic text-grey">No saved files</div>
+            return <div className="text-italic text-grey">No saved files</div>
         }
         return (
             <div className="sdfs">
