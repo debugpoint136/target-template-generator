@@ -1,14 +1,14 @@
 import React from "react";
 const LABS = [
-  'David Aylor',
-  'Shyam Biswal',
-  'Marisa Bartolomei',
-  'Dana Dolinoy',
-  'Gokhan Mutlu',
-  'Cheryl Walker',
-  'Zhibin Wang',
-  'Winnie Tang',
-  'Ting Wang'
+  'Aylor Lab',
+  'Biswal Lab',
+  'Bartolomei Lab',
+  'Dolinoy Lab',
+  'Mutlu Lab',
+  'Walker Lab',
+  'Zhibin Lab',
+  'Tang Lab',
+  'Wang Lab'
 ];
 const SignUpView = ({onSubmit, onGoHome}) => {
   return (

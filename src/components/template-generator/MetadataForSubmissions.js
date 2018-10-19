@@ -4,19 +4,30 @@ import {Label, Button, Popup} from 'semantic-ui-react';
 import Neo4jDownload from './Neo4jDownload';
 import FileSheetDownload from './FileSheetDownload';
 import moment from 'moment';
+import app from "../../fire";
 const SUBMISSIONS = 'https://5dum6c4ytb.execute-api.us-east-1.amazonaws.com/dev/submissions';
 
 class MetadataForSubmissions extends Component {
-    state = { submissions: [], download: null}
+    state = { submissions: null, download: null, lab: null}
+
+    componentWillMount() {
+        app.auth()
+            .onAuthStateChanged(user => {
+                if (user) {
+                    this.setState({lab: user.photoURL });
+                } else {
+                    this.setState({lab: null});
+                }
+            });
+    }
 
     componentDidMount() {
         axios.get(SUBMISSIONS)
-        .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' && sub.assay !== 'RRBS-seq').sort(compare) }))
+        .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' && sub.assay !== 'RRBS-seq' && sub.lab === this.state.lab).sort(compare) }))
         .catch(err => console.log(err));    
     }
 
     handleMetadataDownload = (e, {name}) => {
-        console.log(name)
         this.setState({ download: name });
     }
     
@@ -26,7 +37,7 @@ class MetadataForSubmissions extends Component {
             <h4>Download metadata by Submission</h4>
                 <hr/>
             <div className="m-4 p-4">
-                { (this.state.submissions.length > 0) ? 
+                { (this.state.submissions) ? (this.state.submissions.length === 0) ? <h5>No submissions found</h5> :
                     this.state.submissions.map(submission => 
                         <div className="m-4 p-4 bg-blue-lightest flex justify-between" key={submission._id}>
                             <div className="fdf">

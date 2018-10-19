@@ -24,9 +24,9 @@ class AppRouter extends Component {
         app.auth()
             .onAuthStateChanged(user => {
                 if (user) {
-                    this.setState({authenticated: true, currentUser: user, loading: false});
+                    this.setState({authenticated: true, currentUser: user, loading: false });
                 } else {
-                    this.setState({authenticated: false, currentUser: null, loading: false});
+                    this.setState({authenticated: false, currentUser: null, loading: false });
                 }
             });
     }

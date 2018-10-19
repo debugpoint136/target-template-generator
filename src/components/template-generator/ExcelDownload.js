@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button} from 'semantic-ui-react';
+import {Button, Icon} from 'semantic-ui-react';
 import Neo4jUpload from './Neo4jUpload';
 import fire from '../../fire';
 import {saveAs} from 'file-saver';
@@ -40,9 +40,14 @@ class ExcelDownload extends Component {
             <div className="m-4 p-2 bg-grey-lighter flex justify-between">
                 <div className="">
                     <div className='text-grey-darkest text-grey-dark text-sm font-mono'>{this.props.name}</div>
-                    <div className='text-grey font-hairline text-grey-dark text-xs'>{this.props.date}</div>
+                    <div className='text-grey font-hairline text-grey-dark text-xs flex justify-between'>
+                    {this.props.date}
+                    <div className='text-blue-light mx-4'>{this.props.user}</div>
+                    </div>
                     <hr/>
-                    <Button basic name={this.props.id} onClick={this.handleClick}>Fetch file</Button>
+                    
+                    <Button basic color='purple' size='tiny' name={this.props.id} onClick={this.handleClick}>Fetch file <Icon name='download'/></Button>
+                    
                 </div>
                 { (Object.keys(this.state.data).length > 0) ?  
                     <Neo4jUpload data={this.state.data} /> : null }

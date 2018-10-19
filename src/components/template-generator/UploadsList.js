@@ -22,10 +22,11 @@ class UploadsList extends Component {
                 text: content.data,
                 date: m.fromNow(),
                 name: content.name,
-                id: snapshot.key
+                id: snapshot.key,
+                user: content.user
             };
             this.setState({
-                uploads: [upload].concat(this.state.uploads)
+                uploads: [upload].concat(this.state.uploads.filter(record => record.user === content.user))
             });
         })
     }
@@ -36,7 +37,7 @@ class UploadsList extends Component {
                 <ul>
                     {/* Render the list of messages */
                     this.state.uploads
-                        .map(upload => <ExcelDownload key={upload.id} id={upload.id} name={upload.name} date={upload.date}/>)
+                        .map(upload => <ExcelDownload key={upload.id} id={upload.id} name={upload.name} user={upload.user} date={upload.date}/>)
                     }
                 </ul>
             </div>

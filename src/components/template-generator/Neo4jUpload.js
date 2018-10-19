@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button} from 'semantic-ui-react';
+import {Button,Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import _ from 'lodash';
 import Notifications, {notify} from 'react-notify-toast';
@@ -81,7 +81,7 @@ class Neo4jUpload extends Component {
                 {this.state.error}
                 <Button icon='close' onClick={this.handleErrorBoxClose}/>
                 </div>: null }
-                <Button onClick={this.handleUpload}>Upload sheet</Button>
+                <Button size='tiny' color='purple' onClick={this.handleUpload}>Commit changes {'  '} <Icon name=''/><Icon name='external'/></Button>
             </div>
         );
     }

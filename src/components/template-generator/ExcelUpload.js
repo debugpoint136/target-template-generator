@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import XLSX from 'xlsx';
 import fire from '../../fire';
 import { swapDisplayNamesToKeys } from './utils';
+import app from "../../fire";
 
 
 export default class SheetJSApp extends Component {
@@ -9,12 +10,25 @@ export default class SheetJSApp extends Component {
         super(props);
         this.state = {
             data: [],
+            user: null, // logged in user
             /* Array of Arrays e.g. [["a","b"],[1,2]] */
             cols: []/* Array of column objects e.g. { name: "C", K: 2 } */
         };
         this.handleFile = this.handleFile.bind(this);
         this.exportFile = this.exportFile.bind(this);
     };
+
+    componentWillMount() {
+        app.auth()
+            .onAuthStateChanged(user => {
+                if (user) {
+                    this.setState({user: user.displayName });
+                } else {
+                    this.setState({user: null});
+                }
+            });
+    }
+
     handleFile(file/*:File*/) {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
@@ -29,7 +43,8 @@ export default class SheetJSApp extends Component {
             const sheetData = parseWorkBook(wb);
             const readDataAllSheets = { name: file.name,
                 data: JSON.stringify(sheetData),
-                uploaded: Date.now()
+                uploaded: Date.now(),
+                user: this.state.user
             }
             /* Get first worksheet */
             const wsname = wb.SheetNames[3];
