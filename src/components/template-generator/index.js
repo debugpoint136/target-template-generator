@@ -5,9 +5,9 @@ import React, {Component} from 'react';
 // import {Button} from 'semantic-ui-react';
 import produce from 'immer';
 import ExcelUpload from './ExcelUpload';
-import MetadataForSubmissions from './MetadataForSubmissions';
+// import MetadataForSubmissions from './MetadataForSubmissions';
 // import MetadataForLabs from './MetadataForLabs';
-import FlatTemplate from './FlatTemplate';
+// import FlatTemplate from './FlatTemplate';
 import uuid from 'uuid';
 // import {getDropdownOptions} from './utils';
 // import DropdownComponent from '../common/DropdownComponent';
@@ -108,7 +108,7 @@ class TemplateGenerator extends Component {
 
             <h3 className="text-center">New Template Generator</h3>
 
-            <FlatTemplate/>
+            
             {/* <Neo4jUpload/> */}
             
 
@@ -195,7 +195,7 @@ class TemplateGenerator extends Component {
 
                     <div className="flex justify-around">
 
-                        <div className="m-8 p-8">
+                        {/* <div className="m-8 p-8">
                             <div className="m-8 p-8 h-8 font-semibold font-sans text-2xl">Upload filled out template excel sheet</div>
                             
                             <ExcelUpload/> 
@@ -203,10 +203,10 @@ class TemplateGenerator extends Component {
                             <h3 className='text-center'>Saved Excel files</h3>
                             <hr/>
                             <UploadsList/>
-                        </div>
+                        </div> */}
                         
                         <div className="m-8 p-8">
-                            <MetadataForSubmissions/>
+                            {/* <MetadataForSubmissions/> */}
                             {/* <MetadataForLabs/> */}
                         </div>
                     </div>

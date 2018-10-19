@@ -6,6 +6,7 @@ import {
 import App from './App'
 import PrivateRoute from "./auth/PrivateRoute";
 import app from "./fire";
+import {Loader, Dimmer} from 'semantic-ui-react';
 
 import LogIn from "./auth/LogIn";
 import LogOut from "./auth/LogOut";
@@ -35,7 +36,13 @@ class AppRouter extends Component {
         const {authenticated, loading} = this.state;
 
         if (loading) {
-            return <p>Loading..</p>;
+            return (
+            <div className="h-screen">
+                <Dimmer active>
+                    <Loader size='mini'>Launching...</Loader>
+                </Dimmer>
+                </div>
+            );
         }
         return (
             // <BrowserRouter>

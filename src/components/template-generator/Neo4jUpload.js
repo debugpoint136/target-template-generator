@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button,Icon} from 'semantic-ui-react';
+import {Button,Icon, Loader, Dimmer} from 'semantic-ui-react';
 import axios from 'axios';
 import _ from 'lodash';
 import Notifications, {notify} from 'react-notify-toast';
@@ -12,9 +12,10 @@ const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
 // const simple_DATA = require('./simple_upload.json');
 // const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
-    state = { error: null }
+    state = { error: null, loader: false }
 
     handleUpload = () => {
+        this.setState({ loader: true })
 /*
         axios.post(neo4jUrl, {
             statements: [
@@ -60,6 +61,7 @@ class Neo4jUpload extends Component {
                     this.setState({ error: errorsList.map(err => err.message).join('<br/>') })
                 } else {
                     notify.show('Submitted successfully! ✅', 'success');
+                    this.setState({ loader: false })
                 }
                 
             })
@@ -72,8 +74,15 @@ class Neo4jUpload extends Component {
     }
 
     render() {
-        return (
+        return ( 
             <div className="m-4 p-4">
+            { (this.state.loader) ? 
+                <div className="h-screen">
+                <Dimmer active>
+                    <Loader size='mini'>Transmitting...</Loader>
+                </Dimmer>
+                </div> : null
+            }
             <Notifications />
             {(this.state.error)? 
                 <div className="m-4 p-4 border-2 border-red-light text-red flex justify-between">

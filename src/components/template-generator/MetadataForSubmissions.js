@@ -33,6 +33,7 @@ class MetadataForSubmissions extends Component {
     
     render() {
         return (
+            <div className="m-8 p-8 flex justify-center">
             <div className='border-2 border-dashed border-blue p-4 m-4'>
             <h4>Download metadata by Submission</h4>
                 <hr/>
@@ -63,6 +64,7 @@ class MetadataForSubmissions extends Component {
 
             {( this.state.download ) ?  <Neo4jDownload id={this.state.download} /> : null}
             
+            </div>
             </div>
         );
     }

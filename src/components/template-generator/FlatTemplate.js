@@ -25,18 +25,21 @@ class FlatTemplate extends Component {
     }
     render() {
         return (
-            <div className="m-4 p-4 border-2 border-dotted">
+            <div className="flex justify-center">
+            <div className="m-4 p-4 border-2 border-dotted w-1/2">
                 <h4>Please specify number of rows for each</h4>
                 { SHEETNAMES
                     .map((sheetname, index) => 
                         <InputMetadataRowCount 
                             key={index} name={sheetname} 
                             handleChange={this.handleChange}/>)}   
+                            <p class="ml-8 text-grey-dark text-xs italic">File sheet can be downloaded in next tab, with already registered file information</p>
                 <div className="bg-teal-lightest border-2 border-blue m-4 p-4 w-1/3">
                     {(Object.values(this.state).length > 0) ?
                     <ExcelDownloadFlat data={formatMetadataOptionsForFlatLayout(metadataOptions, this.state)}/>
-                    : <h4>Please fill out values above</h4>}
+                    : <h4 className='text-grey-darker'>Please fill out values above</h4>}
                 </div>
+            </div>
             </div>
         );
     }

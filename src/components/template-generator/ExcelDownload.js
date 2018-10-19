@@ -39,8 +39,9 @@ class ExcelDownload extends Component {
         return (
             <div className="m-4 p-2 bg-grey-lighter flex justify-between">
                 <div className="">
-                    <div className='text-grey-darkest text-grey-dark text-sm font-mono'>{this.props.name}</div>
-                    <div className='text-grey font-hairline text-grey-dark text-xs flex justify-between'>
+                    <div className='text-grey-light text-xs font-mono'>{this.props.id}</div>
+                    <div className='text-grey-darker text-sm font-mono'>{this.props.name}</div>
+                    <div className='text-grey font-hairline text-grey-dark text-xs flex justify-start'>
                     {this.props.date}
                     <div className='text-blue-light mx-4'>{this.props.user}</div>
                     </div>
