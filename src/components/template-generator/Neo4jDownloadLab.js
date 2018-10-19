@@ -3,10 +3,8 @@ import axios from 'axios';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
-const neo4jUrl = "https://graph.dev-targetepigenomics.org:7473/db/data/transaction/commit";
-const AUTHORIZATION = "Basic bmVvNGo6ZW50ZXJub3c=";
-// const neo4jUrl = "https://graph.targetepigenomics.org:7473/db/data/transaction/commit";
-// const AUTHORIZATION = "Basic bmVvNGo6cHJvZHVjdGlvbg==";
+const neo4jUrl = process.env.REACT_APP_NEO4J_API;
+const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 
 
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
