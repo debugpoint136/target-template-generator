@@ -56,14 +56,18 @@ class Neo4jUpload extends Component {
                     errorsList = _.flattenDeep(errorsArray.filter(d => d));
                 }
                 if (errorsList.length > 0) {
-                    this.setState({ error: errorsList.map(err => err.message).join('<br/>') })
+                    this.setState({ error: errorsList.map(err => err.message).join('<br/>'), loader: false });
+                    notify.show('Transmission errored out 👨🏼‍🚀', 'error');
                 } else {
                     notify.show('Submitted successfully! ✅', 'success');
                     this.setState({ loader: false })
                 }
                 
             })
-            .catch(err => this.setState({ error: err}));
+            .catch(err => {
+                notify.show('Transmission errored out 👨🏼‍🚀', 'error');
+                this.setState({ loader: false, error: err })
+            });
         
     }
 

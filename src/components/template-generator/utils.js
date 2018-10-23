@@ -475,22 +475,20 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     SET 
         `;
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
+    
     // Add user name
-    let tmpUser = {};
-    tmpUser[`${ITEM}.user`] = USER;
+    let tmpUser = `${ITEM}.user = ${USER}`;
     queryFieldsArray.push(tmpUser)
     // Add Lab name
-    let tmpLab = {};
-    tmpLab[`${ITEM}.lab`] = LAB;
+    let tmpLab = `${ITEM}.lab = "${LAB}"`;
     queryFieldsArray.push(tmpLab)
     // Add date
-    let tmpDate = {};
-    tmpDate[`${ITEM}.last_updated`] = Date.now();
+    let tmpDate = `${ITEM}.last_updated = ${Date.now()}`;
     queryFieldsArray.push(tmpDate)
 
     const queryFields = queryFieldsArray.join(',\n\t\t');
     const final = query + queryFields;
-    
+    console.log(final);
     return final;
 }
 
