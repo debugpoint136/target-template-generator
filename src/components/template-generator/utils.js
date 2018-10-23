@@ -477,7 +477,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
     
     // Add user name
-    let tmpUser = `${ITEM}.user = ${USER}`;
+    let tmpUser = `${ITEM}.user = "${USER}"`;
     queryFieldsArray.push(tmpUser)
     // Add Lab name
     let tmpLab = `${ITEM}.lab = "${LAB}"`;
