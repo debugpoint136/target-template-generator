@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import FlatTemplate from './components/template-generator/FlatTemplate';
 import MetadataForSubmissions from './components/template-generator/MetadataForSubmissions';
+import MetadataForLabs from './components/template-generator/MetadataForLabs';
 import UploadContainer from './components/template-generator/UploadContainer';
 import {Menu} from 'semantic-ui-react'
 
@@ -42,8 +43,10 @@ class App extends Component {
                 { (this.state.activeItem === 'template') ? <FlatTemplate/> : null}
                 { (this.state.activeItem === 'upload') ? <UploadContainer/> : null}
                 { (this.state.activeItem === 'download') ? <MetadataForSubmissions/> : null}
+
+                {/* <MetadataForLabs/> */}
                 
-                <p class="text-center text-grey text-xs">
+                <p className="text-center text-grey text-xs">
                     {/* ©2018 TaRGET DCC @ Wash U St. Louis */}
                 </p>
             </div>

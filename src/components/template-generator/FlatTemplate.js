@@ -33,7 +33,7 @@ class FlatTemplate extends Component {
                         <InputMetadataRowCount 
                             key={index} name={sheetname} 
                             handleChange={this.handleChange}/>)}   
-                            <p class="ml-8 text-grey-dark text-xs italic">File sheet can be downloaded in next tab, with already registered file information</p>
+                            <p className="ml-8 text-grey-dark text-xs italic">File sheet can be downloaded in next tab, with already registered file information</p>
                 <div className="bg-teal-lightest border-2 border-blue m-4 p-4 w-1/3">
                     {(Object.values(this.state).length > 0) ?
                     <ExcelDownloadFlat data={formatMetadataOptionsForFlatLayout(metadataOptions, this.state)}/>

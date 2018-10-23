@@ -434,7 +434,7 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
     return updatedObj;
 }
 
-export function createNeo4jUploadQuery(DATA) {
+export function createNeo4jUploadQuery(DATA, USER, LAB) {
     const keysToIterate = Object.keys(DATA);
 
     keysToIterate.forEach(key => console.log(`${key} == ${DATA[key].length}`));
@@ -446,7 +446,7 @@ export function createNeo4jUploadQuery(DATA) {
     const allFields = keysToIterate.map(key => {
         const fields = ALL_SCHEMA[key];
     
-        const templateQueryFields = makeQueryTemplateFields(fields, key);
+        const templateQueryFields = makeQueryTemplateFields(fields, key, USER, LAB);
 
         return { sheetname: key, query: templateQueryFields };
     })
@@ -464,16 +464,30 @@ export function createNeo4jUploadQuery(DATA) {
     
     const allQuery = allFields.concat(allConnections.filter(d => d));
     // const allQuery = allConnections;
+    // console.log(allQuery);
     return allQuery;
 }
 
-function makeQueryTemplateFields(FIELDS, ITEM) {
+function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const query = `WITH {json} as data
     UNWIND data.${ITEM} as row
     MERGE (${ITEM}:${ITEM} {accession: row.accession})
     SET 
         `;
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
+    // Add user name
+    let tmpUser = {};
+    tmpUser[`${ITEM}.user`] = USER;
+    queryFieldsArray.push(tmpUser)
+    // Add Lab name
+    let tmpLab = {};
+    tmpLab[`${ITEM}.lab`] = LAB;
+    queryFieldsArray.push(tmpLab)
+    // Add date
+    let tmpDate = {};
+    tmpDate[`${ITEM}.last_updated`] = Date.now();
+    queryFieldsArray.push(tmpDate)
+
     const queryFields = queryFieldsArray.join(',\n\t\t');
     const final = query + queryFields;
     

@@ -23,7 +23,10 @@ class MetadataForSubmissions extends Component {
 
     componentDidMount() {
         axios.get(SUBMISSIONS)
-        .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' && sub.assay !== 'RRBS-seq' && sub.lab === this.state.lab).sort(compare) }))
+        .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' 
+        && sub.assay !== 'RRBS-seq' 
+        // && sub.lab === this.state.lab
+        ).sort(compare) }))
         .catch(err => console.log(err));    
     }
 

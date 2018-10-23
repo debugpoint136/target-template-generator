@@ -3,7 +3,7 @@ import XLSX from 'xlsx';
 import fire from '../../fire';
 import { swapDisplayNamesToKeys } from './utils';
 import app from "../../fire";
-
+import Notifications, {notify} from 'react-notify-toast';
 
 export default class SheetJSApp extends Component {
     constructor(props) {
@@ -11,6 +11,7 @@ export default class SheetJSApp extends Component {
         this.state = {
             data: [],
             user: null, // logged in user
+            lab: null, // logged in user's Lab
             /* Array of Arrays e.g. [["a","b"],[1,2]] */
             cols: []/* Array of column objects e.g. { name: "C", K: 2 } */
         };
@@ -22,7 +23,7 @@ export default class SheetJSApp extends Component {
         app.auth()
             .onAuthStateChanged(user => {
                 if (user) {
-                    this.setState({user: user.displayName });
+                    this.setState({user: user.displayName, lab: user.photoURL });
                 } else {
                     this.setState({user: null});
                 }
@@ -44,7 +45,8 @@ export default class SheetJSApp extends Component {
             const readDataAllSheets = { name: file.name,
                 data: JSON.stringify(sheetData),
                 uploaded: Date.now(),
-                user: this.state.user
+                user: this.state.user,
+                lab: this.state.lab
             }
             /* Get first worksheet */
             const wsname = wb.SheetNames[3];
@@ -55,16 +57,24 @@ export default class SheetJSApp extends Component {
             // console.log(data);
             // console.log(dataObj);
 
-            /* Update Firebase */
-            const newPostRef = fire.database().ref('uploads').push(readDataAllSheets);
-            const postId = newPostRef.key;
-        
-            /* Update state */
-            this.setState({
-                data: data,
-                postId: postId,
-                cols: make_cols(ws['!ref'])
-            });
+            
+
+            if (!ws) {
+                // error message
+                notify.show('Not a valid sheet ⚠️', 'error');
+            } else {
+                /* Update Firebase */
+                const newPostRef = fire.database().ref('uploads').push(readDataAllSheets);
+                const postId = newPostRef.key;
+                
+                /* Update state */
+                this.setState({
+                    data: data,
+                    postId: postId,
+                    cols: make_cols(ws['!ref'])
+                });
+            }
+            
         };
         if (rABS) 
             reader.readAsBinaryString(file);
@@ -83,6 +93,7 @@ export default class SheetJSApp extends Component {
     render() {
         return (
             <div>
+                <Notifications/>
                 <div className="flex">
                     <div className="bg-grey-light m-4 p-4">
                         <div className="col-xs-12">

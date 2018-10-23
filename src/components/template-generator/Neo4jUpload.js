@@ -26,9 +26,9 @@ class Neo4jUpload extends Component {
         .then(res => console.log(res.data))
         .catch(err => console.log(err))
 */
-        const { data } = this.props;
-        const queryList = createNeo4jUploadQuery(data);
-        console.log(data);
+        const { data, user, lab } = this.props;
+        const queryList = createNeo4jUploadQuery(data, user, lab);
+        // console.log(JSON.stringify(queryList));
         if (!queryList) {
             this.setState({ error: "No data to upload" });
             return

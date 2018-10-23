@@ -8,13 +8,15 @@ const Excel = require('exceljs/dist/es5/exceljs.browser');
 
 class ExcelDownload extends Component {
     state = {
-        data: {}
+        data: {}, user: null, lab: null
     }
 
     handleClick = (e, {name}) => {
         fire.database().ref(`uploads/${name}`).once('value', downloadedObj => {
             const FIREBASE_DATA_STR = JSON.stringify(downloadedObj);
             const FIREBASE_DATA = JSON.parse(FIREBASE_DATA_STR).data;
+            const FIREBASE_USER = JSON.parse(FIREBASE_DATA_STR).user;
+            const FIREBASE_LAB = JSON.parse(FIREBASE_DATA_STR).lab;
 
             if (Object.keys(downloadedObj).length === 0) {
                 alert('Nothing to download. Please select other options');
@@ -23,7 +25,7 @@ class ExcelDownload extends Component {
                 const workbook = new Excel.Workbook();
                 const newWorkbook = makeAllWorkSheets(workbook);
                 const standardizedData = restructureSheetFillouts(newWorkbook, FIREBASE_DATA);
-                this.setState({ data: standardizedData })
+                this.setState({ data: standardizedData, user: FIREBASE_USER, lab: FIREBASE_LAB })
                 const workBookWithRows = fillRows(newWorkbook, standardizedData, 'data');
 
                 workBookWithRows
@@ -51,7 +53,7 @@ class ExcelDownload extends Component {
                     
                 </div>
                 { (Object.keys(this.state.data).length > 0) ?  
-                    <Neo4jUpload data={this.state.data} /> : null }
+                    <Neo4jUpload data={this.state.data} user={this.state.user} lab={this.state.lab} /> : null }
                 
             </div>
         );
