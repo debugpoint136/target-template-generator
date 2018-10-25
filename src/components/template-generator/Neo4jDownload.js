@@ -36,7 +36,7 @@ class Neo4jDownload extends Component {
     }
 
     _generateNewSheet = (id) => {
-        // console.log(setupQuery('biosample'));
+        console.log(setupQuery('mouse'));
         const params = {
             submission_id: id
         };
@@ -76,11 +76,17 @@ class Neo4jDownload extends Component {
 }
 
 export default Neo4jDownload;
-
+/**
+ * 
+ * MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
+    ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m)} type 
+    p.accession as part_of, 
+    d.accession as fed, 
+    lt.accession as born_to`
+ */
 function setupQuery(type) {
     let queryParams = '';
-    const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
-    ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
+    const queryCore = `MATCH (f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
     
     switch (type) {
         case 'treatment':
@@ -93,13 +99,17 @@ function setupQuery(type) {
 
         case 'mouse':
             queryParams = `WHERE f.submission_id = $submission_id 
-            OPTIONAL MATCH (m:mouse)-[fd:fed]-(d:diet) 
-            OPTIONAL MATCH (m:mouse)-[bt:born_to]-(lt:litter) 
+            OPTIONAL MATCH undergoes_cursor=(m:mouse)-[u:undergoes]-(t:treatment)
+            OPTIONAL MATCH fed_cursor=(m:mouse)-[fd:fed]-(d:diet) 
+            OPTIONAL MATCH born_to_cursor=(m:mouse)-[bt:born_to]-(lt:litter) 
+            OPTIONAL MATCH part_of_cursor=(m:mouse)-[pf:part_of]->(p:bioproject)
             RETURN DISTINCT m as mouse, 
-            t.accession as undergoes, 
-            p.accession as part_of, 
-            d.accession as fed, 
-            lt.accession as born_to`;
+            CASE WHEN undergoes_cursor IS NULL THEN [] ELSE undergoes_cursor as undergoes
+            CASE WHEN fed_cursor IS NULL THEN [] ELSE fed_cursor as fed
+            CASE WHEN born_to_cursor IS NULL THEN [] ELSE born_to_cursor as born_to
+            CASE WHEN part_of_cursor IS NULL THEN [] ELSE part_of_cursor as part_of
+            `
+            ;
             return queryCore + queryParams;
 
         case 'file':
@@ -109,6 +119,7 @@ function setupQuery(type) {
                     RETURN DISTINCT f as file, 
                     n.accession as paired_file, 
                     a.accession as sequenced`
+                    
 
         case 'assay':
             queryParams = `WHERE f.submission_id = $submission_id RETURN DISTINCT a as assay, b.accession as assay_input`;
@@ -165,7 +176,6 @@ function formatResultsForState(resArray) {
         }
     });
     const noNullResults = formattedResult.filter(d => d);
-
     let toReturn = {};
     noNullResults.forEach(item => {
         toReturn[item.sheet] = item.rows;

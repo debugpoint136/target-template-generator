@@ -11,7 +11,7 @@ const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
 
-class Neo4jDownloadLab extends Component {
+class Neo4jDownloadSubmission extends Component {
     state = {  }
     
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -27,16 +27,17 @@ class Neo4jDownloadLab extends Component {
         return null;
     }
 
+    componentDidMount() {
+        this._generateNewSheet(this.props.id);
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.id !== prevProps.id) {
-            this.props.handleLoader();
-            this._generateNewSheet(this.props.id);
-        }
+        this._generateNewSheet(this.props.id);
     }
 
     _generateNewSheet = (id) => {
         const params = {
-            lab: id
+            submission: id
         };
         console.log(setupQuery('diet'))
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
@@ -51,7 +52,7 @@ class Neo4jDownloadLab extends Component {
             .then((res) => {
                 const results = formatResultsForState(res);
                 console.log(results);
-                excelSimpleDownload(this.props.id, results, this.props.handleLoader);
+                excelSimpleDownload(this.props.id, results);
                 
             })
             .catch(err => {
@@ -73,15 +74,14 @@ class Neo4jDownloadLab extends Component {
     }
 }
 
-export default Neo4jDownloadLab;
+export default Neo4jDownloadSubmission;
 
 function setupQuery(type) {
     let queryParams = '';
     // const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
     // ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
 
-    const queryCore = `MATCH (l:lab)<-[*0..5]-(n) 
-    WHERE l.principal_investigator=$lab`
+    const queryCore = `MATCH (f:file)-[*0..5]->(n) WHERE f.submission_id=$submission`
     
     switch (type) {
         case 'treatment':
@@ -164,6 +164,7 @@ function setupQuery(type) {
 //         'WHERE l.principal_investigator = $lab RETURN DISTINCT a as assay'
 
 function formatResultsForState(resArray) {
+    console.log(resArray);
     const formattedResult = resArray.map(res => {
         const entry = res.data.results;
         if (entry.length > 0) {
@@ -219,7 +220,7 @@ function formatResultsForState(resArray) {
     return toReturn;
 }
 
-function excelSimpleDownload (id, data, closeLoaderCb) {
+function excelSimpleDownload (id, data) {
     if (!id) {
         return
     }
@@ -232,7 +233,7 @@ function excelSimpleDownload (id, data, closeLoaderCb) {
         .writeBuffer()
         .then(buffer => {
             saveAs(new Blob([buffer]), `${id}_${Date.now()}.xlsx`);
-            closeLoaderCb();
+            // closeLoaderCb();
         })
         .catch(err => console.log('Error writing excel export', err));    
 }

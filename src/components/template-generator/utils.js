@@ -488,7 +488,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
 
     const queryFields = queryFieldsArray.join(',\n\t\t');
     const final = query + queryFields;
-    console.log(final);
+
     return final;
 }
 
@@ -497,29 +497,53 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
     let toReturn = `
         WITH {json} as data
         UNWIND data.${ITEM} as row
-        MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        WITH ${ITEM}, row`;
+        
+        `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
+        let body = `
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        WITH row, ${ITEM}, 
+        CASE  
+            WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
+        END as array1
+            FOREACH (el1 in array1 | 
+                MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+                MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
+                )
+                
+        `;
+        /**
+         *  WITH row, ${ITEM},
+        MATCH (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        RETURN
+        ${ITEM}, ${ITEM}_${connectionName}_${connectionTo},
+        CASE ${connectionName}
+            WHEN NULL THEN "other thing"
+            ELSE MERGE (${ITEM})-[${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
+        END
+         */
         // let body =`
-        // WITH row, CASE  WHEN (row.${connectionName} <> "") THEN ['ok'] ELSE [] END as array1
-        // FOREACH (el1 in array1 | MATCH(${ITEM}:${ITEM} {accession: row.accession})
+        // WITH row, CASE  WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] END as array1
+        // FOREACH (el1 in array1 | 
         //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
         //         MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}))
         // `;
-        let body = `
-        MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
-        `;
+
+        // let body = `
+        // MATCH (${ITEM}:${ITEM} {accession: row.accession}) 
+        // MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        // MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
+        // `;
         if (index < CONNECTIONS.length -1) {
             body = body + `
-            WITH ${ITEM}, row
+            WITH row
             `;
         }
         return body;
     })
-
+// WITH ${ITEM}, row
     console.log(toReturn + queryConnectionsArray.join(''));
 
     return toReturn + queryConnectionsArray.join('');
