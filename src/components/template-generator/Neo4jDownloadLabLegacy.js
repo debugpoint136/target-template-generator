@@ -88,7 +88,7 @@ function setupQuery(type) {
             case 'treatment':
                 queryParams = ` AND "treatment" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as treatment, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -98,7 +98,7 @@ function setupQuery(type) {
             case 'biosample':
                 queryParams = ` AND "biosample" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as biosample, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -108,7 +108,7 @@ function setupQuery(type) {
             case 'mouse':
                 queryParams = ` AND "mouse" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as mouse, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -118,7 +118,7 @@ function setupQuery(type) {
             case 'file':
                 queryParams = ` AND "file" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as file, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -128,7 +128,7 @@ function setupQuery(type) {
             case 'assay':
                 queryParams = ` AND "assay" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as assay, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -138,7 +138,7 @@ function setupQuery(type) {
             case 'litter':
                 queryParams = ` AND "litter" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as litter, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
@@ -148,7 +148,7 @@ function setupQuery(type) {
             case 'diet':
                 queryParams =` AND "diet" IN labels(n)
                 WITH DISTINCT n
-                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${JSON.stringify(CONNECTIONS)}
                 RETURN n as diet, 
                 collect({connection:coalesce(type(r),'na'),
                 to:coalesce(labels(m),'na'),
