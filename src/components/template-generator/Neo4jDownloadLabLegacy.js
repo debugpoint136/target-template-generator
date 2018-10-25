@@ -10,6 +10,7 @@ const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
+const CONNECTIONS = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet', 'bioproject' ];
 
 class Neo4jDownloadLabLegacy extends Component {
     state = {  }
@@ -83,76 +84,76 @@ function setupQuery(type) {
     let queryCore = `MATCH (l:lab)<-[*0..5]-(n) 
         WHERE l.principal_investigator=$lab`;
     
-    switch (type) {
-        case 'treatment':
-            queryParams = ` AND "treatment" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ]
-            RETURN n as treatment, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'biosample':
-            queryParams = ` AND "biosample" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'mouse', 'treatment','assay', 'file', 'diet' ]
-            RETURN n as biosample, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'mouse':
-            queryParams = ` AND "mouse" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'biosample', 'treatment','assay', 'file', 'diet' ]
-            RETURN n as mouse, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'file':
-            queryParams = ` AND "file" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'biosample', 'treatment','assay', 'mouse', 'diet' ]
-            RETURN n as file, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'assay':
-            queryParams = ` AND "assay" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'biosample', 'treatment','mouse', 'file', 'diet' ]
-            RETURN n as assay, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'litter':
-            queryParams = ` AND "litter" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'mouse', 'biosample', 'treatment','assay', 'file', 'diet' ]
-            RETURN n as litter, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
-
-        case 'diet':
-            queryParams =` AND "diet" IN labels(n)
-            WITH DISTINCT n
-            OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN [ 'litter', 'biosample', 'treatment','assay', 'file', 'mouse' ]
-            RETURN n as diet, 
-            collect({connection:coalesce(type(r),'na'),
-            to:coalesce(labels(m),'na'),
-            accession:coalesce(m.accession,'na')}) as connections`;
-            return queryCore + queryParams;
+        switch (type) {
+            case 'treatment':
+                queryParams = ` AND "treatment" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as treatment, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'biosample':
+                queryParams = ` AND "biosample" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as biosample, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'mouse':
+                queryParams = ` AND "mouse" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as mouse, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'file':
+                queryParams = ` AND "file" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as file, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'assay':
+                queryParams = ` AND "assay" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as assay, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'litter':
+                queryParams = ` AND "litter" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as litter, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
+    
+            case 'diet':
+                queryParams =` AND "diet" IN labels(n)
+                WITH DISTINCT n
+                OPTIONAL MATCH (n)-[r]->(m) WHERE labels(m) IN ${CONNECTIONS}
+                RETURN n as diet, 
+                collect({connection:coalesce(type(r),'na'),
+                to:coalesce(labels(m),'na'),
+                accession:coalesce(m.accession,'na')}) as connections`;
+                return queryCore + queryParams;
     
         default:
             break;
