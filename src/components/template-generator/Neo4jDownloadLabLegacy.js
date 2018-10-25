@@ -11,7 +11,7 @@ const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
 
-class Neo4jDownloadLab extends Component {
+class Neo4jDownloadLabLegacy extends Component {
     state = {  }
     
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -73,14 +73,15 @@ class Neo4jDownloadLab extends Component {
     }
 }
 
-export default Neo4jDownloadLab;
+export default Neo4jDownloadLabLegacy;
 
 function setupQuery(type) {
     let queryParams = '';
     // const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
     // ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
 
-    let queryCore = `MATCH (n) WHERE n.lab=$lab`;
+    let queryCore = `MATCH (l:lab)<-[*0..5]-(n) 
+        WHERE l.principal_investigator=$lab`;
     
     switch (type) {
         case 'treatment':

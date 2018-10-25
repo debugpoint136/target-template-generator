@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Label, Button} from 'semantic-ui-react';
 import Neo4jDownloadLab from './Neo4jDownloadLab';
+import Neo4jDownloadLabLegacy from './Neo4jDownloadLabLegacy';
 import {Loader, Dimmer} from 'semantic-ui-react';
 
 const LABS = [
@@ -15,17 +16,17 @@ const LABS = [
     'Ting Wang'
 ];
 
-// const PIs = {
-//     "Aylor Lab": "David Aylor",
-//     "Biswal Lab": "Shyam Biswal",
-//     "Bartolomei Lab": "Marisa Bartolomei",
-//     "Dolinoy Lab": "Dana Dolinoy",
-//     "Mutlu Lab": "Gokhan Mutlu, MD",
-//     "Walker Lab": "Cheryl Walker",
-//     "Zhibin Lab": "Zhibin Wang",
-//     "Tang Lab": "Winnie Tang",
-//     "Wang Lab": "Ting Wang"
-// };
+const PIs = {
+    "Aylor Lab": "David Aylor",
+    "Biswal Lab": "Shyam Biswal",
+    "Bartolomei Lab": "Marisa Bartolomei",
+    "Dolinoy Lab": "Dana Dolinoy",
+    "Mutlu Lab": "Gokhan Mutlu, MD",
+    "Walker Lab": "Cheryl Walker",
+    "Zhibin Lab": "Zhibin Wang",
+    "Tang Lab": "Winnie Tang",
+    "Wang Lab": "Ting Wang"
+};
 
 class MetadataForLabs extends Component {
     state = {
@@ -43,6 +44,8 @@ class MetadataForLabs extends Component {
     }
 
     render() {
+        const labStr = this.props.legacy ? PIs[this.props.lab]: this.props.lab;
+
         if (this.state.loader) {
             return (
                 <div className="h-screen">
@@ -71,7 +74,7 @@ class MetadataForLabs extends Component {
                                     icon='download'
                                     onClick={this.handleMetadataDownload}/>
                             </div>)
-}
+                            }
                         </div>
 
                         <Neo4jDownloadLab id={this.state.download} handleLoader={this.handleLoader}/>
@@ -89,12 +92,15 @@ class MetadataForLabs extends Component {
                     <Button
                         basic
                         size='tiny'
-                        name={this.props.lab}
+                        name={labStr}
                         className="mx-4"
                         icon='download'
                         onClick={this.handleMetadataDownload}/>
                 </div>
-                <Neo4jDownloadLab id={this.state.download} handleLoader={this.handleLoader}/>
+                { (this.props.legacy) ? 
+                    <Neo4jDownloadLabLegacy id={this.state.download} handleLoader={this.handleLoader}/> :
+                    <Neo4jDownloadLab id={this.state.download} handleLoader={this.handleLoader}/>
+                }
             </div>
         );
     }
