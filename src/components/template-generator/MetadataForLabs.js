@@ -15,17 +15,17 @@ const LABS = [
     'Ting Wang'
 ];
 
-const PIs = {
-    "Aylor Lab": "David Aylor",
-    "Biswal Lab": "Shyam Biswal",
-    "Bartolomei Lab": "Marisa Bartolomei",
-    "Dolinoy Lab": "Dana Dolinoy",
-    "Mutlu Lab": "Gokhan Mutlu, MD",
-    "Walker Lab": "Cheryl Walker",
-    "Zhibin Lab": "Zhibin Wang",
-    "Tang Lab": "Winnie Tang",
-    "Wang Lab": "Ting Wang"
-};
+// const PIs = {
+//     "Aylor Lab": "David Aylor",
+//     "Biswal Lab": "Shyam Biswal",
+//     "Bartolomei Lab": "Marisa Bartolomei",
+//     "Dolinoy Lab": "Dana Dolinoy",
+//     "Mutlu Lab": "Gokhan Mutlu, MD",
+//     "Walker Lab": "Cheryl Walker",
+//     "Zhibin Lab": "Zhibin Wang",
+//     "Tang Lab": "Winnie Tang",
+//     "Wang Lab": "Ting Wang"
+// };
 
 class MetadataForLabs extends Component {
     state = {
@@ -85,14 +85,11 @@ class MetadataForLabs extends Component {
             <div className="m-4 p-4 flex justify-center">
                 <div className="m-4 p-4 bg-teal-lightest flex justify-between w-1/3">
                     <Label size='tiny' color='blue' className="px-4">{this.props.lab}</Label>
-                    <span>PI name :</span>
-                    <Label color='blue' basic>
-                        {PIs[this.props.lab]}</Label>
 
                     <Button
                         basic
                         size='tiny'
-                        name={PIs[this.props.lab]}
+                        name={this.props.lab}
                         className="mx-4"
                         icon='download'
                         onClick={this.handleMetadataDownload}/>

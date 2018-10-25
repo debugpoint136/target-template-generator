@@ -38,7 +38,7 @@ class Neo4jDownloadLab extends Component {
         const params = {
             lab: id
         };
-        console.log(setupQuery('diet'))
+        // console.log(setupQuery('file'))
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
                                         statements: [
                                             {
@@ -50,7 +50,7 @@ class Neo4jDownloadLab extends Component {
         axios.all(fetchPromises)
             .then((res) => {
                 const results = formatResultsForState(res);
-                console.log(results);
+                // console.log(results);
                 excelSimpleDownload(this.props.id, results, this.props.handleLoader);
                 
             })
@@ -80,8 +80,7 @@ function setupQuery(type) {
     // const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
     // ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
 
-    const queryCore = `MATCH (l:lab)<-[*0..5]-(n) 
-    WHERE l.principal_investigator=$lab`
+    const queryCore = `MATCH (n) WHERE n.lab=$lab` 
     
     switch (type) {
         case 'treatment':
