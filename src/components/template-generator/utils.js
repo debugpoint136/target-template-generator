@@ -472,23 +472,33 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const query = `WITH {json} as data
     UNWIND data.${ITEM} as row
     MERGE (${ITEM}:${ITEM} {accession: row.accession})
-    SET 
+    ON CREATE SET ${ITEM}.accession = row.accession, ${ITEM}.user = "${USER}", ${ITEM}.created = ${Date.now()}, ${ITEM}.lab = "${LAB}",
         `;
-    const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
-    
+    const queryFieldsArrayFields = FIELDS.map(field => { 
+        if (field.name === 'accession' || field.name === undefined || field.name === 'user' || field.name === 'created') {
+            return null;
+        } else {
+            return `${ITEM}.${field.name} = row.${field.name}`;
+        }
+    });
+
+    const queryFieldsArray = queryFieldsArrayFields.filter(d => d);
+    const queryFieldsCreate = queryFieldsArray.join(',\n\t\t');
+
     // Add user name
     let tmpUser = `${ITEM}.last_updated_by = "${USER}"`;
     queryFieldsArray.push(tmpUser)
-    // Add Lab name
-    let tmpLab = `${ITEM}.lab = "${LAB}"`;
-    queryFieldsArray.push(tmpLab)
+
     // Add date
     let tmpDate = `${ITEM}.last_updated = ${Date.now()}`;
     queryFieldsArray.push(tmpDate)
 
-    const queryFields = queryFieldsArray.join(',\n\t\t');
-    const final = query + queryFields;
+    const queryFieldsMatch = queryFieldsArray.join(',\n\t\t');
 
+    const final = query + queryFieldsCreate + `
+    ON MATCH SET
+    ` + queryFieldsMatch;
+    console.log(final);
     return final;
 }
 /*
