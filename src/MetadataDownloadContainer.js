@@ -41,23 +41,15 @@ class MetadataDownloadContainer extends Component {
                         positive={active === 'lab'}
                         name='lab'
                         active={active === 'lab'}
-                        onClick={this.handleClick}>By Lab - 5.0.0</Button>
-                    } content='Download all metadata registered by members of lab, updated to 5.0.0' />
-                    <Button.Or/>
-                    <Button
-                        positive={active === 'legacy'}
-                        name='legacy'
-                        active={active === 'legacy'}
-                        onClick={this.handleClick}>By Lab - 4.0.1</Button>
-                    } content='Download all metadata registered by members of lab (old metadata 4.0.1)' />
+                        onClick={this.handleClick}>By Lab</Button>
+                    } content='Download all metadata registered by members of lab' />
                 </Button.Group> : null }
 
                 {(active === 'submission')
                     ? <MetadataForSubmissions lab={this.state.lab}/>
                     : (active === 'lab')
-                        ? <MetadataForLabs lab={this.state.lab} legacy={false}/> : 
-                        (active === 'legacy') ? <MetadataForLabs lab={this.state.lab} legacy={true}/>
-                        : <p className='text-grey font-hairline mt-8'>Please select an option</p>}
+                        ? <MetadataForLabs lab={this.state.lab} /> : 
+                        <p className='text-grey font-hairline mt-8'>Please select an option</p>}
 
             </div>
         )

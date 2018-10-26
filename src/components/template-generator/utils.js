@@ -477,7 +477,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const queryFieldsArray = FIELDS.map(field => `${ITEM}.${field.name} = row.${field.name}`);
     
     // Add user name
-    let tmpUser = `${ITEM}.user = "${USER}"`;
+    let tmpUser = `${ITEM}.last_updated_by = "${USER}"`;
     queryFieldsArray.push(tmpUser)
     // Add Lab name
     let tmpLab = `${ITEM}.lab = "${LAB}"`;
@@ -491,7 +491,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
 
     return final;
 }
-
+/*
 function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
 
     let toReturn = `
@@ -504,18 +504,33 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
         const connectionTo = connection.to;
         let body = `
         MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        WITH row, ${ITEM}, 
-        CASE  
-            WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
+        WITH COLLECT(${ITEM}) AS items, row
+            UNWIND items as m  
+                OPTIONAL MATCH (m)-[r:${connectionName}]-(:${connectionTo}) 
+                DELETE r
+        WITH row, m,
+        CASE WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
         END as array1
             FOREACH (el1 in array1 | 
                 MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-                MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
-                )
-                
+                MERGE (m)-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
+                ) 
         `;
-        /**
-         *  WITH row, ${ITEM},
+        // let body = `
+        // MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        // WITH row, ${ITEM}, 
+        // CASE  
+        //     WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
+        // END as array1
+        //     FOREACH (el1 in array1 | 
+        //         MERGE (${ITEM})-[r:${connectionName}]-(:${connectionTo})
+        //         DELETE r
+        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        //         MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
+        //         )
+                
+        // `;
+        WITH row, ${ITEM},
         MATCH (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
         RETURN
         ${ITEM}, ${ITEM}_${connectionName}_${connectionTo},
@@ -523,7 +538,7 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
             WHEN NULL THEN "other thing"
             ELSE MERGE (${ITEM})-[${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
         END
-         */
+        
         // let body =`
         // WITH row, CASE  WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] END as array1
         // FOREACH (el1 in array1 | 
@@ -543,8 +558,87 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
         }
         return body;
     })
-// WITH ${ITEM}, row
     console.log(toReturn + queryConnectionsArray.join(''));
 
     return toReturn + queryConnectionsArray.join('');
+}
+*/
+function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
+
+    let header = `
+        WITH {json} as data
+        UNWIND data.${ITEM} as row
+        
+        `;
+    const removeQueries = removeExistingConnections(CONNECTIONS, ITEM);
+    const addQueries = addNewConnections(CONNECTIONS, ITEM);
+
+    const allQueries = removeQueries.concat(addQueries);
+    const toReturn =  header + allQueries.join('');
+    console.log(toReturn);
+    return toReturn;
+}
+
+function removeExistingConnections(CONNECTIONS, ITEM) {
+
+    // let toReturn = `
+    //     WITH {json} as data
+    //     UNWIND data.${ITEM} as row
+        
+    //     `;
+    const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
+        const connectionName = connection.name;
+        const connectionTo = connection.to;
+        let body = `
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})-[r:${connectionName}]-(:${connectionTo}) 
+        DELETE r
+        WITH ${ITEM}, row
+        `;
+
+        // if (index < CONNECTIONS.length -1) {
+        //     body = body + `
+        //     WITH row
+        //     `;
+        // }
+        return body;
+    })
+
+    return queryConnectionsArray;
+}
+
+
+function addNewConnections(CONNECTIONS, ITEM) {
+
+    
+    const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
+        const connectionName = connection.name;
+        const connectionTo = connection.to;
+        // let body = `
+        // MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        // WITH row, ${ITEM},
+        // CASE WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
+        // END as array1
+        //     FOREACH (el1 in array1 | 
+        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        //         MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
+        //         ) 
+        // `;
+        let body = ` 
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        WITH ${ITEM}, row
+        MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        WITH ${ITEM}_${connectionName}_${connectionTo}, ${ITEM}, row
+        CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
+        
+        `;
+
+        if (index < CONNECTIONS.length -1) {
+            body = body + `
+            WITH row
+            `;
+        }
+        return body;
+    })
+
+    return queryConnectionsArray;
 }

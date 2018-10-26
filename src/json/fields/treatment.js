@@ -16,7 +16,7 @@ var fields = [{
   name: 'exposure_specific',
   text: 'Exposure',
   placeholder: 'Include Chemical Entities of Biological Interest (ChEBI) ID or another exposure database (e.g., Environmental Ontology)',
-  values: ['BPA (Bisphenol A) CHEBI:33216', 'TBT (Tributyltin chloride) CHEBI:79734', 'As (arsenite(3-)) CHEBI:29866', 'Pb CHEBI:33112', 'PM2.5 ENVO:01000415', 'DEHP (bis (2-ethylhexyl) phthalate) CHEBI:17747', 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dixoin) CHEBI:28119', 'Filtered Air', 'Control Drinking Water CHEBI:15377', 'Control Diet'],
+  values: ['BPA (Bisphenol A) CHEBI:33216', 'TBT (Tributyltin chloride) CHEBI:79734', 'As (arsenite(3-)) CHEBI:29866', 'Pb CHEBI:33112', 'PM2.5 ENVO:01000415', 'DEHP (bis (2-ethylhexyl) phthalate) CHEBI:17747', 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dixoin) CHEBI:28119', 'Filtered Air', 'Control Drinking Water CHEBI:15377', 'Control Diet','Control Oral Gavage'],
   type: 'text',
   required: true,
   values_restricted: true,

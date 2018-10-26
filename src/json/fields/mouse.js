@@ -26,7 +26,7 @@ var fields = [{
     placeholder: 'Strain information, including parental background if the product of cross. Not just “C57BL/6”.',
     required: true,
     type: 'text',
-    values: ['Avy'],
+    values: ['Avy','C57BL/6J'],
     values_restricted: true
 }, {
     name: 'sex',

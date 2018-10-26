@@ -10,7 +10,7 @@ const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 // const simple_DATA = require('./simple_upload.json');
 // const UPLOAD_DATA = require('./testupload.json');
 class Neo4jUpload extends Component {
-    state = { error: null, loader: false }
+    state = { error: null, loader: false, errorState: false}
 
     handleUpload = () => {
         this.setState({ loader: true })
@@ -65,8 +65,7 @@ class Neo4jUpload extends Component {
                 
             })
             .catch(err => {
-                notify.show('Transmission errored out 👨🏼‍🚀', 'error');
-                this.setState({ loader: false, error: err })
+                this.setState({ loader: false, error: err, errorState: true })
             });
         
     }
@@ -76,6 +75,9 @@ class Neo4jUpload extends Component {
     }
 
     render() {
+        if (this.state.errorState) {
+            return <p className='m-4 p-4 bg-yellow-dark border-red'>Transmission errored out! Please contact admin</p>
+        }
         return ( 
             <div className="m-4 p-4">
             { (this.state.loader) ? 
