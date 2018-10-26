@@ -23,6 +23,7 @@ const ALL_SCHEMA = {};
 const ALL_CONNECTIONS = {};
 
 const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
+const RELATIONSHIP_SHEETNAMES = [ 'bioproject', 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
 const ALL_VALUES = SHEETNAMES.map(name => getValues(name));
 
@@ -501,21 +502,14 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
         `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
-        const connectionTo = connection.to;
-        // If connectionName comes from a complete relationship list:
-        // foreach connectionName:
-        //      if row.${connectionName} is null and existingConnectionTo is null: do nothing;
-        //      if row.${connectionName} is not null AND row.${connectionName} = existingConnectionTo: do nothing;
-        //      if row.${connectionName} is not null AND existingConnectionTo is null: create new connection;
-        //      if row.${connectionName} is not null AND existingConnectionTo is not null: delete connection and create new connection;
-        //      if row.${connectionName} is null and existingConnectionTo is not null: delete connection
-        //      
+        const connectionTo = connection.to;     
         let body = `
-        MATCH (${ITEM}:${ITEM} {accession: row.accession}) OPTIONAL MATCH (${ITEM})-[r]->(m)
-        WITH row, ${ITEM}, type(r) AS relationship, m.accession as existingConnectionTo
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})
+        OPTIONAL MATCH (${ITEM})-[r]->(m) WHERE labels(m) IN ${RELATIONSHIP_SHEETNAMES}
+        DELETE r
+        WITH row, ${ITEM}
         CASE  
-            WHEN relationship = ${connectionName} AND exists(row.${connectionName}) THEN ['ok'] 
-            ELSE [] 
+            WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
         END as array1
             FOREACH (el1 in array1 | 
                 MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
