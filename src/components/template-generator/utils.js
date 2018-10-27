@@ -437,7 +437,7 @@ export function swapDisplayNamesToKeys(sheetName, dataObj) {
 export function createNeo4jUploadQuery(DATA, USER, LAB) {
     const keysToIterate = Object.keys(DATA);
 
-    keysToIterate.forEach(key => console.log(`${key} == ${DATA[key].length}`));
+    // keysToIterate.forEach(key => console.log(`${key} == ${DATA[key].length}`));
 
     if (! keysToIterate.length > 0) {
         return null;
@@ -451,16 +451,29 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         return { sheetname: key, query: templateQueryFields };
     })
 
-    const allConnections = keysToIterate.map(key => {
+    const allConnectionsAdd = keysToIterate.map(key => {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
-            const templateQueryConnections = makeQueryTemplateConnections(connections, key);
+            const templateQueryConnections = makeQueryTemplateConnectionsAdd(connections, key);
             return { sheetname: key, query: templateQueryConnections };
         } else {
             return null;
         }
         
     })
+    
+    const allConnectionsRemove = keysToIterate.map(key => {
+        const connections = CONNECTION_OPTIONS[key];
+        if (connections.length > 0) {
+            const templateQueryConnections = makeQueryTemplateConnectionsRemove(connections, key);
+            return { sheetname: key, query: templateQueryConnections };
+        } else {
+            return null;
+        }
+        
+    })
+
+    const allConnections = allConnectionsRemove.concat(allConnectionsAdd);
     
     const allQuery = allFields.concat(allConnections.filter(d => d));
     // const allQuery = allConnections;
@@ -498,7 +511,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const final = query + queryFieldsCreate + `
     ON MATCH SET
     ` + queryFieldsMatch;
-    console.log(final);
+    // console.log(final);
     return final;
 }
 /*
@@ -573,7 +586,22 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
     return toReturn + queryConnectionsArray.join('');
 }
 */
-function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
+function makeQueryTemplateConnectionsAdd(CONNECTIONS, ITEM) {
+
+    let header = `
+        WITH {json} as data
+        UNWIND data.${ITEM} as row
+        
+        `;
+    const addQueries = addNewConnections(CONNECTIONS, ITEM);
+    const add =  header + addQueries.join('');
+
+    const toReturn = add;
+    console.log(toReturn);
+    return toReturn;
+}
+
+function makeQueryTemplateConnectionsRemove(CONNECTIONS, ITEM) {
 
     let header = `
         WITH {json} as data
@@ -581,11 +609,9 @@ function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
         
         `;
     const removeQueries = removeExistingConnections(CONNECTIONS, ITEM);
-    const addQueries = addNewConnections(CONNECTIONS, ITEM);
+    const remove =  header + removeQueries.join('');
 
-    const allQueries = removeQueries.concat(addQueries);
-    const toReturn =  header + allQueries.join('');
-    console.log(toReturn);
+    const toReturn = remove;
     return toReturn;
 }
 
@@ -596,21 +622,23 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
     //     UNWIND data.${ITEM} as row
         
     //     `;
+    const header = `
+    MATCH (${ITEM}:${ITEM} {accession: row.accession})
+    `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
         let body = `
-        MATCH (${ITEM}:${ITEM} {accession: row.accession})-[r:${connectionName}]-(:${connectionTo}) 
+        MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo}) 
         DELETE r
-        WITH ${ITEM}, row
         `;
 
-        // if (index < CONNECTIONS.length -1) {
-        //     body = body + `
-        //     WITH row
-        //     `;
-        // }
-        return body;
+        if (index < CONNECTIONS.length -1) {
+            body = body + `
+            WITH ${ITEM}, row
+            `;
+        }
+        return header + body;
     })
 
     return queryConnectionsArray;
@@ -619,7 +647,9 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
 
 function addNewConnections(CONNECTIONS, ITEM) {
 
-    
+    const header = `
+    MATCH (${ITEM}:${ITEM} {accession: row.accession})
+    `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
@@ -634,20 +664,16 @@ function addNewConnections(CONNECTIONS, ITEM) {
         //         ) 
         // `;
         let body = ` 
-        MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        WITH ${ITEM}, row
         MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        WITH ${ITEM}_${connectionName}_${connectionTo}, ${ITEM}, row
         CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
-        
         `;
 
         if (index < CONNECTIONS.length -1) {
             body = body + `
-            WITH row
+            WITH row , ${ITEM}
             `;
         }
-        return body;
+        return  header + body;
     })
 
     return queryConnectionsArray;
