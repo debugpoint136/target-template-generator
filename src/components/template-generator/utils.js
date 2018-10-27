@@ -472,12 +472,11 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         }
         
     })
-
     const allConnections = allConnectionsRemove.concat(allConnectionsAdd);
     
     const allQuery = allFields.concat(allConnections.filter(d => d));
     // const allQuery = allConnections;
-    // console.log(allQuery);
+    console.log(allQuery);
     return allQuery;
 }
 
@@ -591,7 +590,7 @@ function makeQueryTemplateConnectionsAdd(CONNECTIONS, ITEM) {
     let header = `
         WITH {json} as data
         UNWIND data.${ITEM} as row
-        
+        MATCH (${ITEM}:${ITEM} {accession: row.accession})
         `;
     const addQueries = addNewConnections(CONNECTIONS, ITEM);
     const add =  header + addQueries.join('');
@@ -647,9 +646,9 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
 
 function addNewConnections(CONNECTIONS, ITEM) {
 
-    const header = `
-    MATCH (${ITEM}:${ITEM} {accession: row.accession})
-    `;
+    // const header = `
+    // MATCH (${ITEM}:${ITEM} {accession: row.accession})
+    // `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
@@ -664,16 +663,19 @@ function addNewConnections(CONNECTIONS, ITEM) {
         //         ) 
         // `;
         let body = ` 
-        MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        OPTIONAL MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
+        WITH ${ITEM}_${connectionName}_${connectionTo}, row, ${ITEM}
+        FOREACH(x IN (CASE WHEN ${ITEM}_${connectionName}_${connectionTo} IS NULL THEN [] else [1] END) |
         CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
+        )
         `;
 
         if (index < CONNECTIONS.length -1) {
             body = body + `
-            WITH row , ${ITEM}
+            WITH row, ${ITEM} 
             `;
         }
-        return  header + body;
+        return  body;
     })
 
     return queryConnectionsArray;

@@ -33,6 +33,7 @@
     "build": "npm run build:css && react-scripts build",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy",
-    "deployaws": "aws s3 sync build s3://target-submission-production"
+    "deployawsprod": "aws s3 sync build s3://target-submission-production",
+    "deployawstest": "aws s3 sync build s3://target-submission-test"
   }
 }
