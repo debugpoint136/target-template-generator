@@ -278,8 +278,8 @@ export function fillRows(WORKBOOK, DATATOFILL, TYPE) { // TYPE = 'template' or '
                     }
                 });
         });
+        worksheet.views = [{'state': 'frozen', xSplit: 1 }];
     });
-
     return WORKBOOK;
 }
 
@@ -597,7 +597,7 @@ function makeQueryTemplateConnectionsAdd(CONNECTIONS, ITEM) {
     const add =  header + addQueries.join('');
 
     const toReturn = add;
-    console.log(toReturn);
+    // console.log(toReturn);
     return toReturn;
 }
 

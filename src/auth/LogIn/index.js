@@ -14,7 +14,6 @@ class LogInContainer extends Component {
     try {
       const res = await app.auth().signInWithEmailAndPassword(email.value, password.value);
       if (!res.user.emailVerified) {
-          console.log(res.user);
           res.user.sendEmailVerification()
       }
       this.props.history.push("/");

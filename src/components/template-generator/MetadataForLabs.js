@@ -4,17 +4,17 @@ import Neo4jDownloadLab from './Neo4jDownloadLab';
 // import Neo4jDownloadLabLegacy from './Neo4jDownloadLabLegacy';
 import {Loader, Dimmer} from 'semantic-ui-react';
 
-const LABS = [
-    'David Aylor',
-    'Shyam Biswal',
-    'Marisa Bartolomei',
-    'Dana Dolinoy',
-    'Gokhan Mutlu, MD',
-    'Cheryl Walker',
-    'Zhibin Wang',
-    'Winnie Tang',
-    'Ting Wang'
-];
+// const LABS = [
+//     'David Aylor',
+//     'Shyam Biswal',
+//     'Marisa Bartolomei',
+//     'Dana Dolinoy',
+//     'Gokhan Mutlu, MD',
+//     'Cheryl Walker',
+//     'Zhibin Wang',
+//     'Winnie Tang',
+//     'Ting Wang'
+// ];
 
 // const PIs = {
 //     "Aylor Lab": "David Aylor",
@@ -27,6 +27,16 @@ const LABS = [
 //     "Tang Lab": "Winnie Tang",
 //     "Wang Lab": "Ting Wang"
 // };
+const LABS = [
+    'Aylor Lab',
+    'Biswal Lab',
+    'Bartolomei Lab',
+    'Dolinoy Lab',
+    'Mutlu Lab',
+    'Walker Lab',
+    'Zhibin Lab',
+    'Wang Lab'
+];
 
 class MetadataForLabs extends Component {
     state = {

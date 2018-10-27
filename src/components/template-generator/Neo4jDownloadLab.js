@@ -39,7 +39,7 @@ class Neo4jDownloadLab extends Component {
         const params = {
             lab: id
         };
-        console.log(setupQuery('file'))
+        // console.log(setupQuery('file'))
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
                                         statements: [
                                             {
@@ -51,7 +51,7 @@ class Neo4jDownloadLab extends Component {
         axios.all(fetchPromises)
             .then((res) => {
                 const results = formatResultsForState(res);
-                console.log(results);
+                // console.log(results);
                 excelSimpleDownload(this.props.id, results, this.props.handleLoader);
                 
             })
@@ -172,34 +172,21 @@ function formatResultsForState(resArray) {
             if (data.length > 0) {
                 const sheetName = columns[0];
                 tmp['sheet'] = sheetName;
-                tmp['rows'] = data.map(d => d.row[0]).filter(d => d);
-                if (columns.length > 1) { // there are relationships too
-                    if (columns[1] === 'connections') {
-                        // Download for entire Lab
-                        //[
-                        // {connection: "derived_from", to: ["mouse"], accession: "TRGTMSE000442"}
-                        // {connection: "fed", to: ["diet"], accession: "TRGTDIET00011"}
-                        // ]
-                        data.forEach(d => {
-                            const connections = d.row[1];
-                            tmp['rows'] = tmp['rows'].map((row, i) => {
-                                connections.forEach(elem => {
-                                    const { connection, accession } = elem;
-                                    row[connection] = accession;
-                                })  
-                                return row;                          
-                            });
-                        })
-                    } else {
-                        for (let index = 1; index < columns.length; index++) {
-                            const columnName = columns[index];
-                            tmp['rows'] = tmp['rows'].map((row, i) => {
-                                row[columnName] = data[i].row[index];
-                                return row;
-                            });
-                        }
-                    }
-                }
+
+                tmp['rows'] = data.map(datum => {
+                    const rowValues = datum.row[0];
+                    const connections = datum.row[1];
+
+                    connections.forEach(entry => {
+                        const { connection, accession } = entry;
+                        if (connection !== 'na') {
+                            rowValues[connection] = accession;
+                            
+                        } 
+                    });
+
+                    return rowValues;
+                });
 
                 return tmp;
             } else {

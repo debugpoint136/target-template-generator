@@ -7,7 +7,6 @@ const LABS = [
   'Mutlu Lab',
   'Walker Lab',
   'Zhibin Lab',
-  'Tang Lab',
   'Wang Lab'
 ];
 const SignUpView = ({onSubmit, onGoHome}) => {

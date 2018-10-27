@@ -164,51 +164,42 @@ function setupQuery(type) {
 //         'WHERE l.principal_investigator = $lab RETURN DISTINCT a as assay'
 
 function formatResultsForState(resArray) {
-    console.log(resArray);
     const formattedResult = resArray.map(res => {
         const entry = res.data.results;
         if (entry.length > 0) {
             const { columns, data } = entry[0];
             let tmp = {};
             if (data.length > 0) {
+            
                 const sheetName = columns[0];
                 tmp['sheet'] = sheetName;
-                tmp['rows'] = data.map(d => d.row[0]).filter(d => d);
-                if (columns.length > 1) { // there are relationships too
-                    if (columns[1] === 'connections') {
-                        // Download for entire Lab
-                        //[
-                        // {connection: "derived_from", to: ["mouse"], accession: "TRGTMSE000442"}
-                        // {connection: "fed", to: ["diet"], accession: "TRGTDIET00011"}
-                        // ]
-                        data.forEach(d => {
-                            const connections = d.row[1];
-                            tmp['rows'] = tmp['rows'].map((row, i) => {
-                                connections.forEach(elem => {
-                                    const { connection, accession } = elem;
-                                    row[connection] = accession;
-                                })  
-                                return row;                          
-                            });
-                        })
-                    } else {
-                        for (let index = 1; index < columns.length; index++) {
-                            const columnName = columns[index];
-                            tmp['rows'] = tmp['rows'].map((row, i) => {
-                                row[columnName] = data[i].row[index];
-                                return row;
-                            });
-                        }
-                    }
+                /*
+                data.map(d => d.row[0]) // row values   {challenge_life_age_beginning: "NA", comments: "NA", exposure_age_last: "PND21", exposure_specific: "7% corn oil chow diet with control water", created: 1505325536252, …}
+                data.map(d => d.row[1]) // connections  {connection: "na", to: "na", accession: "na"}   
+                */
+
+                tmp['rows'] = data.map(datum => {
+                    const rowValues = datum.row[0];
+                    const connections = datum.row[1];
+
+                    connections.forEach(entry => {
+                        const { connection, accession } = entry;
+                        if (connection !== 'na') {
+                            rowValues[connection] = accession;
+                            
+                        } 
+                    });
+
+                    return rowValues;
+                })
+                } else {
+                    return null;
                 }
 
                 return tmp;
             } else {
                 return null;
             }
-        } else {
-            return null;
-        }
     });
     const noNullResults = formattedResult.filter(d => d);
 
