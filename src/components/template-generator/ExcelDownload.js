@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Icon} from 'semantic-ui-react';
 import Neo4jUpload from './Neo4jUpload';
+import ValidateUpload from './ValidateUpload';
 import fire from '../../fire';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, restructureSheetFillouts, fillRows } from './utils';
@@ -8,7 +9,11 @@ const Excel = require('exceljs/dist/es5/exceljs.browser');
 
 class ExcelDownload extends Component {
     state = {
-        data: {}, user: null, lab: null
+        data: {}, user: null, lab: null, validationError: 0
+    }
+
+    handleValidationStatus = (errorCount) => {
+        this.setState({ validationError: errorCount })
     }
 
     handleClick = (e, {name}) => {
@@ -53,6 +58,9 @@ class ExcelDownload extends Component {
                     
                 </div>
                 { (Object.keys(this.state.data).length > 0) ?  
+                    <ValidateUpload id={this.props.id} data={this.state.data} user={this.state.user} lab={this.state.lab} handleValidationStatus={this.handleValidationStatus} /> : null }
+                
+                { (Object.keys(this.state.data).length > 0 && this.state.validationError === 0) ?  
                     <Neo4jUpload data={this.state.data} user={this.state.user} lab={this.state.lab} /> : null }
                 
             </div>

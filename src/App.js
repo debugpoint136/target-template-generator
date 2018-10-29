@@ -49,8 +49,8 @@ class App extends Component {
 
                             
                 <p className="text-center text-grey text-xs">
-                    {/* ©2018 TaRGET DCC @ Wash U St. Louis -- TEST INSTANCE ONLY-- */}
-                    ©2018 TaRGET DCC @ Wash U St. Louis -- PRODUCTION INSTANCE --
+                    ©2018 TaRGET DCC @ Wash U St. Louis -- TEST INSTANCE ONLY--
+                    {/* ©2018 TaRGET DCC @ Wash U St. Louis -- PRODUCTION INSTANCE -- */}
                 </p>
             </div>
         );

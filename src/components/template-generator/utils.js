@@ -680,3 +680,61 @@ function addNewConnections(CONNECTIONS, ITEM) {
 
     return queryConnectionsArray;
 }
+
+export function validateUpload(obj) {
+    const { data, 
+        // lab, user 
+    } = obj;
+    let result = {};
+    let errorCount = 0;
+
+
+    Object.keys(data).forEach(sheetname => {
+        result[sheetname] = [];
+        const rows = data[sheetname];
+        const schema = ALL_SCHEMA[sheetname];
+
+        rows.forEach(row => {
+            Object.keys(row).forEach(key => {
+                const value = row[key];
+                if (schema.filter(d => d.name === key).length > 0) {
+                    const field = schema.filter(d => d.name === key)[0];
+                    if (field.values) {
+                        if (field.values.filter(val => val === value).length === 0) {
+                            result[sheetname].push(`${row.accession} : ${field.text} can only have values from list: ${JSON.stringify(field.values)}`);
+                            errorCount++;
+                        } 
+                    }
+                }
+            })
+        })
+    })
+
+    return { result: result, error: errorCount };
+}
+
+/*
+accession: "TGTFIPGK2PE2"
+barcode: "AGTTAGC"
+date_sequenced: 43373
+description: "raw reads"
+filename: "Blood-3wks-m17.PE.R2.fastq.gz"
+format: "fastq"
+instrument: "HiSeq 4000"
+md5sum: "f3954f3bf21702d2933c34b2805621ee"
+pair: "reverse"
+paired_file: "TGTFIA51S36V"
+pcr_cycles: 15
+pilot: "production"
+platform: "Illumina"
+read_length: 150
+run_number: 367
+run_type: "paired-end"
+sequenced: "TGTASE654W94"
+sequenced_by: "BP"
+sequencing_lane: 4
+spike_ins: "FALSE"
+submission_id: "49ec1f20-ea62-4933-adbd-2dec997c6c2e"
+undefined: "TGTFIPGK2PE2"
+user_accession: "USRFF0304"
+*/
