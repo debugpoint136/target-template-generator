@@ -13,6 +13,7 @@ export default class SheetJSApp extends Component {
             user: null, // logged in user
             lab: null, // logged in user's Lab
             /* Array of Arrays e.g. [["a","b"],[1,2]] */
+            uid: null,
             cols: []/* Array of column objects e.g. { name: "C", K: 2 } */
         };
         this.handleFile = this.handleFile.bind(this);
@@ -23,9 +24,9 @@ export default class SheetJSApp extends Component {
         app.auth()
             .onAuthStateChanged(user => {
                 if (user) {
-                    this.setState({user: user.displayName, lab: user.photoURL });
+                    this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
                 } else {
-                    this.setState({user: null});
+                    this.setState({user: null, lab: null, uid: null });
                 }
             });
     }
@@ -64,7 +65,7 @@ export default class SheetJSApp extends Component {
                 notify.show('Not a valid sheet ⚠️', 'error');
             } else {
                 /* Update Firebase */
-                const newPostRef = fire.database().ref('uploads').push(readDataAllSheets);
+                const newPostRef = fire.database().ref(`uploads/${this.state.uid}`).push(readDataAllSheets);
                 const postId = newPostRef.key;
                 
                 /* Update state */

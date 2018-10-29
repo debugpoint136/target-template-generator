@@ -5,19 +5,36 @@ import ValidateUpload from './ValidateUpload';
 import fire from '../../fire';
 import {saveAs} from 'file-saver';
 import { makeAllWorkSheets, restructureSheetFillouts, fillRows } from './utils';
+import app from "../../fire";
+
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 
 class ExcelDownload extends Component {
     state = {
-        data: {}, user: null, lab: null, validationError: 0
-    }
+        data: {}, user: null, lab: null, validationError: 0, uid: null
+    }    
+    
+    componentWillMount() {
+        app.auth()
+            .onAuthStateChanged(user => {
+                if (user) {
+                    this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
+                } else {
+                    this.setState({user: null, lab: null, uid: null });
+                }
+            });
+    };
+
+
+    
 
     handleValidationStatus = (errorCount) => {
         this.setState({ validationError: errorCount })
     }
 
     handleClick = (e, {name}) => {
-        fire.database().ref(`uploads/${name}`).once('value', downloadedObj => {
+        fire.database().ref(`uploads/${this.state.uid}/${name}`).once('value', downloadedObj => {
+            console.log(downloadedObj);
             const FIREBASE_DATA_STR = JSON.stringify(downloadedObj);
             const FIREBASE_DATA = JSON.parse(FIREBASE_DATA_STR).data;
             const FIREBASE_USER = JSON.parse(FIREBASE_DATA_STR).user;
