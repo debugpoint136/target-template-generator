@@ -34,15 +34,25 @@ class ValidateUpload extends Component {
 export default ValidateUpload;
 
 function createDownloadManifest(obj) {
+    console.log(obj);
     let rows = [];
 
-    Object.keys(obj).forEach(item => {
-        if (obj[item].length > 0) {
-            rows.push(`======================`);
-            rows.push(`        ${item}       `)
-            rows.push(`======================`);
-            obj[item].forEach(row => rows.push(`${row}`))
-            rows.push(`----------------------`);
+    Object.keys(obj).forEach(sheet => {
+        if (obj[sheet]) {
+            rows.push(`
+======================`);
+            rows.push(`        ${sheet.toUpperCase()}       `)
+            rows.push(`======================
+            `);
+            Object.keys(obj[sheet]).forEach(accession => {
+                rows.push(`----------------------`);
+                rows.push(`        ${accession}       `)
+                
+                    obj[sheet][accession].forEach((line, index) => {
+                            rows.push(`        ${index + 1}. ${line}       `)
+                    })
+                rows.push(``);
+            })
         }
     })
     

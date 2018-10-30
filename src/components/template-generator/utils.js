@@ -690,21 +690,84 @@ export function validateUpload(obj) {
 
 
     Object.keys(data).forEach(sheetname => {
-        result[sheetname] = [];
+        result[sheetname] = {};
         const rows = data[sheetname];
         const schema = ALL_SCHEMA[sheetname];
+        // rows.forEach(row => {
+        //     Object.keys(row).forEach(key => {
+        //         const value = row[key];
+        //         if (schema.filter(d => d.name === key).length > 0) {
+        //             const field = schema.filter(d => d.name === key)[0];
+        //             if (field.values) {
+        //                 if (field.values.filter(val => val === value).length === 0) {
+        //                     result[sheetname].push(`${row.accession} : ${field.text} can only have values from list: ${JSON.stringify(field.values)}`);
+        //                     errorCount++;
+        //                 } 
+        //             }
+        //         } 
+        //     })
+        // })
 
+/* one row in rows -
+accession: "TRGTMSE0004"
+animal_weight_sac: 23.94
+born_to: "TRGTLTR0002"
+comments: "Weight at weaning (g): 8.9"
+fasted: "Yes"
+fasted_hours: 6
+fed: "TRGTDIET0002"
+internal_id: "T101c"
+life_stage_collection: "adult (15 to 30 weeks)"
+liver_tumors: "TRUE"
+mouse_age_collection: "21.7 weeks"
+organism: "Mus musculus"
+part_of: "TRGTBPR0004"
+*/
         rows.forEach(row => {
-            Object.keys(row).forEach(key => {
-                const value = row[key];
-                if (schema.filter(d => d.name === key).length > 0) {
-                    const field = schema.filter(d => d.name === key)[0];
-                    if (field.values) {
-                        if (field.values.filter(val => val === value).length === 0) {
-                            result[sheetname].push(`${row.accession} : ${field.text} can only have values from list: ${JSON.stringify(field.values)}`);
-                            errorCount++;
-                        } 
+            schema.forEach(field => {
+                if (field.required) {
+                    if (Object.keys(row).filter(d => d === field.name).length > 0) {
+                        // exists
+                        if (field.values) {
+                            if (field.values.filter(val => val === row[field.name]).length === 0) {
+                                
+                                if (Array.isArray(result[sheetname][row.accession])) {
+                                    result[sheetname][row.accession].push(` ${field.text} : can only have values from list: ---> ${JSON.stringify(field.values)} <--`);
+                                } else {
+                                    result[sheetname][row.accession] = [` ${field.text} : can only have values from list: --> ${JSON.stringify(field.values)} <--`];
+                                }
+                                errorCount++;
+                            } 
+                        }
+                    } else {
+                        // why is a required field missing?
+                        if (Array.isArray(result[sheetname][row.accession])) {
+                            result[sheetname][row.accession].push(` ${field.text} : is a required field`);
+                        } else {
+                            result[sheetname][row.accession] = [` ${field.text} : is a required field`];
+                        }
+                        errorCount++;
                     }
+                }
+
+                if (field.type === 'float') {
+                    if (isNaN(Number.parseFloat(row[field.name]))) {
+                        if (Array.isArray(result[sheetname][row.accession])) {
+                            result[sheetname][row.accession].push(` ${field.text} : should be of data type: Float`);
+                        } else {
+                            result[sheetname][row.accession] = [` ${field.text} : should be of data type: Float`];
+                        }
+                    } 
+                }
+
+                if (field.type === 'integer') {
+                    if (isNaN(Number.parseInt(row[field.name], 10))) {
+                        if (Array.isArray(result[sheetname][row.accession])) {
+                            result[sheetname][row.accession].push(` ${field.text} : should be of data type: Integer`);
+                        } else {
+                            result[sheetname][row.accession] = [` ${field.text} : should be of data type: Integer`];
+                        }
+                    } 
                 }
             })
         })

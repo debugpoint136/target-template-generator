@@ -34,7 +34,6 @@ class ExcelDownload extends Component {
 
     handleClick = (e, {name}) => {
         fire.database().ref(`uploads/${this.state.uid}/${name}`).once('value', downloadedObj => {
-            console.log(downloadedObj);
             const FIREBASE_DATA_STR = JSON.stringify(downloadedObj);
             const FIREBASE_DATA = JSON.parse(FIREBASE_DATA_STR).data;
             const FIREBASE_USER = JSON.parse(FIREBASE_DATA_STR).user;
