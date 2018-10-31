@@ -127,7 +127,7 @@ var fields = [{
     name: 'insert_size',
     text: 'Library insert size (nt)',
     placeholder: 'Average size of sequencing library insert. Determined by size selection at library creation step.',
-    type: 'float',
+    type: 'text',
     required: true
   }, {
     name: 'standard_deviation',

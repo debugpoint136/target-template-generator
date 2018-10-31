@@ -24,7 +24,7 @@ var fields = [{
     name: 'assay_target',
     text: 'Target',
     placeholder: 'ChIP-seq only. Include SO ID',
-    required: true,
+    required: false,
     type: 'text',
     values: [ 'H3K4me1 (SO:0001705)', 'H3K4me3 (SO:0001706)', 'H3K27me3 (SO:0001709)', 'H3K27ac (SO:0002049)', 'H3K9me3 (SO:0001707)', 'Input' ],
     values_restricted: true

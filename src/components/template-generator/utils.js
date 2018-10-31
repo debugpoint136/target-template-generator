@@ -729,15 +729,19 @@ part_of: "TRGTBPR0004"
                     if (Object.keys(row).filter(d => d === field.name).length > 0) {
                         // exists
                         if (field.values) {
-                            if (field.values.filter(val => val === row[field.name]).length === 0) {
-                                
-                                if (Array.isArray(result[sheetname][row.accession])) {
-                                    result[sheetname][row.accession].push(` ${field.text} : can only have values from list: ---> ${JSON.stringify(field.values)} <--`);
-                                } else {
-                                    result[sheetname][row.accession] = [` ${field.text} : can only have values from list: --> ${JSON.stringify(field.values)} <--`];
+                                if (field.values.filter(val => val === row[field.name]).length === 0) {
+
+                                    if (field.name === 'assay_target' && row['technique'] !== 'ChIP-seq (histone modification, OBI:0002017)') { // putting a special check
+                                            console.log('ok'); // assay target should be required only for ChIP-seq
+                                    } else {
+                                        if (Array.isArray(result[sheetname][row.accession])) {
+                                            result[sheetname][row.accession].push(` ${field.text} : can only have values from list: ---> ${JSON.stringify(field.values)} <--`);
+                                        } else {
+                                            result[sheetname][row.accession] = [` ${field.text} : can only have values from list: --> ${JSON.stringify(field.values)} <--`];
+                                        }
+                                        errorCount++;
                                 }
-                                errorCount++;
-                            } 
+                            }
                         }
                     } else {
                         // why is a required field missing?
@@ -752,20 +756,25 @@ part_of: "TRGTBPR0004"
 
                 if (field.type === 'float') {
                     if (isNaN(Number.parseFloat(row[field.name]))) {
-                        if (Array.isArray(result[sheetname][row.accession])) {
-                            result[sheetname][row.accession].push(` ${field.text} : should be of data type: Float`);
-                        } else {
-                            result[sheetname][row.accession] = [` ${field.text} : should be of data type: Float`];
+                        if (row[field.name] !== undefined && row[field.name] !== '') {
+                            if (Array.isArray(result[sheetname][row.accession])) {
+                                result[sheetname][row.accession].push(` ${field.text} : should be of data type: Float`);
+                            } else {
+                                result[sheetname][row.accession] = [` ${field.text} : should be of data type: Float`];
+                            }
                         }
                     } 
                 }
 
                 if (field.type === 'integer') {
                     if (isNaN(Number.parseInt(row[field.name], 10))) {
-                        if (Array.isArray(result[sheetname][row.accession])) {
-                            result[sheetname][row.accession].push(` ${field.text} : should be of data type: Integer`);
-                        } else {
-                            result[sheetname][row.accession] = [` ${field.text} : should be of data type: Integer`];
+                        console.log(field.text, row[field.name]);
+                        if (row[field.name] !== undefined && row[field.name] !== '') {
+                            if (Array.isArray(result[sheetname][row.accession])) {
+                                result[sheetname][row.accession].push(` ${field.text} : should be of data type: Integer`);
+                            } else {
+                                result[sheetname][row.accession] = [` ${field.text} : should be of data type: Integer`];
+                            }
                         }
                     } 
                 }
