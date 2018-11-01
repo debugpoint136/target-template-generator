@@ -455,6 +455,7 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
             const templateQueryConnections = makeQueryTemplateConnectionsAdd(connections, key);
+            // console.log(templateQueryConnections)
             return { sheetname: key, query: templateQueryConnections };
         } else {
             return null;
@@ -466,6 +467,7 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
             const templateQueryConnections = makeQueryTemplateConnectionsRemove(connections, key);
+            console.log(templateQueryConnections)
             return { sheetname: key, query: templateQueryConnections };
         } else {
             return null;
@@ -510,7 +512,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const final = query + queryFieldsCreate + `
     ON MATCH SET
     ` + queryFieldsMatch;
-    // console.log(final);
+    console.log(final);
     return final;
 }
 /*
@@ -628,7 +630,7 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
         const connectionName = connection.name;
         const connectionTo = connection.to;
         let body = `
-        MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo}) 
+        OPTIONAL MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo} {accession:row.${connectionName}}) 
         DELETE r
         `;
 
@@ -725,6 +727,9 @@ part_of: "TRGTBPR0004"
 */
         rows.forEach(row => {
             schema.forEach(field => {
+                if (field.text === 'Subcellular fraction') {
+                    console.log(field.required)
+                }
                 if (field.required) {
                     if (Object.keys(row).filter(d => d === field.name).length > 0) {
                         // exists
