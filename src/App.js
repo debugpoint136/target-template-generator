@@ -2,11 +2,18 @@ import React, {Component} from 'react';
 import FlatTemplate from './components/template-generator/FlatTemplate';
 import MetadataDownloadContainer from './MetadataDownloadContainer';
 import UploadContainer from './components/template-generator/UploadContainer';
-import {Menu} from 'semantic-ui-react'
-const TUTORIALS_PDF="https://firebasestorage.googleapis.com/v0/b/target-submission-prod.appspot.com/o/Updated%20Production%20metadata%20submission-prod.pdf?alt=media&token=b0494656-0103-4fe2-8f01-b4a917e3966a"
+import {Menu} from 'semantic-ui-react';
+// import ExcelDownloadFlat from './components/template-generator/ExcelDownloadFlat';
+// const tmpFileJSON = require('./json/target-submission-prod--LQFvZsN2SnICqrHr_i6-export.json');
+const TUTORIALS_PDF="https://firebasestorage.googleapis.com/v0/b/target-submission-prod.appspot.com/o/Updated%20Production%20metadata%20submission-prod.pdf?alt=media&token=b0494656-0103-4fe2-8f01-b4a917e3966a";
 
 class App extends Component {
-    state = { activeItem: 'template'}
+    state = { activeItem: 'template', data: null}
+
+    // componentDidMount() {
+    //     const data = JSON.parse(tmpFileJSON.data);
+    //     this.setState({ data: data });
+    // }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
@@ -52,6 +59,8 @@ class App extends Component {
                     {/* ©2018 TaRGET DCC @ Wash U St. Louis -- TEST INSTANCE ONLY-- */}
                     ©2018 TaRGET DCC @ Wash U St. Louis -- PRODUCTION INSTANCE --
                 </p>
+                {/* {(this.state.data)? <ExcelDownloadFlat data={this.state.data} />: null} */}
+                
             </div>
         );
     }

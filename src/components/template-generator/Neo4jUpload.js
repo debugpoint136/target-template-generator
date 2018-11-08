@@ -6,48 +6,71 @@ import Notifications, {notify} from 'react-notify-toast';
 import { createNeo4jUploadQuery } from './utils';
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
 const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
-// const QUESTIONS = require('./questions.json');
-// const simple_DATA = require('./simple_upload.json');
-// const UPLOAD_DATA = require('./testupload.json');
+// const neo4j = require('neo4j-driver').v1;
+// const driver = neo4j.driver(`bolt://68.183.19.248:7687`, neo4j.auth.basic("neo4j", "production"), {maxTransactionRetryTime: 60000});
+// const driver = neo4j.driver(`bolt://104.248.231.163:7687`, neo4j.auth.basic("neo4j", "enternow"), {maxTransactionRetryTime: 30000});
+// const driver = neo4j.driver(`bolt://142.93.206.4:7687`, neo4j.auth.basic("neo4j", "production"), {maxTransactionRetryTime: 30000});
+
 class Neo4jUpload extends Component {
-    state = { error: null, loader: false, errorState: false}
+    state = { error: null, loader: false, errorState: false, errorCount: 0, errorMessages: [] }
+
+    handleSessionError = (err) => {
+        this.setState({ errorMessages: this.state.errorMessages.concat(err) });
+    }
 
     handleUpload = () => {
         this.setState({ loader: true })
-/*
-        axios.post(neo4jUrl, {
-            statements: [
-                {
-                    statement: query,
-                    parameters: { json: UPLOAD_DATA }
-                }
-            ]
-        }, { headers: { Authorization: AUTHORIZATION }} )
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err))
-*/
+
         const { data, user, lab } = this.props;
         const queryList = createNeo4jUploadQuery(data, user, lab);
-        // console.log(JSON.stringify(queryList));
         if (!queryList) {
             this.setState({ error: "No data to upload" });
             return
         }
-        const allAxiosPosts = queryList.map(entry => {
-            const { query, sheetname } = entry;
-            const _data = {};
-            _data[sheetname] = data[sheetname];
-
-            return axios.post(neo4jUrl, {
-                statements: [
-                    {
-                        statement: query,
-                        parameters: { json: _data }
-                    }
-                ]
-            }, { headers: { Authorization: AUTHORIZATION }} )
-        });
-
+        // go(queryList, data);  
+        const dataBatches = makeBatchesToDispatch(data);
+        this.start(queryList, dataBatches); 
+        
+        // tx.run("MERGE (adam:Person {name : {nameParam} }) RETURN adam.name AS name", {nameParam: 'Adam'})
+        // const session = driver.session();
+        // session.run(query, { json: _data })
+        //     .subscribe({
+        //         onCompleted: () => {
+        //             console.log(index + 1 + ' query completed');
+        //             session.close();
+        //         },
+        //         onError: (error) => {
+        //             this.handleSessionError(error);
+        //             session.close();
+        //         }
+        //     });
+        // });
+        
+        // if (this.state.errorMessages.length === 0) {
+        // tx.commit()
+        //     .subscribe({
+        //     onCompleted: () => {
+        //         // this transaction is now committed and session can be closed
+        //         session.close();
+        //         notify.show('Submitted successfully! ✅', 'success');
+        //         this.setState({ loader: false });
+        //         driver.close()
+        //     },
+        //     onError: (error) => {
+        //         this.setState({ error: error.message, loader: false });
+        //         notify.show('Transmission errored out 👨🏼‍🚀', 'error');
+        //         driver.close();
+        //     }
+        //     });
+        // } else {
+        // //transaction is rolled black and nothing is created in the database
+        // console.log('rolled back');
+        // this.setState({ error: this.state.errorMessages.join('<br/>'), loader: false });
+        // notify.show('Transmission errored out 👨🏼‍🚀', 'error');
+        // tx.rollback();
+        // driver.close();
+        // }
+        /*
         axios.all(allAxiosPosts)
             .then(res => {
                 const errorsArray = res.map(r => (r.data.errors.length > 0) ? r.data.errors: null);
@@ -67,8 +90,120 @@ class Neo4jUpload extends Component {
             .catch(err => {
                 this.setState({ loader: false, error: err, errorState: true })
             });
+        */
+    }
+
+    start = async (queryList, alldata) => {
+        try {
+            await asyncForEach(alldata, async (entry, index) => {
+                const { data, sheetname, batchNum } = entry;
+                const relatedQueries = queryList.filter(item => item.sheetname === sheetname);
+                console.log(relatedQueries);
+                try {
+                    await asyncForEach(relatedQueries, async (bit) => {
+                        try {
+                            console.log(data);
+                            console.log("Dispatching request : " + sheetname + '==' + (batchNum + 1) + '==' + (index + 1));
+                            await this.neo4jPost(bit.query, data[0], sheetname, batchNum);
+                        } catch (error) {
+                            console.log(error);
+                            this.handleSessionError(error.message);
+                        }
+                    })
+                } catch (error) {
+                    console.log(error);
+                    this.handleSessionError(error.message);
+                }
+                
+                
+            })
+            if (this.state.errorMessages.length === 0) {
+                notify.show('Submitted successfully! ✅', 'success');
+                this.setState({ loader: false });
+            } else {
+                notify.show('Houston we have a problem 👨🏼‍🚀', 'error');
+                this.setState({ loader: false, error: this.state.errorMessages.map(err => err.message).join(',') });
+            }
+            
+        } catch (error) {
+            notify.show('Transmission errored out 👨🏼‍🚀', 'error');
+            this.setState({ loader: false, error: error.map(err => err.message).join('<br/>') });
+        }
         
     }
+
+    neo4jPost = async (query, data, sheetname, batchNum) => {
+        try {
+            const res = await axios.post(neo4jUrl, {
+                statements: [
+                    {
+                        statement: query,
+                        parameters: { json: data }
+                    }
+                ]
+            }, { headers: { Authorization: AUTHORIZATION }} )
+            console.log('processing request ..');
+            if (res.data.errors.length > 0) {
+                this.handleSessionError(`${sheetname} : ${res.data.errors[0].message}`);
+            }
+        } catch (error) {
+            console.log(error);
+            this.handleSessionError(error);
+        } 
+    }
+
+    // neo4jSession = async (query, data, sheetname) => {
+        
+    //     try {
+    //         const session = await driver.session();
+    //         const tx = await session.beginTransaction();
+    //         const res = await tx.run(query, { json: data })
+    //         console.log('all good');
+    //         await tx.commit();
+    //         session.close();
+    //         if (res.data.errors.length > 0) {
+    //             this.handleSessionError(`${sheetname} : ${res.data.errors[0].message}`);
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         this.handleSessionError(`${sheetname} : ${error.message}`);
+    //     } 
+    // }
+
+    // neo4jPostRun = (queryList, data) => {
+    //     try {
+    //         const allRes = queryList.map(async (entry, index) => {
+    //             console.log('dispatching request ' + index);
+    //             const { query, sheetname } = entry;
+    //             const _data = {};
+    //             _data[sheetname] = data[sheetname];
+    //             const res = await neo4jPost(query, _data);
+    //             return res;
+    //         });
+    //         Promise.all(allRes)
+    //         .then(res => {
+    //             const errorsArray = res.map(r => (r.data.errors.length > 0) ? r.data.errors: null);
+    //             let errorsList = [];
+    //             if (errorsArray.length > 0) {
+    //                 errorsList = _.flattenDeep(errorsArray.filter(d => d));
+    //             }
+    //             if (errorsList.length > 0) {
+    //                 this.setState({ error: errorsList.map(err => err.message).join('<br/>'), loader: false });
+    //                 notify.show('Transmission errored out 👨🏼‍🚀', 'error');
+    //             } else {
+    //                 notify.show('Submitted successfully! ✅', 'success');
+    //                 this.setState({ loader: false })
+    //             }
+                
+    //         })
+    //         .catch(err => {
+    //             this.setState({ loader: false, error: err, errorState: true })
+    //         });
+            
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
     handleErrorBoxClose = () => {
         this.setState({ error: null });
@@ -192,3 +327,57 @@ MERGE (litter:Litter {accession:m.born_to})
 MERGE (mouse)-[:born_to]->(litter) 
 `;
 */
+
+/*
+async function go(queryList, data) {
+    try {
+        const allAxiosPosts = await queryList.map((entry, index) => {
+            const { query, sheetname } = entry;
+            const _data = {};
+            _data[sheetname] = data[sheetname];
+            // return neo4jPost(query, _data);
+            const res = sessionRun(query, _data);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function sessionRun(query, data) {
+    try {
+        const session = await driver.session();
+        const tx = await session.beginTransaction();
+        const res = await tx.run(query, { json: data })
+        console.log('all good');
+        await tx.commit();
+        session.close();
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+*/
+
+
+
+
+
+async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array)
+    }
+}
+
+function makeBatchesToDispatch(data) {
+    const sheetsInFile = Object.keys(data);
+    const segmentedRows = sheetsInFile.map(sheetname => {
+        const allRows = data[sheetname];
+        const batches = _.chunk(allRows, 10);
+        const batchedData = batches.map((batch, index) => ({ sheetname: sheetname, data: batch, batchNum: (index + 1)}));
+        return batchedData;
+    });
+    // console.log(segmentedRows);
+    const result = _.flattenDeep(segmentedRows);
+    
+    return result;
+}

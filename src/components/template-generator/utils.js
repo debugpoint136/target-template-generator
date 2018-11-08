@@ -448,7 +448,7 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
     
         const templateQueryFields = makeQueryTemplateFields(fields, key, USER, LAB);
 
-        return { sheetname: key, query: templateQueryFields };
+        return { sheetname: key, query: templateQueryFields, type: 'node' };
     })
 
     const allConnectionsAdd = keysToIterate.map(key => {
@@ -456,7 +456,7 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         if (connections.length > 0) {
             const templateQueryConnections = makeQueryTemplateConnectionsAdd(connections, key);
             // console.log(templateQueryConnections)
-            return { sheetname: key, query: templateQueryConnections };
+            return { sheetname: key, query: templateQueryConnections, type: 'add' };
         } else {
             return null;
         }
@@ -467,8 +467,8 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
             const templateQueryConnections = makeQueryTemplateConnectionsRemove(connections, key);
-            console.log(templateQueryConnections)
-            return { sheetname: key, query: templateQueryConnections };
+            // console.log(templateQueryConnections)
+            return { sheetname: key, query: templateQueryConnections, type: 'remove' };
         } else {
             return null;
         }
@@ -478,14 +478,14 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
     
     const allQuery = allFields.concat(allConnections.filter(d => d));
     // const allQuery = allConnections;
-    console.log(allQuery);
+    // console.log(allQuery);
     return allQuery;
 }
 
 function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const query = `WITH {json} as data
     UNWIND data.${ITEM} as row
-    MERGE (${ITEM}:${ITEM} {accession: row.accession})
+    MERGE (${ITEM}:${ITEM} {accession: row.accession, lab: "${LAB}"})
     ON CREATE SET ${ITEM}.accession = row.accession, ${ITEM}.user = "${USER}", ${ITEM}.created = ${Date.now()}, ${ITEM}.lab = "${LAB}",
         `;
     const queryFieldsArrayFields = FIELDS.map(field => { 
@@ -512,7 +512,7 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     const final = query + queryFieldsCreate + `
     ON MATCH SET
     ` + queryFieldsMatch;
-    console.log(final);
+    // console.log(final);
     return final;
 }
 /*
@@ -630,7 +630,7 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
         const connectionName = connection.name;
         const connectionTo = connection.to;
         let body = `
-        OPTIONAL MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo} {accession:row.${connectionName}}) 
+        OPTIONAL MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo}) 
         DELETE r
         `;
 
@@ -728,7 +728,7 @@ part_of: "TRGTBPR0004"
         rows.forEach(row => {
             schema.forEach(field => {
                 if (field.text === 'Subcellular fraction') {
-                    console.log(field.required)
+                    // console.log(field.required)
                 }
                 if (field.required) {
                     if (Object.keys(row).filter(d => d === field.name).length > 0) {
@@ -773,7 +773,7 @@ part_of: "TRGTBPR0004"
 
                 if (field.type === 'integer') {
                     if (isNaN(Number.parseInt(row[field.name], 10))) {
-                        console.log(field.text, row[field.name]);
+                        // console.log(field.text, row[field.name]);
                         if (row[field.name] !== undefined && row[field.name] !== '') {
                             if (Array.isArray(result[sheetname][row.accession])) {
                                 result[sheetname][row.accession].push(` ${field.text} : should be of data type: Integer`);

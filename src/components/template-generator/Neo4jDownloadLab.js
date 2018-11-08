@@ -10,7 +10,7 @@ const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 
 const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet' ];
-const CONNECTIONS = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet', 'bioproject' ];
+const CONNECTIONS = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet', 'bioproject', 'reagent' ];
 
 class Neo4jDownloadLab extends Component {
     state = {  }
