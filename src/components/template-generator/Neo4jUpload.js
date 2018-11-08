@@ -23,23 +23,27 @@ class Neo4jUpload extends Component {
             this.setState({ error: "No data to upload" });
             return
         }
-        const dataBatches = makeBatchesToDispatch(data);
+        const dataBatches = makeBatchesToDispatch(data); // split rows in excel to batches of 10
         await this.start(queryList, dataBatches, 'node'); 
         await this.start(queryList, dataBatches, 'remove'); 
         await this.start(queryList, dataBatches, 'add'); 
     }
-
+    /**
+     * mode can be: 
+     *  1. node (create/update nodes)
+     *  2. remove (DELETE all relationships, NOT restricted by logged in User's lab)
+     *  3. add (MATCH source and target nodes and create new relationship, RESTRICTED by logged in user's lab)
+     * This async function runs 3 times - once for each mode, looping on data batches
+     */
     start = async (queryList, alldata, mode) => {
         try {
             await asyncForEach(alldata, async (entry, index) => {
                 const { data, sheetname, batchNum } = entry;
                 const relatedQueries = queryList.filter(item => item.sheetname === sheetname && item.type === mode);
-                console.log(relatedQueries);
                 try {
                     await asyncForEach(relatedQueries, async (bit) => {
                         try {
-                            console.log(data);
-                            console.log("Dispatching request : " + sheetname + '==' + (batchNum + 1) + '==' + (index + 1));
+                            console.log("Dispatching request : " + sheetname + '==' + batchNum);
                             await this.neo4jPost(bit.query, data[0], sheetname, batchNum);
                         } catch (error) {
                             console.log(error);
@@ -164,7 +168,7 @@ function makeBatchesToDispatch(data) {
     //         this.handleSessionError(`${sheetname} : ${error.message}`);
     //     } 
     // }
-    
+
 async function go(queryList, data) {
     try {
         const allAxiosPosts = await queryList.map((entry, index) => {
