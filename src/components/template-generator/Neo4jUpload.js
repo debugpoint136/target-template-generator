@@ -30,9 +30,9 @@ class Neo4jUpload extends Component {
     }
     /**
      * mode can be: 
-     *  1. node (create/update nodes)
+     *  1. node (create/update nodes, restricted by logged in User's lab)
      *  2. remove (DELETE all relationships, NOT restricted by logged in User's lab)
-     *  3. add (MATCH source and target nodes and create new relationship, RESTRICTED by logged in user's lab)
+     *  3. add (MATCH source and target nodes and create new relationship, NOT RESTRICTED by logged in user's lab)
      * This async function runs 3 times - once for each mode, looping on data batches
      */
     start = async (queryList, alldata, mode) => {
@@ -62,14 +62,16 @@ class Neo4jUpload extends Component {
                     notify.show('Submitted successfully! ✅', 'success');
                     this.setState({ loader: false });
                 } else {
+                    const errorString = this.state.errorMessages.map(err => err).join(',')
+                    console.log(errorString);
                     notify.show('Houston we have a problem 👨🏼‍🚀', 'error');
-                    this.setState({ loader: false, error: this.state.errorMessages.map(err => err.message).join(',') });
+                    this.setState({ loader: false, error: errorString });
                 }
             }
             
         } catch (error) {
             notify.show('Transmission errored out 👨🏼‍🚀', 'error');
-            this.setState({ loader: false, error: error.map(err => err.message).join('<br/>') });
+            this.setState({ loader: false, error: _.uniq(error.map(err => err.message).join(',')) });
         }
         
     }
