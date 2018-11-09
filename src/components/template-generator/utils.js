@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { generateAccession } from '../../helpers';
 const PREFIX = {
     assay: 'AS',
@@ -451,29 +452,34 @@ export function createNeo4jUploadQuery(DATA, USER, LAB) {
         return { sheetname: key, query: templateQueryFields, type: 'node' };
     })
 
-    const allConnectionsAdd = keysToIterate.map(key => {
+    const allConnectionsAddAoA= keysToIterate.map(key => {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
-            const templateQueryConnections = makeQueryTemplateConnectionsAdd(connections, key);
-            // console.log(templateQueryConnections)
-            return { sheetname: key, query: templateQueryConnections, type: 'add' };
+            // const templateQueryConnections = makeQueryTemplateConnectionsAdd(connections, key);
+            const templateQueryConnections = addNewConnections(connections, key, LAB);
+            return templateQueryConnections.map(item => ({ sheetname: key, query: item, type: 'add' }));
+            // return { sheetname: key, query: templateQueryConnections, type: 'add' };
         } else {
             return null;
         }
-        
     })
+
+    const allConnectionsAdd = _.flattenDeep(allConnectionsAddAoA);
+    // console.log(allConnectionsAdd);
     
-    const allConnectionsRemove = keysToIterate.map(key => {
+    const allConnectionsRemoveAoA = keysToIterate.map(key => {
         const connections = CONNECTION_OPTIONS[key];
         if (connections.length > 0) {
-            const templateQueryConnections = makeQueryTemplateConnectionsRemove(connections, key);
-            // console.log(templateQueryConnections)
-            return { sheetname: key, query: templateQueryConnections, type: 'remove' };
+            // const templateQueryConnections = makeQueryTemplateConnectionsRemove(connections, key);
+            const removeQueries = removeExistingConnections(connections, key, LAB);
+            return removeQueries.map(item => ({ sheetname: key, query: item, type: 'remove' }))
+            // return { sheetname: key, query: templateQueryConnections, type: 'remove' };
         } else {
             return null;
         }
-        
     })
+    const allConnectionsRemove = _.flattenDeep(allConnectionsRemoveAoA);
+
     const allConnections = allConnectionsRemove.concat(allConnectionsAdd);
     
     const allQuery = allFields.concat(allConnections.filter(d => d));
@@ -504,141 +510,42 @@ function makeQueryTemplateFields(FIELDS, ITEM, USER, LAB) {
     queryFieldsArray.push(tmpUser)
 
     // Add date
-    let tmpDate = `${ITEM}.last_updated = ${Date.now()}`;
+    const timeStamp = Date.now();
+    // const timeStampReadable = moment(timeStamp).format('lll');
+    let tmpDate = `${ITEM}.last_updated = ${timeStamp}`;
     queryFieldsArray.push(tmpDate)
 
     const queryFieldsMatch = queryFieldsArray.join(',\n\t\t');
 
     const final = query + queryFieldsCreate + `
     ON MATCH SET
-    ` + queryFieldsMatch;
+    ` + queryFieldsMatch + 
+    `
+    RETURN ${ITEM}.accession as ${ITEM}
+    `;
     // console.log(final);
     return final;
 }
-/*
-function makeQueryTemplateConnections(CONNECTIONS, ITEM) {
 
-    let toReturn = `
+function removeExistingConnections(CONNECTIONS, ITEM, LAB) {
+
+    let header = `
         WITH {json} as data
         UNWIND data.${ITEM} as row
-        
+        MATCH (${ITEM}:${ITEM} {accession: row.accession, lab: "${LAB}"})
         `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
         let body = `
-        MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        WITH COLLECT(${ITEM}) AS items, row
-            UNWIND items as m  
-                OPTIONAL MATCH (m)-[r:${connectionName}]-(:${connectionTo}) 
-                DELETE r
-        WITH row, m,
-        CASE WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
-        END as array1
-            FOREACH (el1 in array1 | 
-                MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-                MERGE (m)-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
-                ) 
-        `;
-        // let body = `
-        // MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        // WITH row, ${ITEM}, 
-        // CASE  
-        //     WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
-        // END as array1
-        //     FOREACH (el1 in array1 | 
-        //         MERGE (${ITEM})-[r:${connectionName}]-(:${connectionTo})
-        //         DELETE r
-        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        //         MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
-        //         )
-                
-        // `;
-        WITH row, ${ITEM},
-        MATCH (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        RETURN
-        ${ITEM}, ${ITEM}_${connectionName}_${connectionTo},
-        CASE ${connectionName}
-            WHEN NULL THEN "other thing"
-            ELSE MERGE (${ITEM})-[${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
-        END
-        
-        // let body =`
-        // WITH row, CASE  WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] END as array1
-        // FOREACH (el1 in array1 | 
-        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        //         MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}))
-        // `;
-
-        // let body = `
-        // MATCH (${ITEM}:${ITEM} {accession: row.accession}) 
-        // MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        // MERGE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
-        // `;
-        if (index < CONNECTIONS.length -1) {
-            body = body + `
-            WITH row
-            `;
-        }
-        return body;
-    })
-    console.log(toReturn + queryConnectionsArray.join(''));
-
-    return toReturn + queryConnectionsArray.join('');
-}
-*/
-function makeQueryTemplateConnectionsAdd(CONNECTIONS, ITEM) {
-
-    let header = `
-        WITH {json} as data
-        UNWIND data.${ITEM} as row
-        MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        `;
-    const addQueries = addNewConnections(CONNECTIONS, ITEM);
-    const add =  header + addQueries.join('');
-
-    const toReturn = add;
-    // console.log(toReturn);
-    return toReturn;
-}
-
-function makeQueryTemplateConnectionsRemove(CONNECTIONS, ITEM) {
-
-    let header = `
-        WITH {json} as data
-        UNWIND data.${ITEM} as row
-        
-        `;
-    const removeQueries = removeExistingConnections(CONNECTIONS, ITEM);
-    const remove =  header + removeQueries.join('');
-
-    const toReturn = remove;
-    return toReturn;
-}
-
-function removeExistingConnections(CONNECTIONS, ITEM) {
-
-    // let toReturn = `
-    //     WITH {json} as data
-    //     UNWIND data.${ITEM} as row
-        
-    //     `;
-    const header = `
-    MATCH (${ITEM}:${ITEM} {accession: row.accession})
-    `;
-    const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
-        const connectionName = connection.name;
-        const connectionTo = connection.to;
-        let body = `
-        OPTIONAL MATCH (${ITEM})-[r:${connectionName}]->(:${connectionTo}) 
+        OPTIONAL MATCH (${ITEM})-[r:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo}:${connectionTo}) 
+        WITH ${ITEM}_${connectionName}_${connectionTo}, row, ${ITEM}, r
+        FOREACH(x IN (CASE WHEN ${ITEM}_${connectionName}_${connectionTo} IS NULL THEN [] else [1] END) |
         DELETE r
+        )
+        RETURN ${ITEM}.accession as ${ITEM}, collect(${ITEM}_${connectionName}_${connectionTo}.accession) as deleted_relationship_${connectionName}
         `;
 
-        if (index < CONNECTIONS.length -1) {
-            body = body + `
-            WITH ${ITEM}, row
-            `;
-        }
         return header + body;
     })
 
@@ -646,38 +553,27 @@ function removeExistingConnections(CONNECTIONS, ITEM) {
 }
 
 
-function addNewConnections(CONNECTIONS, ITEM) {
+function addNewConnections(CONNECTIONS, ITEM, LAB) {
 
-    // const header = `
-    // MATCH (${ITEM}:${ITEM} {accession: row.accession})
-    // `;
+    let header = `
+        WITH {json} as data
+        UNWIND data.${ITEM} as row
+        MATCH (${ITEM}:${ITEM} {accession: row.accession, lab: "${LAB}"})
+        `;
     const queryConnectionsArray = CONNECTIONS.map((connection, index) => {
         const connectionName = connection.name;
         const connectionTo = connection.to;
-        // let body = `
-        // MATCH (${ITEM}:${ITEM} {accession: row.accession})
-        // WITH row, ${ITEM},
-        // CASE WHEN exists(row.${connectionName}) THEN ['ok'] ELSE [] 
-        // END as array1
-        //     FOREACH (el1 in array1 | 
-        //         MERGE (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
-        //         MERGE (${ITEM})-[:${connectionName}]-(${ITEM}_${connectionName}_${connectionTo})
-        //         ) 
-        // `;
+
         let body = ` 
         OPTIONAL MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
         WITH ${ITEM}_${connectionName}_${connectionTo}, row, ${ITEM}
         FOREACH(x IN (CASE WHEN ${ITEM}_${connectionName}_${connectionTo} IS NULL THEN [] else [1] END) |
         CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
         )
+        RETURN ${ITEM}.accession as ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}.accession as added_relationship_${connectionName}
         `;
 
-        if (index < CONNECTIONS.length -1) {
-            body = body + `
-            WITH row, ${ITEM} 
-            `;
-        }
-        return  body;
+        return  header + body;
     })
 
     return queryConnectionsArray;

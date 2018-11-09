@@ -2,16 +2,22 @@ import React, {Component} from 'react';
 import {Button,Icon, Loader, Dimmer} from 'semantic-ui-react';
 import axios from 'axios';
 import _ from 'lodash';
+import moment from 'moment';
 import Notifications, {notify} from 'react-notify-toast';
 import { createNeo4jUploadQuery } from './utils';
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
 const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
+const fileDownload = require('js-file-download')
 
 class Neo4jUpload extends Component {
-    state = { error: null, loader: false, errorState: false, errorCount: 0, errorMessages: [] }
+    state = { error: null, loader: false, errorState: false, errorCount: 0, errorMessages: [], successMessages: [] }
 
     handleSessionError = (err) => {
         this.setState({ errorMessages: this.state.errorMessages.concat(err) });
+    }
+
+    handleSessionResponse = (val) => {
+        this.setState({ successMessages: this.state.successMessages.concat(val) });
     }
 
     handleUpload = async () => {
@@ -31,8 +37,8 @@ class Neo4jUpload extends Component {
     /**
      * mode can be: 
      *  1. node (create/update nodes, restricted by logged in User's lab)
-     *  2. remove (DELETE all relationships, NOT restricted by logged in User's lab)
-     *  3. add (MATCH source and target nodes and create new relationship, NOT RESTRICTED by logged in user's lab)
+     *  2. remove (DELETE all relationships, restricted by logged in User's lab)
+     *  3. add (MATCH source and target nodes and create new relationship, RESTRICTED by logged in user's lab)
      * This async function runs 3 times - once for each mode, looping on data batches
      */
     start = async (queryList, alldata, mode) => {
@@ -43,7 +49,7 @@ class Neo4jUpload extends Component {
                 try {
                     await asyncForEach(relatedQueries, async (bit) => {
                         try {
-                            console.log("Dispatching request : " + sheetname + '==' + batchNum);
+                            console.log("Dispatching request : mode : ~~" + mode + "~~" + sheetname + '==' + batchNum);
                             await this.neo4jPost(bit.query, data[0], sheetname, batchNum);
                         } catch (error) {
                             console.log(error);
@@ -77,18 +83,22 @@ class Neo4jUpload extends Component {
     }
 
     neo4jPost = async (query, data, sheetname, batchNum) => {
+        const courier = {};
+        courier[sheetname] = data;
         try {
             const res = await axios.post(neo4jUrl, {
                 statements: [
                     {
                         statement: query,
-                        parameters: { json: data }
+                        parameters: { json: courier }
                     }
                 ]
             }, { headers: { Authorization: AUTHORIZATION }} )
-            console.log('processing request ..');
+            // console.log('processing request ..');
             if (res.data.errors.length > 0) {
                 this.handleSessionError(`${sheetname} : ${res.data.errors[0].message}`);
+            } else {
+                this.handleSessionResponse(res.data.results);
             }
         } catch (error) {
             console.log(error);
@@ -121,6 +131,11 @@ class Neo4jUpload extends Component {
                 <Button icon='close' onClick={this.handleErrorBoxClose}/>
                 </div>: null }
                 <Button size='tiny' color='purple' onClick={this.handleUpload}>Commit changes {'  '} <Icon name=''/><Icon name='external'/></Button>
+            {(this.state.successMessages.length > 0) ?
+             <Button size='tiny' color='teal' onClick={() => fileDownload(generateCommitLog(this.state.successMessages, this.props.user, this.props.lab), `${Date.now()}_upload_log.txt`)}>Download Upload Log
+             <Icon name=''/><Icon name='clipboard'/></Button>
+            : null
+            }
             </div>
         );
     }
@@ -200,5 +215,26 @@ async function sessionRun(query, data) {
 }
 */
 
-
-
+/**
+ * 
+ * @param [] this.state.successMessages  
+ *          columns: [assay, recruits]
+            data: [ meta: [], row: ["TGTASMZR8J5N", "TEST001"]]
+ */
+function generateCommitLog(messages, USER, LAB) {
+    let rows = [];
+    rows.push(`------Generated : ${moment(Date.now()).format('lll')} -----by ${USER}---from ${LAB}------`);
+    messages.forEach(item => {
+        const { columns, data } = item;
+        if (columns.length === 1) {
+            rows.push(`${columns[0]} : Created/Updated node : ${data[0].row[0]}`);
+        } else {
+            if (data[0].row[1]) {
+                if (data[0].row[1].length > 0) {
+                    rows.push(`${columns[0]} : ${data[0].row[0]}-[${columns[1]}]->${data[0].row[1]}`);
+                } 
+            }
+        }
+    });
+    return rows.join('\n');
+}
