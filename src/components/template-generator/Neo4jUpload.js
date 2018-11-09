@@ -5,6 +5,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import Notifications, {notify} from 'react-notify-toast';
 import { createNeo4jUploadQuery } from './utils';
+import fire from '../../fire';
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
 const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 const fileDownload = require('js-file-download')
@@ -67,6 +68,14 @@ class Neo4jUpload extends Component {
                 if (this.state.errorMessages.length === 0) {
                     notify.show('Submitted successfully! ✅', 'success');
                     this.setState({ loader: false });
+                    const logFile = generateCommitLog(this.state.successMessages, this.props.user, this.props.lab);
+                    const logToStore = { 
+                        user: this.props.user, 
+                        log: JSON.stringify(logFile), 
+                        lab: this.props.lab, 
+                        generated: moment(Date.now()).format('lll')
+                    };
+                    fire.database().ref('logs').push(logToStore); // save in firebase
                 } else {
                     const errorString = this.state.errorMessages.map(err => err).join(',')
                     console.log(errorString);
@@ -132,7 +141,7 @@ class Neo4jUpload extends Component {
                 </div>: null }
                 <Button size='tiny' color='purple' onClick={this.handleUpload}>Commit changes {'  '} <Icon name=''/><Icon name='external'/></Button>
             {(this.state.successMessages.length > 0) ?
-             <Button size='tiny' color='teal' onClick={() => fileDownload(generateCommitLog(this.state.successMessages, this.props.user, this.props.lab), `${Date.now()}_upload_log.txt`)}>Download Upload Log
+             <Button size='tiny' color='teal' onClick={() => fileDownload(generateCommitLog(this.state.successMessages, this.props.user, this.props.lab).join('\n'), `${Date.now()}_upload_log.txt`)}>Download Upload Log
              <Icon name=''/><Icon name='clipboard'/></Button>
             : null
             }
@@ -236,5 +245,5 @@ function generateCommitLog(messages, USER, LAB) {
             }
         }
     });
-    return rows.join('\n');
+    return rows;
 }
