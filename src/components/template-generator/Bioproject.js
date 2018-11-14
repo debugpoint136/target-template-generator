@@ -26,27 +26,29 @@ class Bioproject extends Component {
     }
     
     componentWillMount = () => {
-        fire.auth()
-            .onAuthStateChanged(user => {
-                if (user) {
-                    this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
-
-                    let bioprojectsRef = fire.database().ref('bioprojects').orderByKey().limitToLast(10);
+        // fire.auth()
+        //     .onAuthStateChanged(user => {
+        //         if (user) {
+        //             this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
+                    let bioprojectsRef = fire.database().ref('bioprojects/' + this.props.id);
+                    // let bioprojectsInFirebase = [];
                     bioprojectsRef.on('value', snapshot => {
-                        let bioprojectsInFirebase = [];
-                        snapshot.forEach(data => {
-                            bioprojectsInFirebase.push({text: data.val(),id: data.key})
-                        });
-                        const bioprojectindex = bioprojectsInFirebase.findIndex(item => item.id === this.props.id);
-                        if (bioprojectindex !== -1) {
-                            let bioprojectExisting = bioprojectsInFirebase[bioprojectindex];
-                            this.setState({ bioprojectinfo: bioprojectExisting.text, bioprojects: bioprojectsInFirebase });
-                        }                        
+                        if (snapshot.exists()){
+                            this.setState({ bioprojectinfo: snapshot.val() });
+                        }
                     }, (errorObject) => {
                         console.log("The read failed: " + errorObject.code);
                     });
-                }
-            });
+                        // console.log(this.props.id);
+                        // const bioprojectindex = bioprojectsInFirebase.findIndex(item => item.id === this.props.id);
+                        // console.log(bioprojectindex);
+                        // if (bioprojectindex !== -1) {
+                        //     let bioprojectExisting = bioprojectsInFirebase[bioprojectindex];
+                        //     this.setState({ bioprojectinfo: bioprojectExisting.text, bioprojects: bioprojectsInFirebase });
+                        // }                        
+                    
+                // }
+            // });
     }
     handleChange = (e, {name, value}) => {
         let tmp = this.state.bioprojectinfo;
@@ -55,17 +57,17 @@ class Bioproject extends Component {
     }
     handleSubmit = (event) => {
         event.preventDefault();
-        const bioprojectindex = this.state.bioprojects.findIndex(item => item.id === this.props.id);
-        Object.assign(this.state.bioprojectinfo, {lab: this.state.lab});
+        // const bioprojectindex = this.state.bioprojects.findIndex(item => item.id === this.props.id);
+        Object.assign(this.state.bioprojectinfo, {lab: this.props.lab});
 
-        if (bioprojectindex === -1) {
-            fire.database().ref('bioprojects').push(this.state.bioprojectinfo); // adding new record
-            console.log('Added new record!')
-        } else {
-            const bioproject = this.state.bioprojects[bioprojectindex];
-            fire.database().ref('bioprojects/' + bioproject.id).set(this.state.bioprojectinfo);
+        // if (bioprojectindex === -1) {
+        //     fire.database().ref('bioprojects').push(this.state.bioprojectinfo); // adding new record
+        //     console.log('Added new record!')
+        // } else {
+            // const bioproject = this.state.bioprojects[bioprojectindex];
+            fire.database().ref('bioprojects/' + this.props.id).set(this.state.bioprojectinfo);
             console.log('Updated existing record!')
-        }
+        // }
         this.props.handleSave();
     }
     render() {
