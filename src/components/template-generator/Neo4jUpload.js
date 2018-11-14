@@ -8,7 +8,7 @@ import { createNeo4jUploadQuery } from './utils';
 import fire from '../../fire';
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
 const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
-const fileDownload = require('js-file-download')
+const fileDownload = require('js-file-download');
 
 class Neo4jUpload extends Component {
     state = { error: null, loader: false, errorState: false, errorCount: 0, errorMessages: [], successMessages: [] }
@@ -51,7 +51,7 @@ class Neo4jUpload extends Component {
                     await asyncForEach(relatedQueries, async (bit) => {
                         try {
                             console.log("Dispatching request : mode : ~~" + mode + "~~" + sheetname + '==' + batchNum);
-                            await this.neo4jPost(bit.query, data[0], sheetname, batchNum);
+                            await this.neo4jPost(bit.query, data, sheetname, batchNum);
                         } catch (error) {
                             console.log(error);
                             this.handleSessionError(error.message);
@@ -235,15 +235,17 @@ function generateCommitLog(messages, USER, LAB) {
     rows.push(`------Generated : ${moment(Date.now()).format('lll')} -----by ${USER}---from ${LAB}------`);
     messages.forEach(item => {
         const { columns, data } = item;
-        if (columns.length === 1) {
-            rows.push(`${columns[0]} : Created/Updated node : ${data[0].row[0]}`);
-        } else {
-            if (data[0].row[1]) {
-                if (data[0].row[1].length > 0) {
-                    rows.push(`${columns[0]} : ${data[0].row[0]}-[${columns[1]}]->${data[0].row[1]}`);
-                } 
+        data.forEach(line => {
+            if (columns.length === 1) {
+                rows.push(`${columns[0]} : Created/Updated node : ${line.row[0]}`);
+            } else {
+                if (line.row[1]) {
+                    if (line.row[1].length > 0) {
+                        rows.push(`${columns[0]} : ${line.row[0]}-[${columns[1]}]->${line.row[1]}`);
+                    } 
+                }
             }
-        }
+        });
     });
     return rows;
 }
