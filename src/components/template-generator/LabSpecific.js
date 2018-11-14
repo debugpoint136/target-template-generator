@@ -14,6 +14,8 @@ const PIs = {
     "Tang Lab": "Winnie Tang",
     "Wang Lab": "Ting Wang"
 };
+
+// const LABTMP = "Wang Lab";
 class LabSpecific extends Component {
     state = {
         labinfo: {},
@@ -25,6 +27,7 @@ class LabSpecific extends Component {
             .onAuthStateChanged(user => {
                 if (user) {
                     this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
+                    // this.setState({ lab: LABTMP });
 
                     let labsRef = fire.database().ref('labs').orderByKey().limitToLast(10);
                     labsRef.on('value', snapshot => {
@@ -33,6 +36,7 @@ class LabSpecific extends Component {
                             labsInFirebase.push({text: data.val(),id: data.key})
                         });
                         const LABindex = labsInFirebase.findIndex(item => item.text.lab === user.photoURL);
+                        // const LABindex = labsInFirebase.findIndex(item => item.text.lab === LABTMP);
                         if (LABindex !== -1) {
                             let labExisting = labsInFirebase[LABindex];
                             this.setState({ labinfo: labExisting.text, labs: labsInFirebase });

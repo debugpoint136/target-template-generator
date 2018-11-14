@@ -78,17 +78,9 @@ class Bioproject extends Component {
                 <div className="text-center font-bold text-teal-darkest">Bioproject: </div>
                 
                 {BIOPROJECT.map((elem) => {
-                    // if (elem.name === 'summary') {
-                    //     return <div className='m-4' key={elem.name}>
-                    //         <Label>{elem.text}</Label>
-                    //         <Form.TextArea
-                    //             onChange={this.handleChange}
-                    //             placeholder={elem.placeholder}
-                    //             name={elem.name}
-                    //             value={this.state.bioprojectinfo[elem.name]}
-                    //         />
-                    //     </div>
-                    // } else {
+                    if (elem.name === 'user_accession') {
+                        return null;
+                    } else {
                         return <div className='m-4' key={elem.name}>
                         <Form.TextArea
                             label={elem.text}
@@ -98,7 +90,7 @@ class Bioproject extends Component {
                             value={this.state.bioprojectinfo[elem.name]}
                         />
                     </div>
-                    // }
+                    }
                 })}
                     <div className="text-center">
                         <Form.Button content='Save changes' />

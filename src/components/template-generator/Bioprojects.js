@@ -2,11 +2,29 @@ import React, {Component} from 'react';
 import {Button, Header, Icon, Modal} from 'semantic-ui-react'
 import fire from '../../fire';
 import Bioproject from './Bioproject';
-// import {generateAccession} from '../../helpers';
-function generateAccession(test) {
-    return "TRGTBPR0003";
-}
-
+import {generateAccession} from '../../helpers';
+// function generateAccession(test) {
+//     return "TRGTBPR00015";
+// }
+const inlineStyle = {
+    modal : {
+        marginTop: '0px !important',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    }
+};
+// const LAB = "Wang Lab";
+// const PIs = {
+//     "Aylor Lab": "David Aylor",
+//     "Biswal Lab": "Shyam Biswal",
+//     "Bartolomei Lab": "Marisa Bartolomei",
+//     "Dolinoy Lab": "Dana Dolinoy",
+//     "Mutlu Lab": "Gokhan Mutlu, MD",
+//     "Walker Lab": "Cheryl Walker",
+//     "Zhibin Lab": "Zhibin Wang",
+//     "Tang Lab": "Winnie Tang",
+//     "Wang Lab": "Ting Wang"
+// };
 class Bioprojects extends Component {
     state = {
         bioprojects: [],
@@ -28,9 +46,7 @@ class Bioprojects extends Component {
     handleEditOne = (e, {name}) => this.setState({ mode: 'edit', modalOpen: true, id: name})
 
     componentWillMount = () => {
-        fire
-            .auth()
-            .onAuthStateChanged(user => {
+        fire.auth().onAuthStateChanged(user => {
                 if (user) {
                     this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid});
 
@@ -48,6 +64,7 @@ class Bioprojects extends Component {
                             })
                         });
                         const bioprojectExistingLab = bioprojectsInFirebase.filter(item => item.text.lab === user.photoURL);
+                        // const bioprojectExistingLab = bioprojectsInFirebase.filter(item => item.text.lab === LAB);
                         this.setState({bioprojects: bioprojectExistingLab});
                     }, (errorObject) => {
                         console.log("The read failed: " + errorObject.code);
@@ -57,11 +74,12 @@ class Bioprojects extends Component {
     }
     render() {
         return (
-            <div className='flex justify-center'>
+            <div className='flex justify-center m-8'>
             <div className="">
             {this.state.bioprojects
                         .map(item => <div className='m-4 p-4 bg-grey-lighter' key={item.id}>
                             <Button color='blue' name={item.id} onClick={this.handleEditOne} > {item.id} </Button>
+                            <div className="text-xs text-grey">{item.text.title}</div>
                         </div>)}
                 
                 {(this.state.mode === 'edit') ? <div className="sdfsd">
@@ -70,6 +88,7 @@ class Bioprojects extends Component {
                                 open={this.state.modalOpen}
                                 onClose={this.handleClose}
                                 basic
+                                style={inlineStyle.modal}
                                 size='large'>
                                 <Header icon='key' content={this.state.id}/>
                                 <Modal.Content>
@@ -79,12 +98,6 @@ class Bioprojects extends Component {
                                         </div>
                                     </div>
                                 </Modal.Content>
-                                <Modal.Actions>
-                                    <Button color='green' inverted>
-                                        <Icon name='checkmark'/>
-                                        Done
-                                    </Button>
-                                </Modal.Actions>
                             </Modal>
                         </div> </div>: null }
 
@@ -94,6 +107,7 @@ class Bioprojects extends Component {
                             open={this.state.modalOpen}
                             onClose={this.handleClose}
                             basic
+                            style={inlineStyle.modal}
                             size='large'>
                             <Header icon='key' content='Create New Bioproject'/>
                             <Modal.Content>
@@ -107,12 +121,6 @@ class Bioprojects extends Component {
                                     </div>
                                 </div>
                             </Modal.Content>
-                            <Modal.Actions>
-                                <Button color='green' inverted>
-                                    <Icon name='checkmark'/>
-                                    Done
-                                </Button>
-                            </Modal.Actions>
                         </Modal>
                     </div> : null}
                     <Button onClick = {this.handleNewRequest} color='green' size='large' inverted>
