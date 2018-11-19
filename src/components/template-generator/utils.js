@@ -622,6 +622,26 @@ organism: "Mus musculus"
 part_of: "TRGTBPR0004"
 */
         rows.forEach(row => {
+            const patt = new RegExp("TRGT");
+            const BPRpatt = new RegExp("TRGTBPR"); 
+            const LABpatt = new RegExp("TRGTLAB"); 
+
+            if (patt.test(row.accession)) {
+                if (!BPRpatt.test(row.accession) && !LABpatt.test(row.accession)) {
+                    result[sheetname][row.accession] = [` Seems like you are using old format metadata sheet. Not permitted operation --> Please contact ADMIN`];
+                    errorCount++;
+                    return;
+                } 
+            }
+            Object.values(row).forEach(filledValue => {
+                if (patt.test(filledValue)) {
+                    if (!BPRpatt.test(filledValue) && !LABpatt.test(filledValue)) {
+                        result[sheetname][row.accession] = [`${filledValue} : Seems like you are using old format metadata sheet. Not permitted operation --> Please contact ADMIN`];
+                        errorCount++;
+                        return;
+                    } 
+                }
+            });
             schema.forEach(field => {
                 if (field.text === 'Subcellular fraction') {
                     // console.log(field.required)
