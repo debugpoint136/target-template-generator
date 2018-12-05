@@ -711,8 +711,28 @@ part_of: "TRGTBPR0004"
                     }
                 }
             }
+            // Validation for litter:
+            // add up male and female should be litter size.
+
             // Validation for mouse:
-            // "Mouse age at sac (weeks)" must larger than treatment."Life stage at exposure".
+            // "Mouse age at sac (weeks)" must larger than treatment."Life stage at exposure";
+            // "mouse weight at sac" > 0;
+            // generate life stage at sac using mouse age at sac?
+
+            // validation for biosample:
+            // generate tissue using specific_tissue (if specific_tissue exists)?
+            // generate sample type using tissue?
+            // generate tissue_classification using sample?
+            // if it is primary cell, then all the culture related fields become required.
+
+            // validation for assay:
+            // match category and technique.
+            // Detergent added: TRUE or FALSE for ATAC, NA for other assays.
+            // Filtering method: M... or C... for ATAC, None for other assays.
+            // Target only exists for CHIP-seq.
+            // Population is RNA-seq only.
+            // Are the 3 starting cell amount (weight of cells, number of cells and weight of nucleic acid multually exclusive?)
+
 
         })
     })
