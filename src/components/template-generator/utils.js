@@ -700,20 +700,6 @@ part_of: "TRGTBPR0004"
                     } 
                 }
             })
-            // Additional validation for treatment:
-            // "challenge after exposure" and "challenge diet" must occur together.
-            if（sheetname === 'treatment') {
-                if (row['challenge_after_exposure'] !== '' && row['challenged_with'] === '')  {// Is the row still have this key if it is empty in the excel?
-                    result[sheetname][row.accession].push(`challenge after exposure specified without a challenge diet.`);
-                } else {
-                    if (row['challenge_after_exposure'] === '' && row['challenged_with'] !== '') {
-                        result[sheetname][row.accession].push(`What is the challenge after exposure?`);
-                    }
-                }
-            }
-            // Validation for mouse:
-            // "Mouse age at sac (weeks)" must larger than treatment."Life stage at exposure".
-
         })
     })
 
