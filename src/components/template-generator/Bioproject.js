@@ -1,8 +1,30 @@
 import React, {Component} from 'react';
 import {Form} from 'semantic-ui-react';
 import fire from '../../fire';
+import axios from 'axios';
+
+const neo4jUrl = process.env.REACT_APP_NEO4J_API;
+const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
 const BIOPROJECT = require('../../json/fields/bioproject.js');
 
+const QUERY = `
+WITH {json} as data 
+UNWIND data.bioprojectinfo as q 
+MERGE (bpr:bioproject {accession: q.accession}) 
+    ON CREATE SET 
+        bpr.accession = q.accession,
+        bpr.cbc_results = q.cbc_results,
+        bpr.dam_exposure_level = q.dam_exposure_level,
+        bpr.facility_contamination = q.facility_contamination,
+        bpr.summary = q.summary,
+        bpr.title = q.title
+    ON MATCH SET
+        bpr.cbc_results = q.cbc_results,
+        bpr.dam_exposure_level = q.dam_exposure_level,
+        bpr.facility_contamination = q.facility_contamination,
+        bpr.summary = q.summary,
+        bpr.title = q.title
+`;
 function createBlank() {
     let tmp = {};
     BIOPROJECT.forEach(item => tmp[item.name] = "");
@@ -29,7 +51,7 @@ class Bioproject extends Component {
         // fire.auth()
         //     .onAuthStateChanged(user => {
         //         if (user) {
-        //             this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
+        //             this.setState({user: user.displayName, bpr: user.photoURL, uid: user.uid });
                     let bioprojectsRef = fire.database().ref('bioprojects/' + this.props.id);
                     // let bioprojectsInFirebase = [];
                     bioprojectsRef.on('value', snapshot => {
@@ -55,7 +77,7 @@ class Bioproject extends Component {
         tmp[name] = value;
         this.setState({bioprojectinfo : tmp});
     }
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
         event.preventDefault();
         // const bioprojectindex = this.state.bioprojects.findIndex(item => item.id === this.props.id);
         Object.assign(this.state.bioprojectinfo, {lab: this.props.lab});
@@ -65,10 +87,16 @@ class Bioproject extends Component {
         //     console.log('Added new record!')
         // } else {
             // const bioproject = this.state.bioprojects[bioprojectindex];
+            Object.assign(this.state.bioprojectinfo, { accession: this.props.id });
             fire.database().ref('bioprojects/' + this.props.id).set(this.state.bioprojectinfo);
             console.log('Updated existing record!')
         // }
         this.props.handleSave();
+        try {
+            await neo4jPost(this.state.bioprojectinfo); 
+        } catch (error) {
+            console.error(error);
+        }
     }
     render() {
         return (
@@ -105,3 +133,16 @@ class Bioproject extends Component {
 export default Bioproject;
 
 
+async function neo4jPost(bioprojectinfoPayload) {
+    const neo4jRes = await axios.post(neo4jUrl, {
+        statements: [
+            {
+                statement: QUERY,
+                parameters: { json: { bioprojectinfo: bioprojectinfoPayload } }
+            }
+        ]
+    }, { headers: { Authorization: AUTHORIZATION }} );
+
+    return neo4jRes;
+
+}

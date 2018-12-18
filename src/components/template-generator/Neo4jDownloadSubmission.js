@@ -76,7 +76,7 @@ class Neo4jDownloadSubmission extends Component {
 
 export default Neo4jDownloadSubmission;
 
-const CONNECTIONSLIST = [ 'litter', 'mouse', 'treatment','assay', 'file', 'diet', 'bioproject', 'reagent' ];
+const CONNECTIONSLIST = [ 'litter', 'mouse', 'treatment','assay', 'biosample', 'file', 'diet', 'bioproject', 'reagent' ];
 function setupQuery(type) {
     let queryParams = '';
     // const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]

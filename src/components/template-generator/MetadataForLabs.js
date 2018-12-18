@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Label, Button} from 'semantic-ui-react';
 import Neo4jDownloadLab from './Neo4jDownloadLab';
 // import Neo4jDownloadLabLegacy from './Neo4jDownloadLabLegacy';
-import {Loader, Dimmer} from 'semantic-ui-react';
+import {Loader, Dimmer, Popup} from 'semantic-ui-react';
 
 // const LABS = [
 //     'David Aylor',
@@ -41,11 +41,16 @@ const LABS = [
 class MetadataForLabs extends Component {
     state = {
         download: null,
+        downloadFlat: null,
         loader: false
     }
 
     handleMetadataDownload = (e, {name}) => {
         this.setState({download: name});
+    }
+
+    handleMetadataDownloadFlat = (e, {name}) => {
+        this.setState({download: name, downloadFlat: true});
     }
 
     handleLoader = () => {
@@ -96,16 +101,30 @@ class MetadataForLabs extends Component {
             <div className="m-4 p-4 flex justify-center">
                 <div className="m-4 p-4 bg-teal-lightest flex justify-between w-1/3">
                     <Label size='tiny' color='blue' className="px-4">{this.props.lab}</Label>
-
+                    <Popup trigger={
                     <Button
                         basic
                         size='tiny'
                         name={this.props.lab}
                         className="mx-4"
                         icon='download'
-                        onClick={this.handleMetadataDownload}/>
+                        onClick={this.handleMetadataDownload}/>} content='Download all metadata excel' />
+                        <Popup trigger={
+                            <Button
+                                basic
+                                size='tiny'
+                                name={this.props.lab}
+                                className="mx-4"
+                                icon='table'
+                                onClick={this.handleMetadataDownloadFlat}/>
+                            } content='Download flat file of all metadata csv' />
                 </div>
-                    <Neo4jDownloadLab id={this.state.download} handleLoader={this.handleLoader}/>
+                    { 
+                        (this.state.downloadFlat) ? 
+                        <Neo4jDownloadLab flat={true} id={this.state.download} handleLoader={this.handleLoader}/>
+                        :
+                        <Neo4jDownloadLab flat={false} id={this.state.download} handleLoader={this.handleLoader}/>
+                    }
             </div>
         );
     }

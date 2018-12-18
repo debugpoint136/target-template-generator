@@ -5,7 +5,33 @@ import { makeAllWorkSheets, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
 const AUTHORIZATION = process.env.REACT_APP_NEO4J_PASSWORD;
-
+const HEADER = [ "File accession",
+"File user accession",
+"Paired file accession",
+"File uuid",
+"Filename",
+"Submission Id",
+"md5sum",
+"Score",
+"Assay accession",
+"Assay user accession",
+"Assay technique",
+"Biosample accession",
+"Biosample user accession",
+"Tissue",
+"Mouse accession",
+"Mouse user accession",
+"Mouse internal id",
+"Mouse gender",
+"Mice life stage at collection",
+"Treatment accession",
+"Treatment user accession",
+"Treatment exposure",
+"Treatment dose",
+"Diet accession",
+"Diet user accession",
+"Litter accession",
+"Litter user accession"];
 
 // const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 
@@ -40,6 +66,26 @@ class Neo4jDownloadLab extends Component {
             lab: id
         };
         // console.log(setupQuery('file'))
+        if (this.props.flat) {
+            const QUERY = `MATCH (paired_file:file)-[:paired_file]->(f:file)-->(a:assay)-->(b:biosample)-->(m:mouse)-->(t:treatment),(f)-[:tagged]->(tag:filetag),(m)-->(d:diet),(m)-->(l:litter) 
+            RETURN f.accession,f.user_accession,paired_file.accession,f.file_uuid,f.filename,f.submission_id,f.md5sum,tag.score,a.accession,a.user_accession,a.technique,b.accession,b.user_accession,b.tissue,m.accession,m.user_accession,m.internal_id,m.sex,m.life_stage_collection,t.accession,t.user_accession,t.exposure_specific,t.exposure_dose,d.accession,d.user_accession,l.accession,l.user_accession`;
+            
+            axios.post(neo4jUrl, {
+                statements: [
+                    {
+                        statement: QUERY,
+                        parameters: params
+                    }
+                ]
+            }, { headers: { Authorization: AUTHORIZATION }} )
+            .then((res) => {
+                const results = neo4jResParser(res);
+                csvSimpleDownload(results, this.props.handleLoader);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        } else {
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
                                         statements: [
                                             {
@@ -58,7 +104,7 @@ class Neo4jDownloadLab extends Component {
             .catch(err => {
                 console.log(err);
             });
-            
+    }
 }
 
 
@@ -222,4 +268,41 @@ function excelSimpleDownload (id, data, closeLoaderCb) {
             closeLoaderCb();
         })
         .catch(err => console.log('Error writing excel export', err));    
+}
+
+
+function neo4jResParser(res) {
+    const { columns, data } = res.data.results[0];
+
+    const result = data.map((line, index) => {
+        const { row } = line;
+        let lineResult = {};
+        row.forEach((item, index) => {
+            lineResult[columns[index]] = item;
+        })
+        return lineResult;
+    });
+
+    return result;
+}
+
+function csvSimpleDownload(arrData, closeLoaderCb) {
+
+    let CSV = HEADER + '\r\n';
+    for (var i = 0; i < arrData.length; i++) {
+        var row = "";
+        
+        //2nd loop will extract each column and convert it in string comma-seprated
+        for (var index in arrData[i]) {
+            row += '"' + arrData[i][index] + '",';
+        }
+
+        row.slice(0, row.length - 1);
+        
+        //add a line break after each row
+        CSV += row + '\r\n';
+    }
+
+    saveAs(new Blob([CSV]), `${Date.now()}.csv`);
+    closeLoaderCb();
 }
