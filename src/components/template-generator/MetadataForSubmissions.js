@@ -15,13 +15,13 @@ class MetadataForSubmissions extends Component {
             if (this.props.lab === 'ADMIN') {
                 axios.get(SUBMISSIONS)
                 .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' 
-                && sub.assay !== 'RRBS-seq' 
+                // && sub.assay !== 'RRBS-seq' 
                 ).sort(compare) }))
                 .catch(err => console.log(err));    
             } else {
                 axios.get(SUBMISSIONS)
                 .then(res => this.setState({ submissions: res.data.body.filter(sub => sub.data_phase === 'production' 
-                && sub.assay !== 'RRBS-seq' 
+                // && sub.assay !== 'RRBS-seq' 
                 && sub.lab === this.props.lab
                 )}))
                 .catch(err => console.log(err));    

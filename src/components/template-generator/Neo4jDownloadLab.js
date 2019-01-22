@@ -67,7 +67,7 @@ class Neo4jDownloadLab extends Component {
         };
         // console.log(setupQuery('file'))
         if (this.props.flat) {
-            const QUERY = `MATCH (paired_file:file)-[:paired_file]->(f:file)-->(a:assay)-->(b:biosample)-->(m:mouse)-->(t:treatment),(f)-[:tagged]->(tag:filetag),(m)-->(d:diet),(m)-->(l:litter) 
+            const QUERY = `MATCH (paired_file:file)-[:paired_file]->(f:file {lab: "${this.props.lab}"})-->(a:assay)-->(b:biosample)-->(m:mouse)-->(t:treatment),(f)-[:tagged]->(tag:filetag),(m)-->(d:diet),(m)-->(l:litter) 
             RETURN f.accession,f.user_accession,paired_file.accession,f.file_uuid,f.filename,f.submission_id,f.md5sum,tag.score,a.accession,a.user_accession,a.technique,b.accession,b.user_accession,b.tissue,m.accession,m.user_accession,m.internal_id,m.sex,m.life_stage_collection,t.accession,t.user_accession,t.exposure_specific,t.exposure_dose,d.accession,d.user_accession,l.accession,l.user_accession`;
             
             axios.post(neo4jUrl, {

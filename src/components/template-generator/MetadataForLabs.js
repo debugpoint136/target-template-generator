@@ -121,7 +121,7 @@ class MetadataForLabs extends Component {
                 </div>
                     { 
                         (this.state.downloadFlat) ? 
-                        <Neo4jDownloadLab flat={true} id={this.state.download} handleLoader={this.handleLoader}/>
+                        <Neo4jDownloadLab flat={true} id={this.state.download} lab={this.props.lab} handleLoader={this.handleLoader}/>
                         :
                         <Neo4jDownloadLab flat={false} id={this.state.download} handleLoader={this.handleLoader}/>
                     }
