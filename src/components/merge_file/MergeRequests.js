@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import fire from '../../fire';
 // import ExcelDownload from './ExcelDownload';
 import moment from 'moment';
+import MergeManifestDownload from './MergeManifestDownload';
 
 class MergeRequests extends Component {
     state = { merge_requests: {}, user: null, lab: null, uid: null }
@@ -41,22 +42,21 @@ class MergeRequests extends Component {
             });
     }
     render() { 
-        console.log(Object.values(this.state.merge_requests));
 
-        // if (!this.state.merge_requests) {
-        //     return <div className="text-italic text-grey">Not logged in</div>
-        // }
-        // if (this.state.merge_requests.hasOwnProperty(this.state.uid)) { 
-        //     if (this.state.merge_requests[this.state.uid].length === 0) {
-        //         return <div className="text-italic text-grey">No saved files</div>
-        //     }
-        // } else {
-        //     return <div className="text-italic text-grey">Loading..</div>
-        // }
+        if (!this.state.uid) {
+            return <div className="text-italic text-grey">Not logged in</div>
+        }
+        if (this.state.merge_requests.hasOwnProperty(this.state.uid)) { 
+            if (this.state.merge_requests[this.state.uid].length === 0) {
+                return <div className="text-italic text-grey">No saved files</div>
+            }
+        } else {
+            return <div className="text-italic text-grey">Loading..</div>
+        }
         return (
             <div className="sdfs">
                 <ul>
-                    {Object.values(this.state.merge_requests).map(entry => <li key={entry.id}>{entry.id}</li>)}
+                    {this.state.merge_requests[this.state.uid].map(entry => <MergeManifestDownload key={entry.id} id={entry.id} user={entry.user} date={entry.date}/>)}
                 </ul>
             </div>
         );

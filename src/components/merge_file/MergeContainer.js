@@ -9,7 +9,7 @@ class MergeContainer extends Component {
             <div className="flex justify-center">
             <div className="m-8 p-8 flex-col w-1/2 justify-center">
                 <div className="border-2 border-blue m-8 p-8">
-                    <div className="m-8 p-8 h-8 font-semibold text-grey-darker font-sans text-2xl">Save filled out template excel file</div>
+                    <div className="m-8 p-8 h-8 font-semibold text-grey-darker font-sans text-2xl">Save filled out merge request template</div>
                     <NewMergeRequest/>
                 </div>
                 <div className="border-2 border-blue m-8 p-8">
