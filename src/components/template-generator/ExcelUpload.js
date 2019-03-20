@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import XLSX from 'xlsx';
 import fire from '../../fire';
-import { swapDisplayNamesToKeys } from './utils';
+import { swapDisplayNamesToKeys, cleanUpDate } from './utils';
 import app from "../../fire";
 import Notifications, {notify} from 'react-notify-toast';
 
@@ -42,7 +42,8 @@ export default class SheetJSApp extends Component {
                 type: rABS ? 'binary' : 'array'
             });
 
-            const sheetData = parseWorkBook(wb);
+            const sheetData_ = parseWorkBook(wb);
+            const sheetData = cleanUpDate(sheetData_);
             const readDataAllSheets = { name: file.name,
                 data: JSON.stringify(sheetData),
                 uploaded: Date.now(),

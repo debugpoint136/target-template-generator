@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import { generateAccession } from '../../helpers';
+const m = require('moment');
+
 const PREFIX = {
     assay: 'AS',
     biosample: 'BS',
@@ -26,6 +28,7 @@ const ALL_CONNECTIONS = {};
 const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
 SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
 const ALL_VALUES = SHEETNAMES.map(name => getValues(name));
+const ALL_DATES = flatten(SHEETNAMES.map(name => getDateFields(name)).filter(d => d));
 
 SHEETNAMES.forEach(name => ALL_CONNECTIONS[name] = require(`../../json/metadata_objects/${name}.js`));
 const CONNECTION_OPTIONS = {};
@@ -37,6 +40,7 @@ const HEADERDISPLAYTOKEY = {};
 SHEETNAMES.forEach(name => {
     HEADERDISPLAYTOKEY[name] = getDisplayNameToKeys(name);
 });
+
 
 // const SHEETID = {
 //     'Treatment': 1,
@@ -731,3 +735,54 @@ submission_id: "49ec1f20-ea62-4933-adbd-2dec997c6c2e"
 undefined: "TGTFIPGK2PE2"
 user_accession: "USRFF0304"
 */
+
+function getDateFields(sheetname) {
+    const toReturn = [];
+    ALL_SCHEMA[sheetname].forEach(entry => {
+        let tmp = {};
+        if (entry.type === 'date') {
+            tmp[sheetname] = entry.name;
+            toReturn.push(tmp);
+        }
+    })
+    if (toReturn.length > 0) {
+        return toReturn;
+    } else {
+        return null;
+    }
+}
+
+export function cleanUpDate(obj) {
+    ALL_DATES.forEach(item => {
+        const sheetname = Object.keys(item)[0];
+        const column = item[sheetname];
+        let rows = item[sheetname];
+        if (rows.length > 0) {
+            obj[sheetname] = transformDates(obj[sheetname], column);
+        }
+    })
+    return obj;
+}
+
+function flatten(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
+}
+
+function transformDates(rows, column) {
+    const rowsWithDateTransformed = []
+    rows.forEach(row => {
+        const fieldValue = row[column];
+        if (fieldValue && Number.isInteger(fieldValue)) {
+            row[column] = transformDate(fieldValue);
+        } 
+        rowsWithDateTransformed.push(row)
+    })
+    return rowsWithDateTransformed;
+}
+
+function transformDate(dateStr) {
+    const epochStr = (Number.parseInt(dateStr) - 25569) * 86400 * 1000;
+    return m(epochStr).format('YYYY-MM-DD');
+}

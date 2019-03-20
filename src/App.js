@@ -11,7 +11,7 @@ import Bioprojects from './components/template-generator/Bioprojects';
 const TUTORIALS_PDF="https://firebasestorage.googleapis.com/v0/b/target-submission-prod.appspot.com/o/Updated%20Production%20metadata%20submission-prod.pdf?alt=media&token=b0494656-0103-4fe2-8f01-b4a917e3966a";
 
 class App extends Component {
-    state = { activeItem: 'merge', data: null}
+    state = { activeItem: 'template', data: null}
 
     // componentDidMount() {
     //     const data = JSON.parse(tmpFileJSON.data);
@@ -65,12 +65,12 @@ class App extends Component {
                         Upload new or Update previous metadata
                     </Menu.Item>
 
-                    <Menu.Item
+                    {/* <Menu.Item
                         name='merge'
                         active={activeItem === 'merge'}
                         onClick={this.handleItemClick}>
                         Merge metadata
-                    </Menu.Item>
+                    </Menu.Item> */}
                 </Menu>
                 </div>
 
@@ -78,7 +78,7 @@ class App extends Component {
                 { (this.state.activeItem === 'bioproject') ? <Bioprojects/> : null}
                 { (this.state.activeItem === 'template') ? <FlatTemplate/> : null}
                 { (this.state.activeItem === 'upload') ? <UploadContainer/> : null}
-                { (this.state.activeItem === 'merge') ? <MergeContainer/> : null}
+                {/* { (this.state.activeItem === 'merge') ? <MergeContainer/> : null} */}
                 { (this.state.activeItem === 'download') ? <div className="text-center"><MetadataDownloadContainer/></div> : null}
 
                             
