@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import FlatTemplate from './components/template-generator/FlatTemplate';
 import MetadataDownloadContainer from './MetadataDownloadContainer';
 import UploadContainer from './components/template-generator/UploadContainer';

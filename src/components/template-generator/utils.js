@@ -568,14 +568,34 @@ function addNewConnections(CONNECTIONS, ITEM, LAB) {
         const connectionName = connection.name;
         const connectionTo = connection.to;
 
-        let body = ` 
+        let template = `
+        WITH split('TGTASOR0RBNG,TGTASZ04K3W9', ',') AS ASSAYS 
+        UNWIND ASSAYS AS q 
+            MATCH (a:assay {accession: q}) WITH a 
+            MATCH (b:biosample {accession: "TGTBSHPR44EC"}) WITH a, b
+                        FOREACH(x IN (CASE WHEN a IS NULL THEN [] else [1] END) |
+                                CREATE (a)-[:assay_input]->(b)
+                            )`;
+
+        let bodybkup = ` 
         OPTIONAL MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:row.${connectionName}})
         WITH ${ITEM}_${connectionName}_${connectionTo}, row, ${ITEM}
         FOREACH(x IN (CASE WHEN ${ITEM}_${connectionName}_${connectionTo} IS NULL THEN [] else [1] END) |
         CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
         )
-        RETURN ${ITEM}.accession as ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}.accession as added_relationship_${connectionName}
-        `;
+        RETURN ${ITEM}.accession as ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}.accession as added_relationship_${connectionName}`;
+
+        let body = ` 
+        WITH split(toString(row.${connectionName}), ',') AS ${ITEM}_${connectionName}_${connectionTo}_list, ${ITEM}, row
+        UNWIND ${ITEM}_${connectionName}_${connectionTo}_list AS q 
+            OPTIONAL MATCH (${ITEM}_${connectionName}_${connectionTo}:${connectionTo} {accession:q})
+            WITH ${ITEM}_${connectionName}_${connectionTo}, row, ${ITEM}
+            FOREACH(x IN (CASE WHEN ${ITEM}_${connectionName}_${connectionTo} IS NULL THEN [] else [1] END) |
+            CREATE (${ITEM})-[:${connectionName}]->(${ITEM}_${connectionName}_${connectionTo})
+            )
+        RETURN ${ITEM}.accession as ${ITEM}, ${ITEM}_${connectionName}_${connectionTo}.accession as added_relationship_${connectionName}`;
+
+        console.log(header+body)
 
         return  header + body;
     })

@@ -1,0 +1,37 @@
+{
+    "1": {
+        "title": "Basic Information",
+        "icon": "options",
+        "description": "Choose your submission options",
+        "active": true,
+        "completed": false,
+        "disabled": false
+    },
+
+    "2": {
+        "title": "Declare Files",
+        "icon": "upload",
+        "description": "Copy and paste MD5sum files list (Comma separated)",
+        "active": false,
+        "completed": false,
+        "disabled": true
+    },
+
+    "3": {
+        "title": "Experiment Design",
+        "icon": "lab",
+        "description": "Enter required information",
+        "active": false,
+        "completed": false,
+        "disabled": true
+    },
+
+    "4": {
+        "title": "Confirm",
+        "icon": "info",
+        "description": "Verify experiment details",
+        "active": false,
+        "completed": false,
+        "disabled": true
+    }
+}

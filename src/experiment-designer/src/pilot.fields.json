@@ -1,0 +1,228 @@
+{
+  "assay": [
+    {
+      "name": "starting_cells",
+      "text": "Starting amount of cells (mg)",
+      "placeholder": "Amount of cells input into assay (if applicable)",
+      "type": "textnumber",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "starting_cell_count",
+      "text": "Starting number of cells",
+      "placeholder": "Number of cells input into assay (if applicable)",
+      "type": "textnumber",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "starting_nucleic_acid",
+      "text": "Starting amount of nucleic acid (include units)",
+      "placeholder": "Amount of nucleic acid input into assay (if applicable)",
+      "type": "text",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "strand_specificity",
+      "text": "Strand specificity",
+      "placeholder": "",
+      "values": [
+        "TRUE",
+        "FALSE"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "assay_protocol",
+      "text": "Assay protocol",
+      "placeholder": "Upload assay protocol and specify URL",
+      "type": "text",
+      "required": true,
+      "pilot": true
+    },
+    {
+      "name": "previously_frozen_tissue",
+      "text": "Tissue previously frozen",
+      "placeholder": "Was tissue frozen prior to performing assay?",
+      "values": [
+        "NA",
+        "TRUE",
+        "FALSE"
+      ],
+      "type": "text",
+      "required": false,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "detergent_added",
+      "text": "Detergent added (ATAC-seq)",
+      "placeholder": "",
+      "values": [
+        "NA",
+        "TRUE",
+        "FALSE"
+      ],
+      "type": "text",
+      "required": false,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "filtering_method",
+      "text": "Filtering method (ATAC-seq)",
+      "placeholder": "",
+      "values": [
+        "NA",
+        "Miracloth",
+        "Celltrics column"
+      ],
+      "type": "text",
+      "required": false,
+      "values_restricted": false,
+      "pilot": true
+    }
+  ],
+  "biosample": [
+    {
+      "name": "tissue",
+      "text": "Tissue",
+      "placeholder": "Tissue or cell population collected from mouse",
+      "required": true,
+      "type": "text",
+      "values": [
+        "Aorta",
+        "Blood - leukocytes",
+        "Blood - monocyte",
+        "Blood - PBMC",
+        "Blood - plasma",
+        "Blood - Whole",
+        "Brain - cortex",
+        "Brain - hippocampus",
+        "Brain - hypothalamus",
+        "Brain - mid-brain and hind-brain",
+        "Brain - whole",
+        "Brain - whole, micropunch",
+        "Breast",
+        "Ear - left",
+        "Ear - right",
+        "Fat",
+        "Fat - adipocytes",
+        "Fat - brown adipose",
+        "Fat - mesenteric adipose",
+        "Fat - white adipose",
+        "Gall bladder",
+        "Hair",
+        "Heart",
+        "Heart - ventricles",
+        "Kidney",
+        "Kidney - left",
+        "Kidney - right capsule",
+        "Kidney epithelium",
+        "Liver",
+        "Liver - accessory lobe",
+        "Liver - caudate lobe",
+        "Liver - left lobe",
+        "Liver - medial lobe",
+        "Liver - oval cells",
+        "Liver - right lobe",
+        "Liver - tumor",
+        "Lung",
+        "Lung - alveolar macrophages",
+        "Lung - both",
+        "Lung - epithelial cells",
+        "Lung - right",
+        "Lung - Type II cells",
+        "Nasal epithelium",
+        "Ovary",
+        "Placenta",
+        "Skeletal muscle",
+        "Skin",
+        "Skin - ear punch",
+        "Skin - tail",
+        "Sperm",
+        "Spleen",
+        "Stool",
+        "Tail",
+        "Testis",
+        "Testis - both",
+        "Testis - left",
+        "Testis - right",
+        "Uterine horns",
+        "Uterine horns - endometrium removed",
+        "Uterus",
+        "Cell line (MEF)"
+      ],
+      "values_restricted": false,
+      "pilot": true
+    }
+  ],
+  "file": [
+    {
+      "name": "filename",
+      "text": "Name",
+      "placeholder": "",
+      "type": "text",
+      "required": true,
+      "pilot": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "Add any other details",
+      "type": "textarea",
+      "required": false,
+      "pilot": true
+    }
+  ],
+  "mouse": [
+    {
+      "name": "sex",
+      "text": "Sex",
+      "placeholder": "",
+      "required": true,
+      "type": "text",
+      "values": [
+        "Male",
+        "Female"
+      ],
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "mouse_age_collection",
+      "text": "Mouse age at sac (include units)",
+      "placeholder": "",
+      "type": "text",
+      "required": true,
+      "pilot": true
+    }
+  ],
+  "treatment": [
+    {
+      "name": "exposure_specific",
+      "text": "Exposure",
+      "placeholder": "Specific exposure",
+      "values": [
+        "BPA (Bisphenol A)",
+        "TBT (Tributyltin)",
+        "Genestein",
+        "Arsenic (As)",
+        "Cd",
+        "Pb",
+        "PM2.5",
+        "DEHP",
+        "TCDD (2,3,7,8-tetrachlorodibenzo-p-dixoin)"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": false,
+      "pilot": true
+    }
+  ]
+}

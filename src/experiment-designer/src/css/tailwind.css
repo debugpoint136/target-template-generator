@@ -114,8 +114,7 @@ a {
 abbr[title] {
   border-bottom: none; /* 1 */
   text-decoration: underline; /* 2 */
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted; /* 2 */
+  text-decoration: underline dotted; /* 2 */
 }
 
 /**
@@ -600,24 +599,6 @@ textarea {
   font-family: inherit;
 }
 
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-  color: inherit;
-  opacity: .5;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-  color: inherit;
-  opacity: .5;
-}
-
-input::-ms-input-placeholder,
-textarea::-ms-input-placeholder {
-  color: inherit;
-  opacity: .5;
-}
-
 input::placeholder,
 textarea::placeholder {
   color: inherit;
@@ -663,9 +644,7 @@ button,
 }
 
 .appearance-none {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 .bg-fixed {
@@ -1314,6 +1293,10 @@ button,
 
 .bg-repeat-y {
   background-repeat: repeat-y;
+}
+
+.bg-auto {
+  background-size: auto;
 }
 
 .bg-cover {
@@ -2234,6 +2217,14 @@ button,
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.cursor-wait {
+  cursor: wait;
+}
+
+.cursor-move {
+  cursor: move;
 }
 
 .cursor-not-allowed {
@@ -3216,14 +3207,20 @@ button,
   overflow: scroll;
 }
 
-.overflow-x-scroll {
+.overflow-x-auto {
   overflow-x: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
 }
 
 .overflow-y-scroll {
-  overflow-y: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
+  overflow-y: scroll;
 }
 
 .scrolling-touch {
@@ -3496,6 +3493,10 @@ button,
 
 .relative {
   position: relative;
+}
+
+.sticky {
+  position: sticky;
 }
 
 .pin-none {
@@ -4323,17 +4324,11 @@ button,
 }
 
 .select-none {
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  user-select: none;
 }
 
 .select-text {
-  -webkit-user-select: text;
-     -moz-user-select: text;
-      -ms-user-select: text;
-          user-select: text;
+  user-select: text;
 }
 
 .align-baseline {
@@ -4542,8 +4537,6 @@ button,
   z-index: auto;
 }
 
-/* Your custom CSS here */
-
 @media (min-width: 576px) {
   .sm\:list-reset {
     list-style: none;
@@ -4551,9 +4544,7 @@ button,
   }
 
   .sm\:appearance-none {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
+    appearance: none;
   }
 
   .sm\:bg-fixed {
@@ -5202,6 +5193,10 @@ button,
 
   .sm\:bg-repeat-y {
     background-repeat: repeat-y;
+  }
+
+  .sm\:bg-auto {
+    background-size: auto;
   }
 
   .sm\:bg-cover {
@@ -6122,6 +6117,14 @@ button,
 
   .sm\:cursor-pointer {
     cursor: pointer;
+  }
+
+  .sm\:cursor-wait {
+    cursor: wait;
+  }
+
+  .sm\:cursor-move {
+    cursor: move;
   }
 
   .sm\:cursor-not-allowed {
@@ -7104,14 +7107,20 @@ button,
     overflow: scroll;
   }
 
-  .sm\:overflow-x-scroll {
+  .sm\:overflow-x-auto {
     overflow-x: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
+  .sm\:overflow-y-auto {
+    overflow-y: auto;
+  }
+
+  .sm\:overflow-x-scroll {
+    overflow-x: scroll;
   }
 
   .sm\:overflow-y-scroll {
-    overflow-y: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow-y: scroll;
   }
 
   .sm\:scrolling-touch {
@@ -7384,6 +7393,10 @@ button,
 
   .sm\:relative {
     position: relative;
+  }
+
+  .sm\:sticky {
+    position: sticky;
   }
 
   .sm\:pin-none {
@@ -8203,17 +8216,11 @@ button,
   }
 
   .sm\:select-none {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
   }
 
   .sm\:select-text {
-    -webkit-user-select: text;
-       -moz-user-select: text;
-        -ms-user-select: text;
-            user-select: text;
+    user-select: text;
   }
 
   .sm\:align-baseline {
@@ -8430,9 +8437,7 @@ button,
   }
 
   .md\:appearance-none {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
+    appearance: none;
   }
 
   .md\:bg-fixed {
@@ -9081,6 +9086,10 @@ button,
 
   .md\:bg-repeat-y {
     background-repeat: repeat-y;
+  }
+
+  .md\:bg-auto {
+    background-size: auto;
   }
 
   .md\:bg-cover {
@@ -10001,6 +10010,14 @@ button,
 
   .md\:cursor-pointer {
     cursor: pointer;
+  }
+
+  .md\:cursor-wait {
+    cursor: wait;
+  }
+
+  .md\:cursor-move {
+    cursor: move;
   }
 
   .md\:cursor-not-allowed {
@@ -10983,14 +11000,20 @@ button,
     overflow: scroll;
   }
 
-  .md\:overflow-x-scroll {
+  .md\:overflow-x-auto {
     overflow-x: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
+  .md\:overflow-y-auto {
+    overflow-y: auto;
+  }
+
+  .md\:overflow-x-scroll {
+    overflow-x: scroll;
   }
 
   .md\:overflow-y-scroll {
-    overflow-y: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow-y: scroll;
   }
 
   .md\:scrolling-touch {
@@ -11263,6 +11286,10 @@ button,
 
   .md\:relative {
     position: relative;
+  }
+
+  .md\:sticky {
+    position: sticky;
   }
 
   .md\:pin-none {
@@ -12082,17 +12109,11 @@ button,
   }
 
   .md\:select-none {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
   }
 
   .md\:select-text {
-    -webkit-user-select: text;
-       -moz-user-select: text;
-        -ms-user-select: text;
-            user-select: text;
+    user-select: text;
   }
 
   .md\:align-baseline {
@@ -12309,9 +12330,7 @@ button,
   }
 
   .lg\:appearance-none {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
+    appearance: none;
   }
 
   .lg\:bg-fixed {
@@ -12960,6 +12979,10 @@ button,
 
   .lg\:bg-repeat-y {
     background-repeat: repeat-y;
+  }
+
+  .lg\:bg-auto {
+    background-size: auto;
   }
 
   .lg\:bg-cover {
@@ -13880,6 +13903,14 @@ button,
 
   .lg\:cursor-pointer {
     cursor: pointer;
+  }
+
+  .lg\:cursor-wait {
+    cursor: wait;
+  }
+
+  .lg\:cursor-move {
+    cursor: move;
   }
 
   .lg\:cursor-not-allowed {
@@ -14862,14 +14893,20 @@ button,
     overflow: scroll;
   }
 
-  .lg\:overflow-x-scroll {
+  .lg\:overflow-x-auto {
     overflow-x: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
+  .lg\:overflow-y-auto {
+    overflow-y: auto;
+  }
+
+  .lg\:overflow-x-scroll {
+    overflow-x: scroll;
   }
 
   .lg\:overflow-y-scroll {
-    overflow-y: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow-y: scroll;
   }
 
   .lg\:scrolling-touch {
@@ -15142,6 +15179,10 @@ button,
 
   .lg\:relative {
     position: relative;
+  }
+
+  .lg\:sticky {
+    position: sticky;
   }
 
   .lg\:pin-none {
@@ -15961,17 +16002,11 @@ button,
   }
 
   .lg\:select-none {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
   }
 
   .lg\:select-text {
-    -webkit-user-select: text;
-       -moz-user-select: text;
-        -ms-user-select: text;
-            user-select: text;
+    user-select: text;
   }
 
   .lg\:align-baseline {
@@ -16188,9 +16223,7 @@ button,
   }
 
   .xl\:appearance-none {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
+    appearance: none;
   }
 
   .xl\:bg-fixed {
@@ -16839,6 +16872,10 @@ button,
 
   .xl\:bg-repeat-y {
     background-repeat: repeat-y;
+  }
+
+  .xl\:bg-auto {
+    background-size: auto;
   }
 
   .xl\:bg-cover {
@@ -17759,6 +17796,14 @@ button,
 
   .xl\:cursor-pointer {
     cursor: pointer;
+  }
+
+  .xl\:cursor-wait {
+    cursor: wait;
+  }
+
+  .xl\:cursor-move {
+    cursor: move;
   }
 
   .xl\:cursor-not-allowed {
@@ -18741,14 +18786,20 @@ button,
     overflow: scroll;
   }
 
-  .xl\:overflow-x-scroll {
+  .xl\:overflow-x-auto {
     overflow-x: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
+  .xl\:overflow-y-auto {
+    overflow-y: auto;
+  }
+
+  .xl\:overflow-x-scroll {
+    overflow-x: scroll;
   }
 
   .xl\:overflow-y-scroll {
-    overflow-y: auto;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow-y: scroll;
   }
 
   .xl\:scrolling-touch {
@@ -19021,6 +19072,10 @@ button,
 
   .xl\:relative {
     position: relative;
+  }
+
+  .xl\:sticky {
+    position: sticky;
   }
 
   .xl\:pin-none {
@@ -19840,17 +19895,11 @@ button,
   }
 
   .xl\:select-none {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
   }
 
   .xl\:select-text {
-    -webkit-user-select: text;
-       -moz-user-select: text;
-        -ms-user-select: text;
-            user-select: text;
+    user-select: text;
   }
 
   .xl\:align-baseline {

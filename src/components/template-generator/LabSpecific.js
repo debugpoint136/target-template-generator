@@ -114,7 +114,7 @@ class LabSpecific extends Component {
                     if (elem.name === 'principal_investigator') {
                         return <div className='m-4 flex justify-start' key={elem.name}>
                             <Label>{elem.text}</Label>
-                            <Label color='teal' basic>{PIs[this.state.lab]}</Label>
+                            <Label>{PIs[this.state.lab]}</Label>
                         </div>
                     } else {
                         return <div className='m-4 flex justify-start' key={elem.name}>
