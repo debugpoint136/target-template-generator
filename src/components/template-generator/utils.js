@@ -22,15 +22,14 @@ const PREFIX = {
 //     'Treatment': 'TR',
 //     'Reagent': 'RG'
 // }
-const ALL_SCHEMA = {};
-const ALL_CONNECTIONS = {};
-
+const ALL_SCHEMA = require('../../json/fields.json');
+const ALL_CONNECTIONS = require('../../json/connections.json');
 const SHEETNAMES = [ 'treatment', 'diet', 'litter', 'mouse', 'biosample','assay', 'reagent', 'file' ];
-SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
+// SHEETNAMES.forEach(name => ALL_SCHEMA[name] = require(`../../json/fields/${name}.js`));
 const ALL_VALUES = SHEETNAMES.map(name => getValues(name));
 const ALL_DATES = flatten(SHEETNAMES.map(name => getDateFields(name)).filter(d => d));
 
-SHEETNAMES.forEach(name => ALL_CONNECTIONS[name] = require(`../../json/metadata_objects/${name}.js`));
+// SHEETNAMES.forEach(name => ALL_CONNECTIONS[name] = require(`../../json/metadata_objects/${name}.js`));
 const CONNECTION_OPTIONS = {};
 SHEETNAMES.forEach(name => {
     CONNECTION_OPTIONS[name] = getConnectionOptions(name);

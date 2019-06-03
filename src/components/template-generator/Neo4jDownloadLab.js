@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {saveAs} from 'file-saver';
+import { Form, Radio } from 'semantic-ui-react'
 import { makeAllWorkSheets, fillRows } from './utils';
 const Excel = require('exceljs/dist/es5/exceljs.browser');
 const neo4jUrl = process.env.REACT_APP_NEO4J_API;
@@ -39,8 +40,9 @@ const SHEETNAMES = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file'
 const CONNECTIONS = [ 'treatment', 'litter', 'mouse', 'biosample','assay', 'file', 'diet', 'bioproject', 'reagent' ];
 
 class Neo4jDownloadLab extends Component {
-    state = {  }
-    
+    state = { mode : 'ALL' }
+    handleChange = (e, { value }) => this.setState({ mode: value })
+
     static getDerivedStateFromProps(nextProps, prevState) {
         // Store prevId in state so we can compare when props change.
         // Clear out previously-loaded data (so we don't render stale stuff).
@@ -89,7 +91,7 @@ class Neo4jDownloadLab extends Component {
         const fetchPromises = SHEETNAMES.map(sheetname => axios.post(neo4jUrl, {
                                         statements: [
                                             {
-                                                statement: setupQuery(sheetname),
+                                                statement: this.setupQuery(sheetname),
                                                 parameters: params
                                             }
                                         ]
@@ -107,28 +109,24 @@ class Neo4jDownloadLab extends Component {
     }
 }
 
-
-    render() {
-        // if (!this.props.id) {
-        //     return <h5>Looking up..</h5>
-        // }
-        return (
-            <div className="m-8">
-                
-            </div>
-        );
-    }
-}
-
-export default Neo4jDownloadLab;
-
-function setupQuery(type) {
+    setupQuery = (type) => {
+    const { mode } = this.state;
     let queryParams = '';
     // const queryCore = `MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)-[w:works_on]
     // ->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)-[fr:derived_from]->(m) `
+    let queryCore = ``;
 
-    let queryCore = `MATCH (n) WHERE n.lab=$lab`;
-    
+    if (mode === 'FILTERED') {
+    queryCore = queryCore + `
+    MATCH p1=(paired_file:file)-[:paired_file]->(f:file)-->(a:assay)-->(b:biosample)-->(m:mouse)-->(t:treatment) 
+    MATCH p2 = (m)-->(d:diet) 
+    MATCH p3 = (m)-->(l:litter) WITH NODES(p1) AS nodes1, NODES(p2) AS nodes2, NODES(p3) AS nodes3 
+    WITH nodes1 + nodes2 + nodes3 as allnodes 
+    UNWIND allnodes AS n WITH n WHERE n.lab=$lab`;
+    } else { // ALL
+        queryCore = queryCore + `MATCH (n) WHERE n.lab=$lab`;
+    }
+        
     switch (type) {
         case 'treatment':
             queryParams = ` AND "treatment" IN labels(n)
@@ -204,6 +202,45 @@ function setupQuery(type) {
             break;
     }
 }
+
+    render() {
+        // if (!this.props.id) {
+        //     return <h5>Looking up..</h5>
+        // }
+        return (
+            <div className="m-8">
+                <Form>
+                    <Form.Field>
+                    Selected value: <b>{this.state.value}</b>
+                    </Form.Field>
+                    <Form.Field>
+                    <Radio
+                        label='Filter by connected only'
+                        name='radioGroup'
+                        value='FILTERED'
+                        checked={this.state.mode === 'FILTERED'}
+                        onChange={this.handleChange}
+                    />
+                    </Form.Field>
+                    <Form.Field>
+                    <Radio
+                        label='ALL'
+                        name='radioGroup'
+                        value='ALL'
+                        checked={this.state.mode === 'ALL'}
+                        onChange={this.handleChange}
+                    />
+                    </Form.Field>
+                </Form>
+            </div>
+        );
+    }
+}
+
+export default Neo4jDownloadLab;
+
+
+
 // const query = 'MATCH (t:treatment)<-[u:undergoes]-(m:mouse)-[pf:part_of]->(p:bioproject)' +
 //         '-[w:works_on]->(l:lab),(f:file)-[s:sequenced]->(a:assay)-[i:assay_input]->(b:biosample)' +
 //         '-[fr:derived_from]->(m) ' +
