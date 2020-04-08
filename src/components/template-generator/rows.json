@@ -1,0 +1,236 @@
+[
+  {
+    "id": "8ec36f3c-b916-4672-a004-97d8a8db6272",
+    "item": "Mice",
+    "columns": [
+      {
+        "item": "Mice",
+        "field": "Strain",
+        "name": "strain",
+        "value": "C57BL/6"
+      },
+      {
+        "item": "Mice",
+        "field": "Life stage at sac",
+        "name": "life_stage_collection",
+        "value": "preconception"
+      }
+    ]
+  },
+  {
+    "id": "09c6c940-2c76-4452-a28f-6ced3b36ea43",
+    "item": "Mice",
+    "columns": [
+      {
+        "item": "Mice",
+        "field": "Strain",
+        "name": "strain",
+        "value": "C57BL/6"
+      },
+      {
+        "item": "Mice",
+        "field": "Life stage at sac",
+        "name": "life_stage_collection",
+        "value": "preconception"
+      }
+    ]
+  },
+  {
+    "id": "14b5332f-3f01-4cd3-b5ba-11e36fa7a657",
+    "item": "Mice",
+    "columns": [
+      {
+        "item": "Mice",
+        "field": "Strain",
+        "name": "strain",
+        "value": "C57BL/6"
+      },
+      {
+        "item": "Mice",
+        "field": "Life stage at sac",
+        "name": "life_stage_collection",
+        "value": "preconception"
+      }
+    ]
+  },
+  {
+    "id": "70c14333-2237-42be-b821-68ef8d4fb067",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Blood - Whole"
+      }
+    ]
+  },
+  {
+    "id": "3e0f6362-b470-45a5-bf2e-f3f0e65cc230",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Blood - Whole"
+      }
+    ]
+  },
+  {
+    "id": "aa3e35b2-0c64-4c2d-bc9e-094de53b4a22",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Blood - Whole"
+      }
+    ]
+  },
+  {
+    "id": "bade6ec9-3ed9-4dd0-adb0-df46764b7587",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Heart"
+      }
+    ]
+  },
+  {
+    "id": "a81af711-ae7c-40b9-aab0-17891e8e5a0d",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Heart"
+      }
+    ]
+  },
+  {
+    "id": "ec489c31-569a-4b49-8e4b-670c17df2f42",
+    "item": "Biosample",
+    "columns": [
+      {
+        "item": "Biosample",
+        "field": "Tissue",
+        "name": "tissue",
+        "value": "Heart"
+      }
+    ]
+  },
+  {
+    "id": "4d97fab8-4920-4502-8f82-e8dd3187209c",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "frozen"
+      }
+    ]
+  },
+  {
+    "id": "871ecc69-b13d-4a77-a5dc-b188c500a9ff",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "frozen"
+      }
+    ]
+  },
+  {
+    "id": "aa3e5efc-90ac-4017-ad65-b8e00a0efbbf",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "frozen"
+      }
+    ]
+  },
+  {
+    "id": "5697d420-2011-4a36-a133-598185ada298",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "frozen"
+      }
+    ]
+  },
+  {
+    "id": "283aba35-e5b7-4c35-85df-b5c41641d9f7",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "fresh"
+      }
+    ]
+  },
+  {
+    "id": "6ddf385b-3373-4937-becb-7cd321b18893",
+    "item": "Assay Details",
+    "columns": [
+      {
+        "item": "Assay Details",
+        "field": "Population",
+        "name": "population",
+        "value": "DNA"
+      },
+      {
+        "item": "Assay Details",
+        "field": "Starting Material",
+        "name": "starting_material",
+        "value": "fresh"
+      }
+    ]
+  }
+]

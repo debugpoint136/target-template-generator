@@ -1,0 +1,1033 @@
+{
+  "treatment": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRTMT####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "exposure_category",
+      "text": "Category",
+      "placeholder": "",
+      "values": ["Treated", "Control"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "exposure_specific",
+      "text": "Exposure",
+      "placeholder": "Include Chemical Entities of Biological Interest (ChEBI) ID or another exposure database (e.g., Environmental Ontology)",
+      "values": [
+        "BPA (Bisphenol A) CHEBI:33216",
+        "TBT (Tributyltin chloride) CHEBI:79734",
+        "As (arsenite(3-)) CHEBI:29866",
+        "Pb CHEBI:33112",
+        "PM2.5 ENVO:01000415",
+        "DEHP (bis (2-ethylhexyl) phthalate) CHEBI:17747",
+        "TCDD (2,3,7,8-tetrachlorodibenzo-p-dixoin) CHEBI:28119",
+        "Filtered Air",
+        "Control Drinking Water CHEBI:15377",
+        "Control Diet",
+        "Control Oral Gavage"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "exposure_dose",
+      "text": "Dose of exposure",
+      "placeholder": "Include units. Examples: \"50 mg/kg\", \"100 ppm/s\", \"0 mg/kg (for control)\"",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "exposure_paradigm",
+      "text": "Exposure paradigm",
+      "placeholder": "Include dose, frequency, route, number of exposures (if applicable), vehicle, etc. If diet, include catalog number of treatment diet. Example: \"Dams were exposed to treatment 2 weeks before breeding, through gestation and lactation. Offspring were exposed to treatment through the dam from conception to birth, then through nursing or food/water once pups begin to eat and drink on their own.\"",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "exposure_age_first",
+      "text": "Age at first exposure (weeks)",
+      "placeholder": "Negative ages indicate that the dam was exposed prior to birth i.e. -5=2 weeks prior to conception, 0=birth, -3=conception",
+      "type": "integer",
+      "required": true,
+      "values": ["-5", "-3", "0", "3"],
+      "values_restricted": true
+    },
+    {
+      "name": "exposure_age_last",
+      "text": "Age at last exposure (weeks)",
+      "placeholder": "",
+      "type": "integer",
+      "required": true,
+      "values": ["3", "5", "17"],
+      "values_restricted": true
+    },
+    {
+      "name": "exposure_life_stage",
+      "text": "Life stage at exposure",
+      "placeholder": "",
+      "values": [
+        "preconception (-5 weeks to conception/-3 weeks)",
+        "gestation (conception/-3 weeks to birth/0 weeks",
+        "neonate (birth/0 weeks to 1 week)",
+        "preconception to weaning (-5 weeks to 3 weeks)",
+        "weanling (3 weeks)",
+        "adolescent (3 to 5 weeks)",
+        "juvenile (5 to 10 weeks)",
+        "adult (15 to 30 weeks)",
+        "aged (45 to 52 weeks)"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "challenge_after_exposure",
+      "text": "Challenge after exposure",
+      "placeholder": "(if applicable)",
+      "values": ["High-fat diet"],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "challenge_life_age_beginning",
+      "text": "Age at beginning of challenge (weeks)",
+      "placeholder": "(if applicable)",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "challenge_life_age_end",
+      "text": "Age at end of challenge (weeks)",
+      "placeholder": "(if applicable)",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "challenge_life_Stage",
+      "text": "Life stage at challenge",
+      "placeholder": "(if applicable)",
+      "values": [
+        "preconception (-5 weeks to conception/-3 weeks)",
+        "gestation (conception/-3 weeks to birth/0 weeks",
+        "neonate (birth/0 weeks to 1 week)",
+        "preconception to weaning (-5 weeks to 3 weeks)",
+        "weanling (3 weeks)",
+        "adolescent (3 to 5 weeks)",
+        "juvenile (5 to 10 weeks)",
+        "adult (15 to 30 weeks)",
+        "aged (45 to 52 weeks)"
+      ],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "diet": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRDIET####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "category",
+      "text": "Category",
+      "placeholder": "",
+      "required": true,
+      "type": "text",
+      "values": ["Standard", "Dietary Challenge"],
+      "values_restricted": true
+    },
+    {
+      "name": "description",
+      "text": "Description",
+      "placeholder": "Base diet. Dietary treatments will be included in the treatment tab.",
+      "type": "text",
+      "required": true,
+      "values": [
+        "Soy Protein Free-Teklad/Envigo-2020X",
+        "7% Corn Oil-Phytoestrogen Free-Teklad/Envigo-TD.95092",
+        "Standard Chow-Research Diets Inc-AIN-93G",
+        "Normal Diet-Prolab-P3000",
+        "High-Fat Diet-OpenSource-D12492"
+      ],
+      "values_restricted": true
+    },
+    {
+      "name": "batchId",
+      "text": "Batch number",
+      "placeholder": "Include all batches for the given diet. Contact the DCC to add an additional batch if you encounter permission issues.",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "litter": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRLTR####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "litter_size_total",
+      "text": "Litter size (total)",
+      "placeholder": "Number of pups born in litter",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "litter_size_survived",
+      "text": "Litter size (survived to weaning)",
+      "placeholder": "Number of pups survived in litter",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "litter_number",
+      "text": "Litter number",
+      "placeholder": "Number of litters mother has had",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "number_males",
+      "text": "Number of males",
+      "placeholder": "Number of males in litter",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "number_females",
+      "text": "Number of females",
+      "placeholder": "Number of females in litter",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "age_at_mating",
+      "text": "Dam age at mating (weeks)",
+      "placeholder": "",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "age_matched",
+      "text": "Age-matched sire",
+      "placeholder": "Sire age within +/- 2 weeks of dam",
+      "values": ["TRUE", "FALSE"],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "dam_weight_mating",
+      "text": "Dam weight, mating (g)",
+      "placeholder": "",
+      "type": "float",
+      "required": false
+    },
+    {
+      "name": "dam_weight_weaning",
+      "text": "Dam weight, weaning (g)",
+      "placeholder": "",
+      "type": "float",
+      "required": false
+    },
+    {
+      "name": "dam_weight_preexposure",
+      "text": "Dam weight, pre-exposure (g)",
+      "placeholder": "",
+      "type": "float",
+      "required": true
+    },
+    {
+      "name": "date_born",
+      "text": "Date born",
+      "placeholder": "Format at YYYY-MM-DD",
+      "type": "date",
+      "required": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "mouse": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRMSE####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "organism",
+      "text": "Organism",
+      "placeholder": "Scientific name (genus, species, and subspecies, if applicable)",
+      "type": "text",
+      "required": true,
+      "values": ["Mus musculus"],
+      "values_restricted": true
+    },
+    {
+      "name": "source",
+      "text": "Source",
+      "placeholder": "Source of mouse strain (e.g., laboratory)",
+      "type": "text",
+      "required": true,
+      "values": ["The Jackson Laboratory", "Laboratory colony"],
+      "values_restricted": true
+    },
+    {
+      "name": "strain",
+      "text": "Strain",
+      "placeholder": "Strain information, including parental background if the product of cross. Not just “C57BL/6”.",
+      "required": true,
+      "type": "text",
+      "values": ["Avy", "C57BL/6J"],
+      "values_restricted": true
+    },
+    {
+      "name": "sex",
+      "text": "Sex",
+      "placeholder": "",
+      "required": true,
+      "type": "text",
+      "values": ["Male", "Female"],
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "internal_id",
+      "text": "Internal ID",
+      "placeholder": "Internal unique identifier for mouse",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "mouse_age_collection",
+      "text": "Mouse age at sac (weeks)",
+      "placeholder": "",
+      "type": "integer",
+      "required": true,
+      "pilot": true
+    },
+    {
+      "name": "life_stage_collection",
+      "text": "Life stage at sac",
+      "placeholder": "",
+      "values": [
+        "preconception (-5 weeks to conception/-3 weeks)",
+        "gestation (conception/-3 weeks to birth/0 weeks",
+        "neonate (birth/0 weeks to 1 week)",
+        "preconception to weaning (-5 weeks to 3 weeks)",
+        "weanling (3 weeks)",
+        "adolescent (3 to 5 weeks)",
+        "juvenile (5 to 10 weeks)",
+        "adult (15 to 30 weeks)",
+        "aged (45 to 52 weeks)"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "animal_weight_sac",
+      "text": "Weight at sac (g)",
+      "placeholder": "",
+      "type": "float",
+      "required": false
+    },
+    {
+      "name": "perfusion",
+      "text": "Perfusion",
+      "placeholder": "Was mouse perfused before sample collection?",
+      "values": ["Yes", "No"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "fasted",
+      "text": "Fasted",
+      "values": ["Yes", "No"],
+      "placeholder": "Was mouse fasted before sample collection?",
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "fasted_hours",
+      "text": "Number of hours fasted",
+      "placeholder": "",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "liver_tumors",
+      "text": "Macroscopic tumors present",
+      "placeholder": "Were diffuse tumors present?",
+      "type": "text",
+      "values": ["NA", "TRUE", "FALSE"],
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "tumor_organs",
+      "text": "Organs with tumors",
+      "placeholder": "Specify organ(s) where macroscopic tumors are present",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "technicians",
+      "text": "Technicians",
+      "placeholder": "Individual performing the sac (initials).",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "biosample": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRSMP####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "tissue_classification",
+      "text": "Tissue Classification",
+      "placeholder": "",
+      "values": ["Target", "Surrogate"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "sample_type",
+      "text": "Type",
+      "placeholder": "",
+      "values": ["primary cells", "tissue"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "tissue",
+      "text": "Tissue",
+      "placeholder": "Broad tissue or cell population collected from mouse. Surrogate tissues are \"Blood\", \"Skin of body\". Include Uberon ID (http://uberon.org).",
+      "required": true,
+      "type": "text",
+      "values": [
+        "Blood UBERON:0000178",
+        "Brain UBERON:0000955",
+        "Adipose Tissue UBERON:0001013",
+        "Heart UBERON:0000948",
+        "Kidney UBERON:0002113",
+        "Liver UBERON:0002107",
+        "Lung UBERON: 0002048",
+        "Mammary Gland UBERON:0001911",
+        "skeletal muscle organ UBERON:0014892",
+        "Ovary UBERON:0000992",
+        "Placenta UBERON:0001987",
+        "Skin of Body UBERON:0002097",
+        "Spleen UBERON:0002106",
+        "Testis UBERON:0000473",
+        "Uterine Horn UBERON:0002247"
+      ],
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "specific_tissue",
+      "text": "Specific tissue",
+      "placeholder": "Specific tissue or cell population. Fat location should be specified in Comments. Include Uberon ID (http://uberon.org).",
+      "type": "text",
+      "required": false,
+      "values": [
+        "Blood - whole",
+        "Blood - leukocytes",
+        "Blood - plasma UBERON:0001969",
+        "Brain - whole UBERON:0000955",
+        "Brain - cortex UBERON:0001851",
+        "Brain - hippocampus",
+        "Brain - hypothalamus UBERON:0001898",
+        "Brain - mid-brain and hind-brain",
+        "Brain-cerebellum UBERON:0002037",
+        "Brain - striatum UBERON:0002435",
+        "Fat - brown adipose UBERON:0001348",
+        "Fat - white adipose UBERON:0001347",
+        "Heart- whole UBERON:0000948",
+        "Kidney - left UBERON:0004538",
+        "Kidney - right UBERON:0004539",
+        "Kidney - both UBERON:0002113",
+        "Liver - accessory lobe",
+        "Liver - caudate lobe",
+        "left lobe of liver UBERON:0001115",
+        "liver left lateral lobe  UBERON:0006727",
+        "Liver - medial lobe",
+        "liver left medial lobe UBERON:0006728",
+        "right lobe of liver  UBERON:0001114",
+        "Liver - tumor",
+        "Lung - whole UBERON:0002048",
+        "hindlimb muscle UBERON:0003663",
+        "Skin - ear, both UBERON:0001495",
+        "Skin - ear, left UBERON:0001495",
+        "Skin - ear, right UBERON:0001495",
+        "Skin - tail UBERON:0003534",
+        "Testis - both UBERON: 0000473",
+        "Uterine horns - myometrium (endometrium removed) UBERON:0001296"
+      ],
+      "values_restricted": true
+    },
+    {
+      "name": "collection_protocol",
+      "text": "Collection protocol",
+      "placeholder": "Upload collection protocol and specify URL.",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "organ_weight",
+      "text": "Organ/tissue weight (mg)",
+      "placeholder": "",
+      "type": "float",
+      "required": true
+    },
+    {
+      "name": "liver_hist_image_HE",
+      "text": "Histology, H&E stain",
+      "placeholder": "Link to URL of uploaded image.",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "liver_hist_image_ORO",
+      "text": "Histology, Oil red O stain",
+      "placeholder": "Link to URL of uploaded image.",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "cell_culture_protocol",
+      "text": "Cell culture protocol",
+      "placeholder": "Upload primary cell culture protocol and specify URL",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "culture_length",
+      "text": "Culture length (days)",
+      "placeholder": "Length of time cells were cultured",
+      "type": "float",
+      "required": false
+    },
+    {
+      "name": "passage_number",
+      "text": "Passage number",
+      "placeholder": "Number of culture passages before harvest",
+      "type": "integer",
+      "required": false
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "assay": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRASY####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "category",
+      "text": "Category",
+      "placeholder": "",
+      "values": [
+        "DNA methylation",
+        "Histone modification",
+        "Open chromatin",
+        "Gene expression"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "technique",
+      "text": "Technique",
+      "placeholder": "Include OBI ID",
+      "required": true,
+      "type": "text",
+      "values": [
+        "ATAC-seq (transposase-accessible chromatin, OBI:0002039)",
+        "RNA-seq (OBI:0001271)",
+        "RRBS (reduced representation bisulfite sequencing, OBI:0001862)",
+        "ChIP-seq (histone modification, OBI:0002017)",
+        "WGBS (shotgun bisulfite-seq assay, OBI:0001863)"
+      ],
+      "values_restricted": true
+    },
+    {
+      "name": "assay_target",
+      "text": "Target",
+      "placeholder": "ChIP-seq only. Include SO ID",
+      "required": false,
+      "type": "text",
+      "values": [
+        "H3K4me1 (SO:0001705)",
+        "H3K4me3 (SO:0001706)",
+        "H3K27me3 (SO:0001709)",
+        "H3K27ac (SO:0002049)",
+        "H3K9me3 (SO:0001707)",
+        "Input"
+      ],
+      "values_restricted": true
+    },
+    {
+      "name": "population",
+      "text": "Population",
+      "placeholder": "RNA-seq only. Nucleic acid population, including enriched or depleted populations. Include OBI ID",
+      "values": [
+        "rRNA-depleted total RNA",
+        "polyA mRNA (OBI:0000869)",
+        "total RNA (OBI:0000895)"
+      ],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "subcellular_fraction",
+      "text": "Subcellular fraction",
+      "placeholder": "Include GO term for subcellular fraction isolated from cell.",
+      "type": "text",
+      "required": false,
+      "values": ["Whole cell", "Nuclei"],
+      "values_restricted": true
+    },
+    {
+      "name": "strand_specificity",
+      "text": "Strand specificity",
+      "placeholder": "",
+      "values": ["forward", "reverse", "none"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "assay_protocol",
+      "text": "Assay protocol",
+      "placeholder": "Upload assay protocol and specify URL.",
+      "type": "text",
+      "required": true,
+      "pilot": true
+    },
+    {
+      "name": "starting_cells",
+      "text": "Starting amount of cells/nuclei (mg)",
+      "placeholder": "Amount of cells input into assay (if applicable)",
+      "type": "float",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "tissue_weight",
+      "text": "Tissue weight (mg)",
+      "placeholder": "Amount of tissue input into assay (if applicable)",
+      "type": "float",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "starting_cell_count",
+      "text": "Starting number of cells (k)",
+      "placeholder": "Number of cells input into assay (if applicable)",
+      "type": "float",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "starting_nucleic_acid",
+      "text": "Starting amount of nucleic acid (ng)",
+      "placeholder": "Amount of nucleic acid input into assay (if applicable)",
+      "type": "float",
+      "required": false,
+      "pilot": true
+    },
+    {
+      "name": "date_extracted",
+      "text": "Date extracted",
+      "placeholder": "Date nucleic acid was extracted. Format as YYYY-MM-DD.",
+      "type": "date",
+      "required": false
+    },
+    {
+      "name": "date_performed",
+      "text": "Date prepared",
+      "placeholder": "Date library was prepared. Format as YYYY-MM-DD.",
+      "type": "date",
+      "required": true
+    },
+    {
+      "name": "processed_by",
+      "text": "Processed by",
+      "placeholder": "Initials of individual or name of group preparing the library.",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "detergent_added",
+      "text": "Detergent added (ATAC-seq)",
+      "placeholder": "",
+      "values": ["NA", "TRUE", "FALSE"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "filtering_method",
+      "text": "Filtering method (ATAC-seq)",
+      "placeholder": "",
+      "values": ["Miracloth", "Celltrics column", "None"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true,
+      "pilot": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "reagent": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRREA####",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "reagent",
+      "text": "Reagent",
+      "placeholder": "Antibody or enzyme",
+      "type": "text",
+      "values": ["antibody"],
+      "values_restricted": true,
+      "required": false
+    },
+    {
+      "name": "source",
+      "text": "Source",
+      "placeholder": "Company name (e.g., laboratory, vendor)",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "product_id",
+      "text": "Product ID",
+      "placeholder": "For commercially available reagents",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "lot",
+      "text": "Lot ID",
+      "placeholder": "For commercially available reagents",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "antigen_sequence",
+      "text": "Antigen sequence",
+      "placeholder": "(for antibodies)",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "clonality",
+      "text": "Clonality",
+      "placeholder": "(for antibodies)",
+      "values": ["monoclonal", "polyclonal"],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "host",
+      "text": "Host organism",
+      "placeholder": "(for antibodies)",
+      "values": ["horse", "rabbit"],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "isotype",
+      "text": "Isotype",
+      "placeholder": "(for antibodies)",
+      "values": ["IgA", "IgG"],
+      "type": "text",
+      "required": false,
+      "values_restricted": true
+    },
+    {
+      "name": "purification_method",
+      "text": "Purification method",
+      "placeholder": "(e.g., antiserum, affinity)",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "file": [
+    {
+      "name": "user_accession",
+      "text": "User accession",
+      "placeholder": "USRFF####",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "submission_id",
+      "text": "Submission ID",
+      "placeholder": "Please see your data submission dashboard for this information",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "pilot",
+      "text": "Data Phase",
+      "placeholder": "",
+      "values": ["test", "pilot", "production"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "file_uuid",
+      "text": "File UUID",
+      "placeholder": "Please see your data submission dashboard for this information",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "filename",
+      "text": "Name",
+      "placeholder": "Example: \"V115.PE1.fastq.gz\"",
+      "type": "text",
+      "required": true,
+      "pilot": true
+    },
+    {
+      "name": "md5sum",
+      "text": "md5sum",
+      "placeholder": "",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "format",
+      "text": "Format",
+      "placeholder": "",
+      "values": ["fastq"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "description",
+      "text": "Description",
+      "placeholder": "",
+      "values": ["raw reads"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "run_type",
+      "text": "Run type",
+      "placeholder": "",
+      "values": ["single-end", "paired-end"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "pair",
+      "text": "Pair",
+      "placeholder": "",
+      "values": ["forward", "reverse"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "read_length",
+      "text": "Read length (nt)",
+      "placeholder": "",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "platform",
+      "text": "Platform",
+      "placeholder": "",
+      "values": ["Illumina"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "instrument",
+      "text": "Instrument",
+      "placeholder": "",
+      "values": [
+        "HiSeq 2500",
+        "HiSeq 3000",
+        "HiSeq 4000",
+        "HiSeq X10",
+        "NextSeq 500",
+        "Novaseq 6000"
+      ],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "machine",
+      "text": "Machine",
+      "placeholder": "Barcode for individual machine used for sequencing (for batch effects) (see fastq sequence ID - @<instrument>:<run number>)",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "run_number",
+      "text": "Run number",
+      "placeholder": "(see fastq sequence ID - @<instrument>:<run number>)",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "sequencing_lane",
+      "text": "Sequencing lane",
+      "placeholder": "",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "spike_ins",
+      "text": "Spike-ins present",
+      "placeholder": "",
+      "values": ["TRUE", "FALSE"],
+      "type": "text",
+      "required": true,
+      "values_restricted": true
+    },
+    {
+      "name": "pcr_cycles",
+      "text": "PCR cycles",
+      "placeholder": "",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "insert_size",
+      "text": "Library insert size (nt)",
+      "placeholder": "Average size of sequencing library insert. Determined by size selection at library creation step.",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "standard_deviation",
+      "text": "Standard deviation (nt)",
+      "placeholder": "Standard deviation of sequencing library insert size. Refers to Library insert size.",
+      "type": "float",
+      "required": false
+    },
+    {
+      "name": "barcode",
+      "text": "Barcode",
+      "placeholder": "",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "sequenced_by",
+      "text": "Sequenced by",
+      "placeholder": "Lab who performed sequencing.",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "date_sequenced",
+      "text": "Date sequenced",
+      "placeholder": "",
+      "type": "date",
+      "required": true
+    },
+    {
+      "name": "comments",
+      "text": "Comments",
+      "placeholder": "",
+      "type": "text",
+      "required": false,
+      "pilot": true
+    }
+  ]
+}

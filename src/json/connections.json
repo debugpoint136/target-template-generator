@@ -1,0 +1,183 @@
+{
+  "treatment": {
+    "one": "treatment",
+    "all": "treatments",
+    "prefix": "TRGTTMT000",
+    "usr_prefix": "USRTMT000",
+    "connections": [
+      {
+        "name": "challenged_with",
+        "display_name": "Challenge diet",
+        "placeholder": "Link to Diet accession (if applicable)",
+        "allow_multiple": true,
+        "to": "diet",
+        "all": "diets"
+      }
+    ]
+  },
+  "diet": {
+    "one": "diet",
+    "all": "diets",
+    "prefix": "TRGTDIET000",
+    "usr_prefix": "USRDIET000",
+    "connections": []
+  },
+  "litter": {
+    "one": "litter",
+    "all": "litters",
+    "prefix": "TRGTLTR000",
+    "usr_prefix": "USRLTR000",
+    "connections": [
+      {
+        "name": "part_of",
+        "display_name": "Bioproject",
+        "placeholder": "Link to Bioproject accession",
+        "allow_multiple": true,
+        "to": "bioproject",
+        "all": "bioprojects"
+      },
+      {
+        "name": "sire",
+        "display_name": "Sire",
+        "placeholder": "Link to Mouse accession",
+        "to": "mouse",
+        "all": "mice"
+      },
+      {
+        "name": "dam",
+        "display_name": "Dam",
+        "placeholder": "Link to Mouse accession",
+        "to": "mouse",
+        "all": "mice"
+      }
+    ]
+  },
+  "mouse": {
+    "one": "mouse",
+    "all": "mice",
+    "prefix": "TRGTMSE000",
+    "usr_prefix": "USRMSE000",
+    "connections": [
+      {
+        "name": "born_to",
+        "display_name": "Litter",
+        "placeholder": "Link to Litter accession",
+        "to": "litter",
+        "all": "litters",
+        "required": true
+      },
+      {
+        "name": "fed",
+        "display_name": "Diet",
+        "placeholder": "Primary diet (link to Diet accession)",
+        "allow_multiple": true,
+        "to": "diet",
+        "all": "diets",
+        "required": true
+      },
+      {
+        "name": "undergoes",
+        "display_name": "Treatment",
+        "placeholder": "Exposure regimen (link to Treatment accession)",
+        "to": "treatment",
+        "all": "treatments",
+        "required": true
+      },
+      {
+        "name": "part_of",
+        "display_name": "Bioproject",
+        "placeholder": "Link to Bioproject accession",
+        "allow_multiple": true,
+        "to": "bioproject",
+        "all": "bioprojects",
+        "required": true
+      }
+    ]
+  },
+  "biosample": {
+    "one": "biosample",
+    "all": "biosamples",
+    "prefix": "TRGTSMP000",
+    "usr_prefix": "USRSMP000",
+    "connections": [
+      {
+        "name": "derived_from",
+        "display_name": "Mouse",
+        "placeholder": "Link to Mouse accession",
+        "to": "mouse",
+        "all": "mice",
+        "required": true
+      },
+      {
+        "name": "pooled_from",
+        "display_name": "Pooled from biosamples",
+        "placeholder": "Link to Biosample accessions (if applicable)",
+        "allow_multiple": true,
+        "to": "biosample",
+        "all": "biosamples"
+      }
+    ]
+  },
+  "assay": {
+    "one": "assay",
+    "all": "assays",
+    "prefix": "TRGTASY000",
+    "usr_prefix": "USRASY000",
+    "connections": [
+      {
+        "name": "recruits",
+        "display_name": "Reagent",
+        "placeholder": "Link to Reagent accession (if applicable)",
+        "allow_multiple": true,
+        "to": "reagent",
+        "all": "reagents"
+      },
+      {
+        "name": "assay_input",
+        "display_name": "Biosample",
+        "placeholder": "Cell population on which assay was performed (if applicable); link to Biosample accession",
+        "to": "biosample",
+        "all": "biosamples",
+        "required": true
+      },
+      {
+        "name": "pooled_from",
+        "display_name": "Pooled from assays",
+        "placeholder": "Link to Assay accessions (if applicable)",
+        "allow_multiple": true,
+        "to": "assay",
+        "all": "assays"
+      }
+    ]
+  },
+  "reagent": {
+    "one": "reagent",
+    "all": "reagents",
+    "prefix": "TRGTREA000",
+    "usr_prefix": "USRREA000",
+    "connections": []
+  },
+  "file": {
+    "one": "file",
+    "all": "files",
+    "prefix": "TRGTFF000",
+    "usr_prefix": "USRFF000",
+    "connections": [
+      {
+        "name": "paired_file",
+        "display_name": "Paired file",
+        "placeholder": "Link to File accession",
+        "to": "file",
+        "all": "files"
+      },
+      {
+        "name": "sequenced",
+        "display_name": "Assay",
+        "placeholder": "Assay sequenced in this file (link to Assay accession)",
+        "to": "assay",
+        "all": "assays",
+        "required": true
+      }
+    ]
+  }
+}

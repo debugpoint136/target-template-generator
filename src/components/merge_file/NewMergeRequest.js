@@ -1,0 +1,187 @@
+import React, {Component} from 'react';
+import XLSX from 'xlsx';
+import fire from '../../fire';
+// import { swapDisplayNamesToKeys } from './utils';
+import app from "../../fire";
+import Notifications, {notify} from 'react-notify-toast';
+
+export default class NewMergeRequest extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [],
+            user: null, // logged in user
+            lab: null, // logged in user's Lab
+            /* Array of Arrays e.g. [["a","b"],[1,2]] */
+            uid: null,
+            cols: []/* Array of column objects e.g. { name: "C", K: 2 } */
+        };
+        this.handleFile = this.handleFile.bind(this);
+        this.exportFile = this.exportFile.bind(this);
+    };
+
+    componentWillMount() {
+        app.auth()
+            .onAuthStateChanged(user => {
+                if (user) {
+                    this.setState({user: user.displayName, lab: user.photoURL, uid: user.uid });
+                } else {
+                    this.setState({user: null, lab: null, uid: null });
+                }
+            });
+    }
+
+    handleFile(file/*:File*/) {
+        /* Boilerplate to set up FileReader */
+        const reader = new FileReader();
+        const rABS = !!reader.readAsBinaryString;
+        reader.onload = (e) => {
+            /* Parse data */
+            const bstr = e.target.result;
+            const wb = XLSX.read(bstr, {
+                type: rABS ? 'binary' : 'array'
+            });
+            /* Get first worksheet */
+            const wsname = wb.SheetNames[0];
+            const ws = wb.Sheets[wsname];
+            const dataObj = XLSX.utils.sheet_to_json(ws); // creates a straight-up object - save this in Firebase
+
+            const readDataFromSheets = { 
+                data: JSON.stringify(dataObj),
+                uploaded: Date.now(),
+                user: this.state.user,
+                lab: this.state.lab
+            }
+
+            if (!ws) {
+                // error message
+                notify.show('Not a valid sheet ⚠️', 'error');
+            } else {
+                /* Update Firebase */
+                const newPostRef = fire.database().ref(`merge_requests/${this.state.uid}`).push(readDataFromSheets);
+                const postId = newPostRef.key;
+                
+                /* Update state */
+                this.setState({
+                    data: dataObj,
+                    postId: postId
+                });
+            }
+            
+        };
+        if (rABS) 
+            reader.readAsBinaryString(file);
+        else 
+            reader.readAsArrayBuffer(file);
+        }
+    ;
+    exportFile() {
+        /* convert state to workbook */
+        const ws = XLSX.utils.aoa_to_sheet(this.state.data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "SheetJS");
+        /* generate XLSX file and send to client */
+        XLSX.writeFile(wb, "sheetjs.xlsx")
+    };
+    render() {
+        return (
+            <div>
+                <Notifications/>
+                <div className="flex">
+                    <div className="bg-grey-light m-4 p-4">
+                        <div className="col-xs-12">
+                            <DataInput handleFile={this.handleFile}/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        );
+    };
+};
+
+/*
+  Simple HTML5 file input wrapper
+  usage: <DataInput handleFile={callback} />
+    handleFile(file:File):void;
+*/
+class DataInput extends Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    };
+    handleChange(e) {
+        const files = e.target.files;
+        if (files && files[0]) 
+            this.props.handleFile(files[0]);
+        };
+    render() {
+        return (
+            <form className="form-inline">
+                <div className="form-group">
+                    {/* <label htmlFor="file">Spreadsheet</label> */}
+                    <input
+                        type="file"
+                        className="form-control"
+                        id="file"
+                        accept={SheetJSFT}
+                        onChange={this.handleChange}/>
+                </div>
+            </form>
+        );
+    };
+}
+
+/*
+  Simple HTML Table
+  usage: <OutTable data={data} cols={cols} />
+    data:Array<Array<any> >;
+    cols:Array<{name:string, key:number|string}>;
+*/
+/*
+class OutTable extends React.Component {
+
+    render() {
+        return (
+            <div className="table-responsive">
+                <table className="table table-striped">
+                    <thead>
+                        <tr>{this.props.cols.map((c) => <th key={c.key}>{c.name}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                        {this.props.data.map((r, i) => <tr key={i}>
+                                {this.props.cols.map(c => <td key={c.key}>{r[c.key]}</td>)}
+                            </tr>)}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+};
+*/
+/* list of supported file types */
+const SheetJSFT = [
+    "xlsx",
+        "xlsb",
+        "xlsm",
+        "xls",
+        "xml",
+        "csv",
+        "txt",
+        "ods",
+        "fods",
+        "uos",
+        "sylk",
+        "dif",
+        "dbf",
+        "prn",
+        "qpw",
+        "123",
+        "wb*",
+        "wq*",
+        "html",
+        "htm"
+    ].map(function (x) {
+    return "." + x;
+}).join(",");
+

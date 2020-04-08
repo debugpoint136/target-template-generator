@@ -1,0 +1,294 @@
+{
+    "items": [
+      {
+        "tags": [
+          "neo4j",
+          "cypher",
+          "graphdb"
+        ],
+        "answers": [
+          {
+            "comments": [
+              {
+                "owner": {
+                  "reputation": 9677,
+                  "user_id": 92359,
+                  "user_type": "registered",
+                  "accept_rate": 94,
+                  "profile_image": "https://www.gravatar.com/avatar/664d3d4c50c731d90a32db5f9e01b4b9?s=128&d=identicon&r=PG",
+                  "display_name": "InverseFalcon",
+                  "link": "https://stackoverflow.com/users/92359/inversefalcon"
+                },
+                "edited": false,
+                "score": 0,
+                "creation_date": 1501356690,
+                "post_id": 45392943,
+                "comment_id": 77747071,
+                "link": "https://stackoverflow.com/questions/45392402/neo4j-cypher-query-for-many-to-many-relationship/45392943#comment77747071_45392943"
+              },
+              {
+                "owner": {
+                  "reputation": 1172,
+                  "user_id": 2286415,
+                  "user_type": "registered",
+                  "profile_image": "https://i.stack.imgur.com/tbRoS.png?s=128&g=1",
+                  "display_name": "upma",
+                  "link": "https://stackoverflow.com/users/2286415/logisima"
+                },
+                "reply_to_user": {
+                  "reputation": 9677,
+                  "user_id": 92359,
+                  "user_type": "registered",
+                  "accept_rate": 94,
+                  "profile_image": "https://www.gravatar.com/avatar/664d3d4c50c731d90a32db5f9e01b4b9?s=128&d=identicon&r=PG",
+                  "display_name": "InverseFalcon",
+                  "link": "https://stackoverflow.com/users/92359/inversefalcon"
+                },
+                "edited": false,
+                "score": 0,
+                "creation_date": 1501357898,
+                "post_id": 45392943,
+                "comment_id": 77747472,
+                "link": "https://stackoverflow.com/questions/45392402/neo4j-cypher-query-for-many-to-many-relationship/45392943#comment77747472_45392943"
+              }
+            ],
+            "tags": [],
+            "owner": {
+              "reputation": 1172,
+              "user_id": 2286415,
+              "user_type": "registered",
+              "profile_image": "https://i.stack.imgur.com/tbRoS.png?s=128&g=1",
+              "display_name": "logisima",
+              "link": "https://stackoverflow.com/users/2286415/logisima"
+            },
+            "last_editor": {
+              "reputation": 1172,
+              "user_id": 2286415,
+              "user_type": "registered",
+              "profile_image": "https://i.stack.imgur.com/tbRoS.png?s=128&g=1",
+              "display_name": "logisima",
+              "link": "https://stackoverflow.com/users/2286415/logisima"
+            },
+            "comment_count": 2,
+            "down_vote_count": 0,
+            "up_vote_count": 0,
+            "is_accepted": false,
+            "score": 0,
+            "last_activity_date": 1501357859,
+            "last_edit_date": 1501357859,
+            "creation_date": 1501354557,
+            "answer_id": 45392943,
+            "question_id": 45392402,
+            "share_link": "https://stackoverflow.com/a/45392943",
+            "body_markdown": "You can try this query :\r\n\r\n    MATCH (:Brand {id:1})-[:SOLD_BY]-&gt;(s:Store)\r\n    RETURN s, [ (b)-[:SOLD_BY]-&gt;(s) | b] AS brands\r\n\r\nSee this link to have more information : https://neo4j.com/blog/cypher-graphql-neo4j-3-1-preview/\r\n\r\nCheers",
+            "link": "https://stackoverflow.com/questions/45392402/neo4j-cypher-query-for-many-to-many-relationship/45392943#45392943",
+            "title": "Neo4j Cypher query for many to many relationship"
+          }
+        ],
+        "owner": {
+          "reputation": 1,
+          "user_id": 8387000,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/36abab6c5c432d9a222e8704711b3426?s=128&d=identicon&r=PG&f=1",
+          "display_name": "Always smiles",
+          "link": "https://stackoverflow.com/users/8387000/n-miles"
+        },
+        "comment_count": 0,
+        "delete_vote_count": 0,
+        "close_vote_count": 0,
+        "is_answered": false,
+        "view_count": 10,
+        "favorite_count": 0,
+        "down_vote_count": 0,
+        "up_vote_count": 0,
+        "answer_count": 1,
+        "score": 0,
+        "last_activity_date": 1501357859,
+        "creation_date": 1501351310,
+        "question_id": 45392402,
+        "share_link": "https://stackoverflow.com/q/45392402",
+        "body_markdown": "I have a graph that looks like the following:\r\n\r\n    Brand--SOLD_BY--&gt;Store\r\n\r\nOne brand of a certain item can be sold by multiple stores. Similarly, a single store can sell multiple brands of items.\r\n\r\nWhat I want to achieve is find all the stores that sell a particular brand but in the result along with the store, I would also like the other brands that are sold by that particular store.\r\n\r\nFor example:\r\n\r\nBrand1 is sold by StoreA, StoreB, StoreC. The result should look something like..\r\n\r\nStoreA - Brand1, Brand2\r\n\r\nStoreB - Brand1, Brand3\r\n\r\nStoreC - Brand1\r\n\r\n\r\nI&#39;ve managed to find the stores but I&#39;m not being able to find the other brands sold by the store.\r\n\r\n    MATCH (b:Brand)-[s:SOLD_BY]-&gt;(s:Store)\r\n    WHERE b.id=1\r\n    WITH DISTINCT s AS stores\r\n    RETURN stores\r\n\r\nOne thing I&#39;ve thought of is if I should loop inside the collected stores and find the brands but I don&#39;t know how efficient that would be since the graph can have many nodes. \r\n\r\nAny help would be appreciated, thanks.",
+        "link": "https://stackoverflow.com/questions/45392402/neo4j-cypher-query-for-many-to-many-relationship",
+        "title": "Neo4j Cypher query for many to many relationship"
+      },
+      {
+        "tags": [
+          "python",
+          "neo4j",
+          "cypher"
+        ],
+        "comments": [
+          {
+            "owner": {
+              "reputation": 1172,
+              "user_id": 2286415,
+              "user_type": "registered",
+              "profile_image": "https://i.stack.imgur.com/tbRoS.png?s=128&g=1",
+              "display_name": "logisima",
+              "link": "https://stackoverflow.com/users/2286415/logisima"
+            },
+            "edited": false,
+            "score": 0,
+            "creation_date": 1501331549,
+            "post_id": 45389225,
+            "comment_id": 77739132,
+            "link": "https://stackoverflow.com/questions/45389225/neo4j-match-only-one-node-time-in-loop#comment77739132_45389225"
+          },
+          {
+            "owner": {
+              "reputation": 21,
+              "user_id": 6275851,
+              "user_type": "registered",
+              "profile_image": "https://i.stack.imgur.com/DxZMO.jpg?s=128&g=1",
+              "display_name": "Einharch",
+              "link": "https://stackoverflow.com/users/6275851/einharch"
+            },
+            "reply_to_user": {
+              "reputation": 1172,
+              "user_id": 2286415,
+              "user_type": "registered",
+              "profile_image": "https://i.stack.imgur.com/tbRoS.png?s=128&g=1",
+              "display_name": "logisima",
+              "link": "https://stackoverflow.com/users/2286415/logisima"
+            },
+            "edited": false,
+            "score": 0,
+            "creation_date": 1501332485,
+            "post_id": 45389225,
+            "comment_id": 77739397,
+            "link": "https://stackoverflow.com/questions/45389225/neo4j-match-only-one-node-time-in-loop#comment77739397_45389225"
+          },
+          {
+            "owner": {
+              "reputation": 9677,
+              "user_id": 92359,
+              "user_type": "registered",
+              "accept_rate": 94,
+              "profile_image": "https://www.gravatar.com/avatar/664d3d4c50c731d90a32db5f9e01b4b9?s=128&d=identicon&r=PG",
+              "display_name": "InverseFalcon",
+              "link": "https://stackoverflow.com/users/92359/inversefalcon"
+            },
+            "edited": false,
+            "score": 0,
+            "creation_date": 1501334749,
+            "post_id": 45389225,
+            "comment_id": 77740074,
+            "link": "https://stackoverflow.com/questions/45389225/neo4j-match-only-one-node-time-in-loop#comment77740074_45389225"
+          }
+        ],
+        "owner": {
+          "reputation": 21,
+          "user_id": 6275851,
+          "user_type": "registered",
+          "profile_image": "https://i.stack.imgur.com/DxZMO.jpg?s=128&g=1",
+          "display_name": "Einheiser",
+          "link": "https://stackoverflow.com/users/6275851/einharch"
+        },
+        "comment_count": 3,
+        "delete_vote_count": 0,
+        "close_vote_count": 0,
+        "is_answered": false,
+        "view_count": 19,
+        "favorite_count": 0,
+        "down_vote_count": 0,
+        "up_vote_count": 0,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1501330873,
+        "creation_date": 1501330873,
+        "question_id": 45389225,
+        "share_link": "https://stackoverflow.com/q/45389225",
+        "body_markdown": "I wonder if it&#39;s possible to limit the MATCH to only one node in a Cypher query.\r\n\r\nI have billions of nodes, and there&#39;s a huge difference if I use Limit 1 in a match or not:\r\n\r\n1) `MATCH (n:Node) WHERE n.id = &quot;UUID&quot; RETURN n LIMIT 1`\r\n\r\n2) `MATCH (n:Node) WHERE n.id = &quot;UUID&quot; RETURN n`\r\n\r\n(1) executes in milliseconds, (2) takes few minutes (I believe it&#39;s trying to find *all* nodes with that id, despite having a unique index).\r\n\r\nNow, in a huge CSV file that has two two nodes IDs, I want to match and create a relation between as follow:\r\n\r\n    PROFILE\r\n    USING PERIODIC COMMIT 100000\r\n    LOAD CSV WITH HEADERS FROM &quot;file:///CSV_FILE.csv&quot; as row\r\n    MATCH (n:Node {id: row.`:START_ID`})\r\n    MATCH (m:Node {id: row.`:END_ID`})\r\n    MERGE (n)-[:RELATION]-&gt;(m)\r\n\r\nThis takes ages. I tried adding `LIMIT 1` at the end, and the results are blazing fast, but the loop itself is interrupted after the first row. Doing `LIMIT 2` instead and performances drop to abysmal levels.\r\n\r\n**Is there a way to limit each match to only one node?**",
+        "link": "https://stackoverflow.com/questions/45389225/neo4j-match-only-one-node-time-in-loop",
+        "title": "Neo4j - Match only one node/time in loop"
+      },
+      {
+        "tags": [
+          "neo4j"
+        ],
+        "owner": {
+          "reputation": 1,
+          "user_id": 7571419,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/de189114b03b9fe0ac6a734821c46255?s=128&d=identicon&r=PG&f=1",
+          "display_name": "John Smith",
+          "link": "https://stackoverflow.com/users/7571419/john-smith"
+        },
+        "comment_count": 0,
+        "delete_vote_count": 0,
+        "close_vote_count": 0,
+        "is_answered": false,
+        "view_count": 24,
+        "favorite_count": 0,
+        "down_vote_count": 0,
+        "up_vote_count": 0,
+        "answer_count": 0,
+        "score": 0,
+        "last_activity_date": 1501322893,
+        "creation_date": 1501322893,
+        "question_id": 45387965,
+        "share_link": "https://stackoverflow.com/q/45387965",
+        "body_markdown": "To find the shortest path in neo4j I am using Dijkstra&#39;s algorithm from APOC library. The issue is that request returns just 1 result. Is it possible to get 5 or 10 shortest paths? Or can I set conditions by weight of edges? For instance, total length more than 500.\r\n\r\n    MATCH (start:Point {title: &#39;Some Point 1&#39;}), (end:Point {title: &#39;Some Point 5&#39;}) CALL apoc.algo.dijkstra(start, end, &#39;distance&#39;, &#39;value&#39;) YIELD path, weight RETURN path, weight\r\n\r\n",
+        "link": "https://stackoverflow.com/questions/45387965/neo4j-apoc-dijkstra-procedure",
+        "title": "Neo4j apoc dijkstra procedure"
+      },
+      {
+        "tags": [
+          "neo4j",
+          "cypher"
+        ],
+        "answers": [
+          {
+            "tags": [],
+            "owner": {
+              "reputation": 1688,
+              "user_id": 6692895,
+              "user_type": "registered",
+              "accept_rate": 88,
+              "profile_image": "https://graph.facebook.com/10154498103378258/picture?type=large",
+              "display_name": "Tomaž Bratanič",
+              "link": "https://stackoverflow.com/users/6692895/toma%c5%be-bratani%c4%8d"
+            },
+            "comment_count": 0,
+            "down_vote_count": 0,
+            "up_vote_count": 0,
+            "is_accepted": false,
+            "score": 0,
+            "last_activity_date": 1501329555,
+            "creation_date": 1501329555,
+            "answer_id": 45389020,
+            "question_id": 45386379,
+            "share_link": "https://stackoverflow.com/a/45389020",
+            "body_markdown": "Your problem looks a lot like finding strongly connected components in the graph. As defined in the docs.\r\n\r\n&gt; A directed graph is strongly connected if there is a path between all\r\n&gt; pairs of vertices ( nodes ). This algorithms treats the graph as directed, so\r\n&gt; the direction of the relationship is important and strongly connected\r\n&gt; compoment exists only if there are relationships between nodes in both\r\n&gt; direction.\r\n\r\nCheck out more in the [documentation][1]. You will need [neo4j-graph-algorithms][2].\r\n\r\nExample query with writing back the component of the graph to the node.\r\n\r\n    CALL algo.scc(&#39;Label&#39;,&#39;C&#39;, {write:true,partitionProperty:&#39;partition&#39;})\r\n    YIELD loadMillis, computeMillis, writeMillis, setCount, maxSetSize, minSetSize  \r\n\r\n\r\nAnd then you can find your biggest component with the following query. \r\n\r\n\r\n    MATCH (u:Label)\r\n    RETURN distinct(u.partition) as partition,count(*) as size_of_partition \r\n    ORDER by size_of_partition DESC LIMIT 1\r\n\r\n  [1]: https://neo4j-contrib.github.io/neo4j-graph-algorithms/#_strongly_connected_components\r\n  [2]: https://github.com/neo4j-contrib/neo4j-graph-algorithms/releases",
+            "link": "https://stackoverflow.com/questions/45386379/find-all-nodes-with-two-way-relationships-starting-from-one-specific-node-using/45389020#45389020",
+            "title": "Find all nodes with two-way relationships starting from one specific node using cypher in neo4j"
+          }
+        ],
+        "owner": {
+          "reputation": 1,
+          "user_id": 8385192,
+          "user_type": "registered",
+          "profile_image": "https://www.gravatar.com/avatar/d051cd17761eefcee5dd34ed2d85bfdf?s=128&d=identicon&r=PG&f=1",
+          "display_name": "Tongliang Li",
+          "link": "https://stackoverflow.com/users/8385192/tongliang-li"
+        },
+        "comment_count": 0,
+        "delete_vote_count": 0,
+        "close_vote_count": 0,
+        "is_answered": false,
+        "view_count": 20,
+        "favorite_count": 0,
+        "down_vote_count": 0,
+        "up_vote_count": 0,
+        "answer_count": 1,
+        "score": 0,
+        "last_activity_date": 1501329555,
+        "creation_date": 1501311617,
+        "question_id": 45386379,
+        "share_link": "https://stackoverflow.com/q/45386379",
+        "body_markdown": "[neo4j nodes and relationships][1]\r\n\r\n\r\n  [1]: https://i.stack.imgur.com/eHB2k.png\r\n\r\nThis is quite a tough job. I&#39;m trying to find all nodes with two-way relationships starting from a specific node. Based on the image above, I would like to find all two-way relationships starting from node 1. Only nodes with two-way relationships match. For example, node 1,3,4 matches and node 1,2,3 matches as two separate groups. However, if node 2 and 4 has a two-way relationship, then node 1,2,3,4 matches as one group. The main idea is that all nodes are linked both ways in such a group. My idea is to find all nodes with two-way relationships starting from 1 and continue processing, but I&#39;m not able to continue. Can anyone help me with this problem, thanks a lot. By the way, only the largest &#39;two-way-circle&#39; is needed.",
+        "link": "https://stackoverflow.com/questions/45386379/find-all-nodes-with-two-way-relationships-starting-from-one-specific-node-using",
+        "title": "Find all nodes with two-way relationships starting from one specific node using cypher in neo4j"
+      }
+    ]
+}
