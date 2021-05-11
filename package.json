@@ -9,7 +9,7 @@
     "firebase": "^5.5.0",
     "immer": "^1.7.1",
     "js-file-download": "^0.4.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "moment": "^2.22.2",
     "neo4j-driver": "^1.7.1",
     "react": "^16.2.0",
