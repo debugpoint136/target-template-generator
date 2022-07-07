@@ -10,7 +10,7 @@
     "immer": "^1.7.1",
     "js-file-download": "^0.4.4",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "neo4j-driver": "^1.7.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
